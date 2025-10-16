@@ -2,7 +2,9 @@ package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
+import com.adil.bridgespero.exception.TeacherNotFoundException;
 import com.adil.bridgespero.mapper.TeacherMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,10 @@ public class TeacherService {
                 pageSize,
                 responses.getTotalElements(),
                 responses.getTotalPages());
+    }
+
+    public TeacherDashboardResponse getDashboard(Long id) {
+        return teacherMapper.toDashboardResponse(teacherRepository.findById(id)
+                .orElseThrow(() -> new TeacherNotFoundException(id)));
     }
 }

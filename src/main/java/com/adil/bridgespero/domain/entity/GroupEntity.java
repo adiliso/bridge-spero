@@ -66,8 +66,8 @@ public class GroupEntity extends BaseEntity {
 
     String syllabus;
 
-    @Column(name = "group_status", nullable = false)
-    GroupStatus groupStatus;
+    @Column(nullable = false)
+    GroupStatus status;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     List<LessonScheduleEntity> lessonSchedules = new ArrayList<>();
