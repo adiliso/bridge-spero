@@ -35,6 +35,9 @@ public class LessonScheduleEntity extends BaseEntity {
     @Column(name = "start_time", nullable = false)
     LocalTime startTime;
 
+    @Column(name = "end_time", nullable = false)
+    LocalTime endTime;
+
     @ManyToOne
     @JoinColumn(name = "group_id")
     GroupEntity group;
