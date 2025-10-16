@@ -29,7 +29,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentEntity extends UserEntity {
 
-    @Column(name = "profile_picture_url", nullable = false)
+    @Column(name = "profile_picture_url")
     String profilePictureUrl;
 
     @Column(length = 500)

@@ -1,8 +1,13 @@
 package com.adil.bridgespero.domain.model.enums;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
 @Getter
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum Experience {
 
     BEGINNER("0-1 il"),
@@ -10,9 +15,5 @@ public enum Experience {
     EXPERIENCED("5-9 il"),
     EXPERT("10+ il");
 
-    private final String description;
-
-    Experience(String description) {
-        this.description = description;
-    }
+    String description;
 }

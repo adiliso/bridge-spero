@@ -1,8 +1,11 @@
 package com.adil.bridgespero.domain.entity;
 
+import com.adil.bridgespero.domain.model.enums.Experience;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -34,14 +37,15 @@ public class TeacherEntity extends UserEntity {
     @Column(name = "profile_picture_url", nullable = false)
     String profilePictureUrl;
 
-    @Column(name = "years_of_experience", nullable = false)
-    int yearsOfExperience;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    Experience experience;
 
     @Column(name = "demo_video_url", nullable = false)
     String demoVideoUrl;
 
     @Column()
-    Double rating = 3.5;
+    Double rating = 4.0;
 
     @Column(name = "rating_count")
     Integer ratingCount = 1;
