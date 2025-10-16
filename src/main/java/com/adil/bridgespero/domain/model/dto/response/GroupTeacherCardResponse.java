@@ -9,9 +9,11 @@ public record GroupTeacherCardResponse(
 
         String name,
         String status,
+        double price,
         String startDate,
-        Integer numberOfStudents,
-        Integer maxStudents,
+        int numberOfStudents,
+        int maxStudents,
+        Integer minStudents,
         List<String> schedule
 ) {
 }

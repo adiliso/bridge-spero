@@ -18,9 +18,11 @@ public class GroupMapper {
         return GroupTeacherCardResponse.builder()
                 .name(entity.getName())
                 .status(entity.getStatus().toString().toLowerCase())
+                .price(entity.getPrice())
                 .startDate(entity.getStartDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT)))
                 .numberOfStudents(entity.getStudents().size())
                 .maxStudents(entity.getMaxStudents())
+                .minStudents(entity.getMinStudents())
                 .schedule(entity.getLessonSchedules().stream().map(this::mapSchedule).toList())
                 .build();
     }
