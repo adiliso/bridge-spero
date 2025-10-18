@@ -46,8 +46,8 @@ public class GroupEntity extends BaseEntity {
     @Column(name = "start_date", nullable = false)
     LocalDate startDate;
 
-    @Column(name = "duration_in_months", nullable = false)
-    Double durationInMonths;
+    @Column(name = "end_date", nullable = false)
+    LocalDate endDate;
 
     @Column(name = "max_students", nullable = false)
     Integer maxStudents;

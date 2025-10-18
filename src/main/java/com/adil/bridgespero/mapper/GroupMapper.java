@@ -2,9 +2,11 @@ package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -14,7 +16,7 @@ import static com.adil.bridgespero.domain.model.constant.AppConstant.DATE_FORMAT
 @Component
 public class GroupMapper {
 
-    public GroupTeacherCardResponse toTeacherCardResponse(GroupEntity entity) {
+    public GroupTeacherCardResponse toGroupTeacherCardResponse(GroupEntity entity) {
         return GroupTeacherCardResponse.builder()
                 .name(entity.getName())
                 .status(entity.getStatus().toString().toLowerCase())
@@ -27,13 +29,27 @@ public class GroupMapper {
                 .build();
     }
 
+    public GroupScheduleCardResponse toGroupScheduleCardResponse(GroupEntity entity, DayOfWeek day) {
+        return new GroupScheduleCardResponse(
+                entity.getName(),
+                entity.getLessonSchedules()
+                        .stream()
+                        .filter(sc -> sc.getDayOfWeek().equals(day))
+                        .map(this::mapTime)
+                        .toList());
+    }
+
     private String mapSchedule(LessonScheduleEntity entity) {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         String day = entity.getDayOfWeek()
                 .getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
+        return String.format("%s: %s", day, mapTime(entity));
+    }
+
+    private String mapTime(LessonScheduleEntity entity) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         String start = entity.getStartTime().format(timeFormatter);
         String end = entity.getEndTime().format(timeFormatter);
-
-        return String.format("%s: %s-%s", day, start, end);
+        return String.format("%s-%s", start, end);
     }
 }

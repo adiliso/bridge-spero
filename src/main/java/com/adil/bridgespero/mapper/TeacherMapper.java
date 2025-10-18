@@ -35,7 +35,7 @@ public class TeacherMapper {
                 .groups(entity.getGroups()
                         .stream()
                         .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
-                        .map(groupMapper::toTeacherCardResponse)
+                        .map(groupMapper::toGroupTeacherCardResponse)
                         .toList())
                 .build();
     }
