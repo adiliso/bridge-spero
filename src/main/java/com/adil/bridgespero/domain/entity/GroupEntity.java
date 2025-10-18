@@ -46,8 +46,8 @@ public class GroupEntity extends BaseEntity {
     @Column(name = "start_date", nullable = false)
     LocalDate startDate;
 
-    @Column(name = "duration_in_months", nullable = false)
-    Double durationInMonths;
+    @Column(name = "end_date", nullable = false)
+    LocalDate endDate;
 
     @Column(name = "max_students", nullable = false)
     Integer maxStudents;
@@ -66,8 +66,8 @@ public class GroupEntity extends BaseEntity {
 
     String syllabus;
 
-    @Column(name = "group_status", nullable = false)
-    GroupStatus groupStatus;
+    @Column(nullable = false)
+    GroupStatus status;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     List<LessonScheduleEntity> lessonSchedules = new ArrayList<>();
