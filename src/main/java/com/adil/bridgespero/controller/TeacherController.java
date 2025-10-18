@@ -1,5 +1,6 @@
 package com.adil.bridgespero.controller;
 
+import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static com.adil.bridgespero.domain.model.constant.PageConstants.DEFAULT_PAGE_NUMBER;
 import static com.adil.bridgespero.domain.model.constant.PageConstants.DEFAULT_PAGE_SIZE;
@@ -34,7 +37,14 @@ public class TeacherController {
     }
 
     @GetMapping
-    public ResponseEntity<TeacherDashboardResponse> getDashboard(@RequestHeader("User-Id") Long id){
+    public ResponseEntity<TeacherDashboardResponse> getDashboard(@RequestHeader("User-Id") Long id) {
         return ResponseEntity.ok(teacherService.getDashboard(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<GroupTeacherCardResponse>> getGroups(
+            @RequestHeader("User-Id") Long id,
+            @RequestParam int parameter) {
+        return ResponseEntity.ok(teacherService.getGroups(id, parameter));
     }
 }
