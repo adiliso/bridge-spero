@@ -1,12 +1,10 @@
 spring:
   application:
     name: bridge-spero
-  server:
-    port: 8081
   datasource:
-    url: jdbc:postgresql://localhost:5434/postgres
-    username: postgres
-    password: 1234
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
 zoom:
   client-id: ${ZOOM_CLIENT_ID}
   client-secret: ${ZOOM_CLIENT_SECRET}
