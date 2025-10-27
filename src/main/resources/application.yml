@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: bridge-spero
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+zoom:
+  client-id: ${ZOOM_CLIENT_ID}
+  client-secret: ${ZOOM_CLIENT_SECRET}
+  redirect-uri: ${ZOOM_REDIRECT_URI}
