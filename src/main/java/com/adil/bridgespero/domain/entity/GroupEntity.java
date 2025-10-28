@@ -39,6 +39,8 @@ public class GroupEntity extends BaseEntity {
     @Column(nullable = false)
     String name;
 
+    String imageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_category_id")
     SubjectCategoryEntity subjectCategory;
@@ -69,6 +71,7 @@ public class GroupEntity extends BaseEntity {
     @Column(nullable = false)
     GroupStatus status;
 
+    @Builder.Default
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     List<LessonScheduleEntity> lessonSchedules = new ArrayList<>();
 

@@ -48,9 +48,10 @@ public class TeacherEntity extends UserEntity {
     @Column(name = "demo_video_url", nullable = false)
     String demoVideoUrl;
 
-    @Column()
+    @Builder.Default
     Double rating = 4.0;
 
+    @Builder.Default
     @Column(name = "rating_count")
     Integer ratingCount = 1;
 
@@ -58,6 +59,7 @@ public class TeacherEntity extends UserEntity {
     @Builder.Default
     Set<String> subjects = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(
             mappedBy = "teacher",
             cascade = CascadeType.ALL,

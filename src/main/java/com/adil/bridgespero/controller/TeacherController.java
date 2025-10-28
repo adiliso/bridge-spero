@@ -7,7 +7,9 @@ import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.service.TeacherService;
 import jakarta.validation.constraints.Min;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +27,10 @@ import static com.adil.bridgespero.domain.model.constant.PageConstants.DEFAULT_P
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/teachers")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TeacherController {
 
-    private final TeacherService teacherService;
+    TeacherService teacherService;
 
     @GetMapping("/top-rated")
     public ResponseEntity<PageResponse<TeacherCardResponse>> getTopRated(

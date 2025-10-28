@@ -2,6 +2,7 @@ package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,20 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class GroupMapper {
+
+    public GroupCardResponse toCardResponse(GroupEntity entity) {
+        return new GroupCardResponse(
+                entity.getId(),
+                entity.getTeacher().getId(),
+                entity.getImageUrl(),
+                entity.getSubjectCategory().toString(),
+                entity.getLanguage().getValue(),
+                entity.getName(),
+                entity.getTeacher().getName(),
+                entity.getTeacher().getSurname(),
+                entity.getPrice()
+        );
+    }
 
     public GroupTeacherCardResponse toGroupTeacherCardResponse(GroupEntity entity) {
         return GroupTeacherCardResponse.builder()
