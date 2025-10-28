@@ -2,18 +2,15 @@ package com.adil.bridgespero.domain.model.dto.response;
 
 import lombok.Builder;
 
-import java.util.List;
-
 @Builder
 public record GroupTeacherCardResponse(
 
+        Long id,
         String name,
         String status,
-        double price,
-        String startDate,
+        String startDateTime,
         int numberOfStudents,
         int maxStudents,
-        Integer minStudents,
-        List<String> schedule
+        Integer minStudents
 ) {
 }

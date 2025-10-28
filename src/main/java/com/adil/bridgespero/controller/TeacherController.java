@@ -29,7 +29,7 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
-    @GetMapping
+    @GetMapping("/top-rated")
     public ResponseEntity<PageResponse<TeacherCardResponse>> getTopRated(
             @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER, required = false) @Min(0) int pageNumber,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE, required = false) @Min(1) int pageSize
@@ -42,7 +42,7 @@ public class TeacherController {
         return ResponseEntity.ok(teacherService.getDashboard(id));
     }
 
-    @GetMapping
+    @GetMapping("/groups")
     public ResponseEntity<List<GroupTeacherCardResponse>> getGroups(
             @RequestHeader("User-Id") Long id,
             @RequestParam int parameter) {
@@ -50,9 +50,8 @@ public class TeacherController {
     }
 
     @GetMapping("/schedule")
-    public ResponseEntity<ScheduleResponse> getTodaySchedule(
-            @RequestHeader("User-Id") Long id,
-            @RequestParam int parameter) {
-        return ResponseEntity.ok(teacherService.getTodaySchedule(id, parameter));
+    public ResponseEntity<ScheduleResponse> getSchedule(
+            @RequestHeader("User-Id") Long id) {
+        return ResponseEntity.ok(teacherService.getSchedule(id));
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 public record TeacherDashboardResponse(
 
         String name,
+        Integer activeGroups,
         Integer activeStudents,
         Double totalEarning,
         Double rating,

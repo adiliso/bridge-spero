@@ -11,6 +11,7 @@ import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
 import com.adil.bridgespero.exception.TeacherNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
+import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.TeacherMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +22,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.adil.bridgespero.domain.model.constant.AppConstant.SCHEDULE_DATE_FORMAT;
 import static com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE;
-import static com.adil.bridgespero.domain.model.enums.GroupStatus.COMPLETED;
-import static com.adil.bridgespero.domain.model.enums.GroupStatus.PENDING;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +40,7 @@ public class TeacherService {
     GroupRepository groupRepository;
     TeacherMapper teacherMapper;
     GroupMapper groupMapper;
+    ScheduleMapper scheduleMapper;
 
     public PageResponse<TeacherCardResponse> getTopRated(final int pageNumber, final int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("rating").descending());
@@ -57,7 +57,8 @@ public class TeacherService {
 
     public TeacherDashboardResponse getDashboard(Long id) {
         return teacherMapper.toDashboardResponse(teacherRepository.findById(id)
-                .orElseThrow(() -> new TeacherNotFoundException(id)));
+                        .orElseThrow(() -> new TeacherNotFoundException(id)),
+                groupRepository.findAllByTeacherIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now())));
     }
 
     public List<GroupTeacherCardResponse> getGroups(Long id, int parameter) {
@@ -74,18 +75,17 @@ public class TeacherService {
                 .toList();
     }
 
-    public ScheduleResponse getTodaySchedule(Long id, int parameter) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(SCHEDULE_DATE_FORMAT);
-        LocalDate date = LocalDate.now().plusDays(parameter);
-        return new ScheduleResponse(
-                date.format(formatter),
-                groupRepository.findAllByTeacherIdAndStatusInAndDateBetweenStartAndEnd(
-                                id,
-                                List.of(ACTIVE, PENDING, COMPLETED),
-                                LocalDate.now())
-                        .stream()
-                        .map(g -> groupMapper.toGroupScheduleCardResponse(g, date.getDayOfWeek()))
-                        .toList()
-        );
+    public ScheduleResponse getSchedule(Long id) {
+        LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = startOfWeek.plusDays(7);
+
+        return scheduleMapper.toScheduleResponse(
+                startOfWeek,
+                endOfWeek,
+                groupRepository.findAllByTeacherIdAndSchedule(
+                        id,
+                        startOfWeek,
+                        endOfWeek
+                ));
     }
 }

@@ -1,11 +1,14 @@
 package com.adil.bridgespero.mapper;
 
+import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.TeacherEntity;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -26,18 +29,27 @@ public class TeacherMapper {
                 .build();
     }
 
-    public TeacherDashboardResponse toDashboardResponse(TeacherEntity entity) {
+    public TeacherDashboardResponse toDashboardResponse(TeacherEntity entity, List<GroupEntity> groups) {
         return TeacherDashboardResponse.builder()
                 .name(entity.getName())
+                .activeGroups(getActiveGroups(entity))
                 .activeStudents(getActiveStudents(entity))
                 .totalEarning(null)
                 .rating(entity.getRating())
-                .groups(entity.getGroups()
+                .groups(groups
                         .stream()
                         .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
                         .map(groupMapper::toGroupTeacherCardResponse)
                         .toList())
                 .build();
+    }
+
+    private Integer getActiveGroups(TeacherEntity entity) {
+        return entity.getGroups()
+                .stream()
+                .filter(group -> group.getStatus().equals(GroupStatus.ACTIVE))
+                .toList()
+                .size();
     }
 
     private Integer getActiveStudents(TeacherEntity entity) {

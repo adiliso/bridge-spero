@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,13 +16,33 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long> {
 
     List<GroupEntity> findAllByTeacherIdAndStatus(Long teacherId, GroupStatus status);
 
-    @Query("SELECT g FROM GroupEntity g " +
-           "WHERE g.teacher.id = :teacherId " +
-           "AND g.status IN (:statuses) " +
-           "AND :date BETWEEN g.startDate AND g.endDate")
-    List<GroupEntity> findAllByTeacherIdAndStatusInAndDateBetweenStartAndEnd(
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.lessonSchedules ls
+                WHERE g.teacher.id = :teacherId
+                AND ls.dayOfWeek = :dayOfWeek
+                AND g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE
+            """)
+    List<GroupEntity> findAllByTeacherIdAndStatusAndDayOfWeek(
             @Param("teacherId") Long teacherId,
-            @Param("statuses") List<GroupStatus> statuses,
-            @Param("date") LocalDate date
+            @Param("dayOfWeek") DayOfWeek dayOfWeek);
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
+                WHERE g.teacher.id = :teacherId
+                  AND (
+                      g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE
+                      OR (
+                          g.startDate <= :endOfWeek
+                          AND g.endDate >= :startOfWeek
+                      )
+                  )
+            """)
+    List<GroupEntity> findAllByTeacherIdAndSchedule(
+            @Param("teacherId") Long teacherId,
+            @Param("startOfWeek") LocalDate startOfWeek,
+            @Param("endOfWeek") LocalDate endOfWeek
     );
 }
