@@ -16,6 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,7 +36,8 @@ public class SubjectCategoryEntity extends BaseEntity {
     @JoinColumn(name = "parent_id")
     SubjectCategoryEntity parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    List<SubjectCategoryEntity> subcategories;
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<SubjectCategoryEntity> subcategories = new ArrayList<>();
 }
 

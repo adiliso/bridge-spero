@@ -3,6 +3,7 @@ package com.adil.bridgespero.domain.entity;
 import com.adil.bridgespero.domain.model.enums.Experience;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -44,12 +48,18 @@ public class TeacherEntity extends UserEntity {
     @Column(name = "demo_video_url", nullable = false)
     String demoVideoUrl;
 
-    @Column()
+    @Builder.Default
     Double rating = 4.0;
 
+    @Builder.Default
     @Column(name = "rating_count")
     Integer ratingCount = 1;
 
+    @ElementCollection
+    @Builder.Default
+    Set<String> subjects = new HashSet<>();
+
+    @Builder.Default
     @OneToMany(
             mappedBy = "teacher",
             cascade = CascadeType.ALL,
