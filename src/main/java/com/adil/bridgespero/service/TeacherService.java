@@ -1,11 +1,13 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
+import com.adil.bridgespero.domain.entity.TeacherEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.ZoomTokenResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
@@ -24,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,5 +91,19 @@ public class TeacherService {
                         startOfWeek,
                         endOfWeek
                 ));
+    }
+
+    @Transactional
+    public void saveToken(ZoomTokenResponse body, Long teacherId) {
+        TeacherEntity teacher = getTeacher(teacherId);
+        teacher.setZoomAccessToken(body.getAccessToken());
+        teacher.setZoomRefreshToken(body.getRefreshToken());
+        teacher.setZoomTokenExpiry(LocalDateTime.now(ZoneOffset.UTC).plusSeconds(body.getExpiresIn()));
+
+        teacherRepository.save(teacher);
+    }
+
+    public TeacherEntity getTeacher(Long id) {
+        return teacherRepository.findById(id).orElseThrow(() -> new TeacherNotFoundException(id));
     }
 }

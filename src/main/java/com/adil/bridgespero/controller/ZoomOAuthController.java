@@ -1,62 +1,46 @@
 package com.adil.bridgespero.controller;
 
-import java.net.URI;
+import com.adil.bridgespero.domain.model.dto.response.ZoomCreateMeetingResponse;
+import com.adil.bridgespero.service.ZoomService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
 
 @RestController
-@RequestMapping("/api/zoom")
+@RequestMapping("/api/zoom/oauth")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ZoomOAuthController {
 
-    @Value("${zoom.client-id}")
-    private String clientId;
+    ZoomService zoomService;
 
-    @Value("${zoom.client-secret}")
-    private String clientSecret;
-
-    @Value("${zoom.redirect-uri}")
-    private String redirectUri;
-
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    @GetMapping("/authorize")
-    public ResponseEntity<Void> redirectToZoom() {
-        String url = "https://zoom.us/oauth/authorize" +
-                "?response_type=code" +
-                "&client_id=" + clientId +
-                "&redirect_uri=" + redirectUri;
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(url))
-                .build();
+    @GetMapping("/authorize/{teacherId}")
+    public ResponseEntity<Void> authorize(@PathVariable Long teacherId) {
+        URI uri = zoomService.buildAuthorizationUri(teacherId);
+        return ResponseEntity.status(302).location(uri).build();
     }
 
-    @GetMapping("/oauth/callback")
-    public ResponseEntity<String> handleCallback(@RequestParam("code") String code) {
-        String tokenUrl = "https://zoom.us/oauth/token";
+    @GetMapping("/callback")
+    public ResponseEntity<String> callback(
+            @RequestParam("code") String code,
+            @RequestParam(value = "state") Long teacherId) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(clientId, clientSecret);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        zoomService.exchangeCodeForTokens(code, teacherId);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("code", code);
-        body.add("redirect_uri", redirectUri);
+        return ResponseEntity.ok("Zoom connected. Teacher id: " + teacherId);
+    }
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                tokenUrl, HttpMethod.POST, request, String.class);
-
-        return ResponseEntity.ok(response.getBody());
+    @PostMapping("/create-meeting/{teacherId}")
+    public ResponseEntity<ZoomCreateMeetingResponse> createMeeting(@PathVariable Long teacherId) {
+        return ResponseEntity.ok(zoomService.createInstantMeeting(teacherId));
     }
 }
