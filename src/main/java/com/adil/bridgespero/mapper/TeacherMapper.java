@@ -24,7 +24,6 @@ public class TeacherMapper {
                 .surname(entity.getSurname())
                 .rating(entity.getRating())
                 .activeStudents(getActiveStudents(entity))
-                .subjects(entity.getSubjects().stream().toList())
                 .experience(entity.getExperience().getDescription())
                 .build();
     }

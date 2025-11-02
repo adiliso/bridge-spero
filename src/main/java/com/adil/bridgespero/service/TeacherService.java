@@ -3,7 +3,7 @@ package com.adil.bridgespero.service;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
-import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
@@ -75,11 +75,11 @@ public class TeacherService {
                 .toList();
     }
 
-    public ScheduleResponse getSchedule(Long id) {
+    public ScheduleWeekResponse getSchedule(Long id) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate endOfWeek = startOfWeek.plusDays(7);
 
-        return scheduleMapper.toScheduleResponse(
+        return scheduleMapper.toScheduleWeekResponse(
                 startOfWeek,
                 endOfWeek,
                 groupRepository.findAllByTeacherIdAndSchedule(

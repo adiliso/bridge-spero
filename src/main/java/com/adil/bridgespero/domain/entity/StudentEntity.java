@@ -4,8 +4,11 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,10 +27,18 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "teacher")
-@EqualsAndHashCode(callSuper = true, exclude = {"groups"})
+@Table(name = "student")
+@EqualsAndHashCode(exclude = {"groups"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentEntity extends UserEntity {
+public class StudentEntity {
+
+    @Id
+    Long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    UserEntity user;
 
     @Column(name = "profile_picture_url")
     String profilePictureUrl;

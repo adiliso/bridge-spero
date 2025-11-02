@@ -2,7 +2,7 @@ package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
-import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.service.TeacherService;
@@ -53,7 +53,7 @@ public class TeacherController {
     }
 
     @GetMapping("/schedule")
-    public ResponseEntity<ScheduleResponse> getSchedule(
+    public ResponseEntity<ScheduleWeekResponse> getSchedule(
             @RequestHeader("User-Id") Long id) {
         return ResponseEntity.ok(teacherService.getSchedule(id));
     }

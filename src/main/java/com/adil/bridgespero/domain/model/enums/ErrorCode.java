@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     TEACHER_NOT_FOUND(HttpStatus.NOT_FOUND),
+    GROUP_NOT_FOUND(HttpStatus.NOT_FOUND),
     TEACHER_ALREADY_EXISTS(HttpStatus.CONFLICT),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
     BAD_REQUEST(HttpStatus.BAD_REQUEST),

@@ -7,7 +7,12 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,9 +36,17 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "teacher")
-@EqualsAndHashCode(callSuper = true, exclude = "groups")
+@EqualsAndHashCode(exclude = "groups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TeacherEntity extends UserEntity {
+public class TeacherEntity {
+
+    @Id
+    Long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    UserEntity user;
 
     @Column(length = 500)
     String bio;
@@ -63,7 +76,8 @@ public class TeacherEntity extends UserEntity {
     @OneToMany(
             mappedBy = "teacher",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     List<GroupEntity> groups = new ArrayList<>();
 }

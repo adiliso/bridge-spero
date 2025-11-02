@@ -13,7 +13,6 @@ public record TeacherCardResponse(
         String surname,
         Double rating,
         Integer activeStudents,
-        List<String> subjects,
         String experience
 ) {
 }

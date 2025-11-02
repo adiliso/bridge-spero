@@ -1,21 +1,23 @@
 package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
+import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleDayResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.adil.bridgespero.domain.model.constant.AppConstant.DATE_FORMAT;
+import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_DATE_FORMATTER;
+import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_TIME_FORMATTER;
+import static java.time.format.TextStyle.FULL;
 
 @Component
 @RequiredArgsConstructor
@@ -23,8 +25,9 @@ public class ScheduleMapper {
 
     private final GroupMapper groupMapper;
 
-    public ScheduleResponse toScheduleResponse(LocalDate startOfWeek, LocalDate endOfWeek, List<GroupEntity> groups) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+    public ScheduleWeekResponse toScheduleWeekResponse(LocalDate startOfWeek,
+                                                       LocalDate endOfWeek,
+                                                       List<GroupEntity> groups) {
         Map<DayOfWeek, List<GroupEntity>> scheduledGroups = groups.stream()
                 .flatMap(g -> g.getLessonSchedules().stream()
                         .map(ls -> Map.entry(ls.getDayOfWeek(), g))
@@ -34,8 +37,8 @@ public class ScheduleMapper {
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())
                 ));
 
-        return new ScheduleResponse(
-                String.format("%s - %s", startOfWeek.format(formatter), endOfWeek.format(formatter)),
+        return new ScheduleWeekResponse(
+                String.format("%s - %s", startOfWeek.format(GROUP_DATE_FORMATTER), endOfWeek.format(GROUP_DATE_FORMATTER)),
                 scheduledGroups.keySet().stream()
                         .map(k -> toScheduleDayResponse(k, scheduledGroups.get(k)))
                         .toList()
@@ -44,11 +47,19 @@ public class ScheduleMapper {
 
     private ScheduleDayResponse toScheduleDayResponse(DayOfWeek dayOfWeek, List<GroupEntity> groups) {
         return new ScheduleDayResponse(
-                dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()),
+                dayOfWeek.getDisplayName(FULL, Locale.getDefault()),
                 groups
                         .stream()
                         .map(g -> groupMapper.toGroupScheduleCardResponse(g, dayOfWeek))
                         .toList()
+        );
+    }
+
+    public ScheduleResponse toScheduleResponse(LessonScheduleEntity entity) {
+        return new ScheduleResponse(
+                entity.getDayOfWeek().getDisplayName(FULL, Locale.getDefault()),
+                entity.getStartTime().format(GROUP_TIME_FORMATTER),
+                entity.getEndTime().format(GROUP_TIME_FORMATTER)
         );
     }
 }
