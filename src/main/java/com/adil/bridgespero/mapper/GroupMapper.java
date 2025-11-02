@@ -30,8 +30,8 @@ public class GroupMapper {
                 entity.getSubjectCategory().toString(),
                 entity.getLanguage().getValue(),
                 entity.getName(),
-                entity.getTeacher().getName(),
-                entity.getTeacher().getSurname(),
+                entity.getTeacher().getUser().getName(),
+                entity.getTeacher().getUser().getSurname(),
                 entity.getPrice()
         );
     }

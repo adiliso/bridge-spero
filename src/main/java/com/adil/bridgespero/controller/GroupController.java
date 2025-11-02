@@ -45,7 +45,7 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getDetailsById(groupId));
     }
 
-    @GetMapping
+    @GetMapping("/schedule")
     public ResponseEntity<List<ScheduleResponse>> getSchedule(
             @RequestParam Long groupId
     ) {

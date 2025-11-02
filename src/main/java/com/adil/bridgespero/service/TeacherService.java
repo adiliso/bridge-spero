@@ -58,7 +58,11 @@ public class TeacherService {
     public TeacherDashboardResponse getDashboard(Long id) {
         return teacherMapper.toDashboardResponse(teacherRepository.findById(id)
                         .orElseThrow(() -> new TeacherNotFoundException(id)),
-                groupRepository.findAllByTeacherIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now())));
+                groupRepository.findAllByTeacherIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now()))
+                        .stream()
+                        .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
+                        .map(groupMapper::toGroupTeacherCardResponse)
+                        .toList());
     }
 
     public List<GroupTeacherCardResponse> getGroups(Long id, int parameter) {

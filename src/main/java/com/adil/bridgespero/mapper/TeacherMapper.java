@@ -1,7 +1,7 @@
 package com.adil.bridgespero.mapper;
 
-import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.TeacherEntity;
+import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
@@ -14,32 +14,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TeacherMapper {
 
-    private final GroupMapper groupMapper;
-
     public TeacherCardResponse toCardResponse(TeacherEntity entity) {
         return TeacherCardResponse.builder()
                 .id(entity.getId())
                 .profilePictureUrl(entity.getProfilePictureUrl())
-                .name(entity.getName())
-                .surname(entity.getSurname())
+                .name(entity.getUser().getName())
+                .surname(entity.getUser().getSurname())
                 .rating(entity.getRating())
                 .activeStudents(getActiveStudents(entity))
                 .experience(entity.getExperience().getDescription())
                 .build();
     }
 
-    public TeacherDashboardResponse toDashboardResponse(TeacherEntity entity, List<GroupEntity> groups) {
+    public TeacherDashboardResponse toDashboardResponse(TeacherEntity entity, List<GroupTeacherCardResponse> groups) {
         return TeacherDashboardResponse.builder()
-                .name(entity.getName())
+                .name(entity.getUser().getName())
                 .activeGroups(getActiveGroups(entity))
                 .activeStudents(getActiveStudents(entity))
                 .totalEarning(null)
                 .rating(entity.getRating())
-                .groups(groups
-                        .stream()
-                        .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
-                        .map(groupMapper::toGroupTeacherCardResponse)
-                        .toList())
+                .groups(groups)
                 .build();
     }
 
