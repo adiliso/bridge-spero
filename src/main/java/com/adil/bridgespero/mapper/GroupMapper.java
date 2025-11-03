@@ -2,10 +2,12 @@ package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -82,6 +84,13 @@ public class GroupMapper {
                 entity.getStartDate().format(GROUP_DATE_FORMATTER),
                 entity.getPrice(),
                 teacherMapper.toCardResponse(entity.getTeacher())
+        );
+    }
+
+    public RecordingResponse toRecordingResponse(RecordingEntity entity) {
+        return new RecordingResponse(
+                entity.getUuid().toString(),
+                entity.getName()
         );
     }
 }

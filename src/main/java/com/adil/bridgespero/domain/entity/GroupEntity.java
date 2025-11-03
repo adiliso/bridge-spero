@@ -25,13 +25,15 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"lessonSchedules", "teacher", "subjectCategory", "students"})
+@EqualsAndHashCode(callSuper = true,
+        exclude = {"lessonSchedules", "teacher", "subjectCategory", "students", "recordings"})
 @Table(name = "group")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
@@ -66,24 +68,36 @@ public class GroupEntity extends BaseEntity {
 
     String description;
 
-    String syllabus;
+    @Builder.Default
+    UUID syllabus = UUID.randomUUID();
 
     @Column(nullable = false)
     GroupStatus status;
 
     @Builder.Default
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     List<LessonScheduleEntity> lessonSchedules = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
     TeacherDetailEntity teacher;
 
-    @ManyToMany
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "group_student",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<UserEntity> students;
+    List<UserEntity> students = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "group",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    List<RecordingEntity> recordings = new ArrayList<>();
 }

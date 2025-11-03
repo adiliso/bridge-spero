@@ -3,6 +3,7 @@ package com.adil.bridgespero.controller;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
+import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
 import com.adil.bridgespero.service.GroupService;
 import jakarta.validation.constraints.Min;
@@ -58,5 +59,12 @@ public class GroupController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(groupService.getSyllabus(id));
+    }
+
+    @GetMapping("/{id}/recordings")
+    public ResponseEntity<List<RecordingResponse>> getRecordings(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(groupService.getRecordings(id));
     }
 }

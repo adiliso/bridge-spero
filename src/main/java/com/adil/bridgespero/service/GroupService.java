@@ -4,8 +4,11 @@ import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
+import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
 import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.repository.RecordingRepository;
+import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
@@ -29,6 +32,8 @@ import static com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE;
 public class GroupService {
 
     GroupRepository groupRepository;
+    RecordingRepository recordingRepository;
+    ScheduleRepository scheduleRepository;
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
 
@@ -56,13 +61,20 @@ public class GroupService {
     }
 
     public List<ScheduleResponse> getScheduleById(Long groupId) {
-        return getById(groupId).getLessonSchedules()
+        return scheduleRepository.findAllByGroupId(groupId)
                 .stream()
                 .map(scheduleMapper::toScheduleResponse)
                 .toList();
     }
 
     public String getSyllabus(Long id) {
-        return getById(id).getSyllabus();
+        return getById(id).getSyllabus().toString();
+    }
+
+    public List<RecordingResponse> getRecordings(Long id) {
+        return recordingRepository.findAllByGroupId(id)
+                .stream()
+                .map(groupMapper::toRecordingResponse)
+                .toList();
     }
 }
