@@ -61,4 +61,8 @@ public class GroupService {
                 .map(scheduleMapper::toScheduleResponse)
                 .toList();
     }
+
+    public String getSyllabus(Long id) {
+        return getById(id).getSyllabus();
+    }
 }

@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,17 +39,24 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getTopRated(pageNumber, pageSize));
     }
 
-    @GetMapping()
+    @GetMapping("/{id}")
     public ResponseEntity<GroupDetailsResponse> getDetails(
-            @RequestParam Long groupId
+            @PathVariable Long id
     ) {
-        return ResponseEntity.ok(groupService.getDetailsById(groupId));
+        return ResponseEntity.ok(groupService.getDetailsById(id));
     }
 
-    @GetMapping("/schedule")
+    @GetMapping("/{id}/schedule")
     public ResponseEntity<List<ScheduleResponse>> getSchedule(
-            @RequestParam Long groupId
+            @PathVariable Long id
     ) {
-        return ResponseEntity.ok(groupService.getScheduleById(groupId));
+        return ResponseEntity.ok(groupService.getScheduleById(id));
+    }
+
+    @GetMapping("/{id}/syllabus")
+    public ResponseEntity<String> getSyllabus(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(groupService.getSyllabus(id));
     }
 }
