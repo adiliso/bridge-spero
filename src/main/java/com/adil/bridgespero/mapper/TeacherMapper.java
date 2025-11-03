@@ -1,6 +1,6 @@
 package com.adil.bridgespero.mapper;
 
-import com.adil.bridgespero.domain.entity.TeacherEntity;
+import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
@@ -14,10 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TeacherMapper {
 
-    public TeacherCardResponse toCardResponse(TeacherEntity entity) {
+    public TeacherCardResponse toCardResponse(TeacherDetailEntity entity) {
         return TeacherCardResponse.builder()
                 .id(entity.getId())
-                .profilePictureUrl(entity.getProfilePictureUrl())
+                .profilePictureUrl(entity.getUser().getProfilePictureUrl())
                 .name(entity.getUser().getName())
                 .surname(entity.getUser().getSurname())
                 .rating(entity.getRating())
@@ -26,7 +26,7 @@ public class TeacherMapper {
                 .build();
     }
 
-    public TeacherDashboardResponse toDashboardResponse(TeacherEntity entity, List<GroupTeacherCardResponse> groups) {
+    public TeacherDashboardResponse toDashboardResponse(TeacherDetailEntity entity, List<GroupTeacherCardResponse> groups) {
         return TeacherDashboardResponse.builder()
                 .name(entity.getUser().getName())
                 .activeGroups(getActiveGroups(entity))
@@ -37,16 +37,16 @@ public class TeacherMapper {
                 .build();
     }
 
-    private Integer getActiveGroups(TeacherEntity entity) {
-        return entity.getGroups()
+    private Integer getActiveGroups(TeacherDetailEntity entity) {
+        return entity.getCreatedGroups()
                 .stream()
                 .filter(group -> group.getStatus().equals(GroupStatus.ACTIVE))
                 .toList()
                 .size();
     }
 
-    private Integer getActiveStudents(TeacherEntity entity) {
-        return entity.getGroups()
+    private Integer getActiveStudents(TeacherDetailEntity entity) {
+        return entity.getCreatedGroups()
                 .stream()
                 .filter(group -> group.getStatus().equals(GroupStatus.ACTIVE))
                 .mapToInt(group -> group.getStudents().size())

@@ -35,10 +35,10 @@ import java.util.Set;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "teacher")
-@EqualsAndHashCode(exclude = "groups")
+@Table(name = "teacher_detail")
+@EqualsAndHashCode(exclude = "createdGroups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TeacherEntity {
+public class TeacherDetailEntity {
 
     @Id
     Long id;
@@ -47,12 +47,6 @@ public class TeacherEntity {
     @MapsId
     @JoinColumn(name = "user_id")
     UserEntity user;
-
-    @Column(length = 500)
-    String bio;
-
-    @Column(name = "profile_picture_url", nullable = false)
-    String profilePictureUrl;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -79,6 +73,6 @@ public class TeacherEntity {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    List<GroupEntity> groups = new ArrayList<>();
+    List<GroupEntity> createdGroups = new ArrayList<>();
 }
 

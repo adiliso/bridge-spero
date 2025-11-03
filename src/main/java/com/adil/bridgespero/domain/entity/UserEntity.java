@@ -1,10 +1,15 @@
 package com.adil.bridgespero.domain.entity;
 
 import com.adil.bridgespero.domain.model.enums.Role;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,6 +21,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
+import java.util.List;
 
 @Entity
 @Getter
@@ -45,5 +51,22 @@ public class UserEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Column(name = "profile_picture_url")
+    String profilePictureUrl;
+
+    @Column(length = 500)
+    String bio;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "user_interest",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "subject")
+    List<String> interests;
+
+    @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
+    List<GroupEntity> groups;
 }
 

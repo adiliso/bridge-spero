@@ -77,13 +77,13 @@ public class GroupEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
-    TeacherEntity teacher;
+    TeacherDetailEntity teacher;
 
     @ManyToMany
     @JoinTable(
             name = "group_student",
             joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
+            inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<StudentEntity> students;
+    private List<UserEntity> students;
 }
