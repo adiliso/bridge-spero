@@ -52,12 +52,31 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
     );
 
     @Query("""
-        SELECT g
-        FROM GroupEntity g
-        JOIN g.students s
-        WHERE s.id = :studentId
-          AND g.status = :status
-    """)
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.users u
+                WHERE u.id = :userId
+                  AND (
+                      g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE
+                      OR (
+                          g.startDate <= :endOfWeek
+                          AND g.endDate >= :startOfWeek
+                      )
+                  )
+            """)
+    List<GroupEntity> findAllByUserIdAndSchedule(
+            @Param("userId") Long userId,
+            @Param("startOfWeek") LocalDate startOfWeek,
+            @Param("endOfWeek") LocalDate endOfWeek
+    );
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.users u
+                WHERE u.id = :studentId
+                AND g.status = :status
+            """)
     List<GroupEntity> findAllByStudentIdAndStatus(
             @Param("studentId") Long studentId,
             @Param("status") GroupStatus status
@@ -66,8 +85,8 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
     @Query("""
         SELECT g
         FROM GroupEntity g
-        JOIN g.students s
-        WHERE s.id = :studentId
+        JOIN g.users u
+        WHERE u.id = :studentId
           AND g.lessonSchedules = :daysOfWeek
           AND g.status = :status
     """)
@@ -78,12 +97,11 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
     );
 
     @Query("""
-        SELECT g
-        FROM GroupEntity g
-        JOIN g.students s
-        WHERE s.id = :studentId
-    """)
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.users u
+                WHERE u.id = :studentId
+            """)
     List<GroupEntity> findAllByStudentId(
             @Param("studentId") Long studentId);
-
 }

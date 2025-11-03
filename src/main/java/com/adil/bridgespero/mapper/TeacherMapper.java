@@ -61,7 +61,7 @@ public class TeacherMapper {
         return entity.getCreatedGroups()
                 .stream()
                 .filter(group -> group.getStatus().equals(GroupStatus.ACTIVE))
-                .mapToInt(group -> group.getStudents().size())
+                .mapToInt(group -> group.getUsers().size())
                 .sum();
     }
 }

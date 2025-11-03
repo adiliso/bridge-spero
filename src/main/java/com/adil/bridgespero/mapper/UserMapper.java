@@ -9,7 +9,6 @@ import java.util.List;
 
 public class UserMapper {
 
-
     public StudentDashboardResponse toDashboardResponse(UserEntity entity, List<GroupStudentCardResponse> groups) {
         return StudentDashboardResponse.builder()
                 .name(entity.getName())

@@ -54,7 +54,7 @@ public class GroupMapper {
                         .filter(sc -> sc.getDayOfWeek().equals(DayOfWeek.from(LocalDate.now())))
                         .map(this::mapTime)
                         .toString())
-                .numberOfStudents(entity.getStudents().size())
+                .numberOfStudents(entity.getUsers().size())
                 .maxStudents(entity.getMaxStudents())
                 .minStudents(entity.getMinStudents())
                 .build();
@@ -85,7 +85,7 @@ public class GroupMapper {
                 entity.getLanguage().getValue(),
                 entity.getDescription(),
                 ChronoUnit.WEEKS.between(entity.getStartDate(), entity.getEndDate()),
-                entity.getStudents().size(),
+                entity.getUsers().size(),
                 entity.getMaxStudents(),
                 entity.getStartDate().format(GROUP_DATE_FORMATTER),
                 entity.getPrice(),
