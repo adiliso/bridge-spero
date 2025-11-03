@@ -100,4 +100,11 @@ public class GroupEntity extends BaseEntity {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     List<RecordingEntity> recordings = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "group",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    List<ResourceEntity> resources = new ArrayList<>();
 }

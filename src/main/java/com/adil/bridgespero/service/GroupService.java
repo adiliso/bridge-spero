@@ -5,9 +5,11 @@ import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
+import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.RecordingRepository;
+import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
@@ -34,6 +36,7 @@ public class GroupService {
     GroupRepository groupRepository;
     RecordingRepository recordingRepository;
     ScheduleRepository scheduleRepository;
+    ResourceRepository resourceRepository;
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
 
@@ -75,6 +78,13 @@ public class GroupService {
         return recordingRepository.findAllByGroupId(id)
                 .stream()
                 .map(groupMapper::toRecordingResponse)
+                .toList();
+    }
+
+    public List<ResourceResponse> getResources(Long id) {
+        return resourceRepository.findAllByGroupId(id)
+                .stream()
+                .map(groupMapper::toResourceResponse)
                 .toList();
     }
 }

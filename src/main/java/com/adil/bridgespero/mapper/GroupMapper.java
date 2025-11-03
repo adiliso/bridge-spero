@@ -3,11 +3,13 @@ package com.adil.bridgespero.mapper;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
+import com.adil.bridgespero.domain.entity.ResourceEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
+import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_DATE_FORMATTER;
+import static com.adil.bridgespero.domain.model.constant.AppConstant.RECORDING_DATE_FORMATTER;
 
 @Component
 @RequiredArgsConstructor
@@ -89,6 +92,13 @@ public class GroupMapper {
 
     public RecordingResponse toRecordingResponse(RecordingEntity entity) {
         return new RecordingResponse(
+                entity.getUuid().toString(),
+                entity.getDate().format(RECORDING_DATE_FORMATTER)
+        );
+    }
+
+    public ResourceResponse toResourceResponse(ResourceEntity entity) {
+        return new ResourceResponse(
                 entity.getUuid().toString(),
                 entity.getName()
         );
