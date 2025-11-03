@@ -2,17 +2,27 @@ package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
+import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_DATE_FORMATTER;
 
 @Component
+@RequiredArgsConstructor
 public class GroupMapper {
+
+    private final TeacherMapper teacherMapper;
 
     public GroupCardResponse toCardResponse(GroupEntity entity) {
         return new GroupCardResponse(
@@ -22,8 +32,8 @@ public class GroupMapper {
                 entity.getSubjectCategory().toString(),
                 entity.getLanguage().getValue(),
                 entity.getName(),
-                entity.getTeacher().getName(),
-                entity.getTeacher().getSurname(),
+                entity.getTeacher().getUser().getName(),
+                entity.getTeacher().getUser().getSurname(),
                 entity.getPrice()
         );
     }
@@ -60,5 +70,27 @@ public class GroupMapper {
         String start = entity.getStartTime().format(timeFormatter);
         String end = entity.getEndTime().format(timeFormatter);
         return String.format("%s-%s", start, end);
+    }
+
+    public GroupDetailsResponse toGroupDetailsResponse(GroupEntity entity) {
+        return new GroupDetailsResponse(
+                entity.getName(),
+                entity.getSubjectCategory().getName(),
+                entity.getLanguage().getValue(),
+                entity.getDescription(),
+                ChronoUnit.WEEKS.between(entity.getStartDate(), entity.getEndDate()),
+                entity.getStudents().size(),
+                entity.getMaxStudents(),
+                entity.getStartDate().format(GROUP_DATE_FORMATTER),
+                entity.getPrice(),
+                teacherMapper.toCardResponse(entity.getTeacher())
+        );
+    }
+
+    public RecordingResponse toRecordingResponse(RecordingEntity entity) {
+        return new RecordingResponse(
+                entity.getUuid().toString(),
+                entity.getName()
+        );
     }
 }

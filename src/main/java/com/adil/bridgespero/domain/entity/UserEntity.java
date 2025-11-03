@@ -1,10 +1,16 @@
 package com.adil.bridgespero.domain.entity;
 
+import com.adil.bridgespero.domain.model.enums.Role;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -13,37 +19,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
-import java.io.Serializable;
-import java.time.Instant;
+import java.util.List;
 
+@Entity
 @Getter
 @Setter
 @SuperBuilder
-@MappedSuperclass
 @NoArgsConstructor
-@EqualsAndHashCode
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class UserEntity implements Serializable {
+public class UserEntity extends BaseEntity {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
-    @Column(name = "created_at", updatable = false, nullable = false)
-    @CreationTimestamp
-    Instant createdAt;
-
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    Instant updatedAt;
 
     @Column(nullable = false)
     String name;
@@ -57,5 +49,24 @@ public abstract class UserEntity implements Serializable {
     @Column(nullable = false)
     String password;
 
+    @Enumerated(EnumType.STRING)
+    Role role;
+
+    @Column(name = "profile_picture_url")
+    String profilePictureUrl;
+
+    @Column(length = 500)
+    String bio;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "user_interest",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "subject")
+    List<String> interests;
+
+    @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
+    List<GroupEntity> groups;
 }
 
