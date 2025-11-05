@@ -1,6 +1,8 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
+import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
@@ -12,6 +14,7 @@ import com.adil.bridgespero.domain.repository.RecordingRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.exception.GroupNotFoundException;
+import com.adil.bridgespero.exception.ScheduleNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import lombok.AccessLevel;
@@ -63,7 +66,7 @@ public class GroupService {
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
     }
 
-    public List<ScheduleResponse> getScheduleById(Long groupId) {
+    public List<ScheduleResponse> getScheduleByGroupId(Long groupId) {
         return scheduleRepository.findAllByGroupId(groupId)
                 .stream()
                 .map(scheduleMapper::toScheduleResponse)
@@ -86,5 +89,31 @@ public class GroupService {
                 .stream()
                 .map(groupMapper::toResourceResponse)
                 .toList();
+    }
+
+    @Transactional
+    public ScheduleResponse createSchedule(Long id, ScheduleRequest request) {
+        var entity = scheduleMapper.toEntity(id, request);
+
+        LessonScheduleEntity saved = scheduleRepository.save(entity);
+        return scheduleMapper.toScheduleResponse(saved);
+    }
+
+    @Transactional
+    public void updateSchedule(Long id, ScheduleRequest request) {
+        checkScheduleExistsById(id);
+        LessonScheduleEntity entity = getSchedule(id);
+
+        scheduleMapper.updateSchedule(id, entity, request);
+    }
+
+    private LessonScheduleEntity getSchedule(Long id) {
+        return scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id));
+    }
+
+    private void checkScheduleExistsById(Long id) {
+        if (!scheduleRepository.existsById(id)) {
+            throw new ScheduleNotFoundException(id);
+        }
     }
 }

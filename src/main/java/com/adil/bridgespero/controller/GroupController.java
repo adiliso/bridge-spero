@@ -1,5 +1,6 @@
 package com.adil.bridgespero.controller;
 
+import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
@@ -7,6 +8,7 @@ import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
 import com.adil.bridgespero.service.GroupService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +28,7 @@ import java.util.List;
 
 import static com.adil.bridgespero.domain.model.constant.PageConstants.DEFAULT_PAGE_NUMBER;
 import static com.adil.bridgespero.domain.model.constant.PageConstants.DEFAULT_PAGE_SIZE;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @Validated
 @RestController
@@ -52,7 +58,24 @@ public class GroupController {
     public ResponseEntity<List<ScheduleResponse>> getSchedule(
             @PathVariable Long id
     ) {
-        return ResponseEntity.ok(groupService.getScheduleById(id));
+        return ResponseEntity.ok(groupService.getScheduleByGroupId(id));
+    }
+
+    @PostMapping("/{id}/schedule")
+    public ResponseEntity<ScheduleResponse> createSchedule(
+            @PathVariable Long id,
+            @Valid @RequestBody ScheduleRequest request
+    ) {
+        return ResponseEntity.status(CREATED).body(groupService.createSchedule(id, request));
+    }
+
+    @PutMapping("/schedule/{id}")
+    public ResponseEntity<Void> updateSchedule(
+            @PathVariable Long id,
+            @Valid @RequestBody ScheduleRequest request
+    ){
+        groupService.updateSchedule(id, request);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/syllabus")
@@ -72,7 +95,7 @@ public class GroupController {
     @GetMapping("/{id}/resources")
     public ResponseEntity<List<ResourceResponse>> getResources(
             @PathVariable Long id
-    ){
+    ) {
         return ResponseEntity.ok(groupService.getResources(id));
     }
 }
