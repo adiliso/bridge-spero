@@ -11,7 +11,8 @@ import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupUserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,20 +45,40 @@ public class GroupMapper {
         );
     }
 
-    public GroupTeacherCardResponse toGroupTeacherCardResponse(GroupEntity entity) {
-        return GroupTeacherCardResponse.builder()
+    public GroupTeacherDashboardResponse toGroupTeacherDashboardResponse(GroupEntity entity) {
+        return GroupTeacherDashboardResponse.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .status(entity.getStatus().toString().toLowerCase())
-                .startDateTime(entity.getLessonSchedules()
-                        .stream()
-                        .filter(sc -> sc.getDayOfWeek().equals(DayOfWeek.from(LocalDate.now())))
-                        .map(this::mapTime)
-                        .toString())
+                .startTime(getStartTime(entity))
                 .numberOfStudents(entity.getUsers().size())
                 .maxStudents(entity.getMaxStudents())
                 .minStudents(entity.getMinStudents())
                 .build();
+    }
+
+    public GroupUserDashboardResponse toGroupUserDashboardResponse(GroupEntity entity) {
+        return new GroupUserDashboardResponse(
+                entity.getId(),
+                entity.getTeacher().getId(),
+                entity.getName(),
+                entity.getStatus().toString().toLowerCase(),
+                getStartTime(entity),
+                getTeacherNameSurname(entity)
+        );
+    }
+
+    private String getTeacherNameSurname(GroupEntity entity) {
+        return String.format("%s %s", entity.getTeacher().getUser().getName(),
+                entity.getTeacher().getUser().getSurname());
+    }
+
+    private String getStartTime(GroupEntity entity) {
+        return entity.getLessonSchedules()
+                .stream()
+                .filter(sc -> sc.getDayOfWeek().equals(DayOfWeek.from(LocalDate.now())))
+                .map(this::mapTime)
+                .toString();
     }
 
     public GroupScheduleCardResponse toGroupScheduleCardResponse(GroupEntity entity, DayOfWeek day) {

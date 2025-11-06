@@ -1,7 +1,7 @@
 package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDetailedCardResponse;
@@ -38,7 +38,7 @@ public class TeacherMapper {
         );
     }
 
-    public TeacherDashboardResponse toDashboardResponse(TeacherDetailEntity entity, List<GroupTeacherCardResponse> groups) {
+    public TeacherDashboardResponse toDashboardResponse(TeacherDetailEntity entity, List<GroupTeacherDashboardResponse> groups) {
         return TeacherDashboardResponse.builder()
                 .name(entity.getUser().getName())
                 .activeGroups(getActiveGroups(entity))
@@ -52,7 +52,7 @@ public class TeacherMapper {
     private Integer getActiveGroups(TeacherDetailEntity entity) {
         return entity.getCreatedGroups()
                 .stream()
-                .filter(group -> group.getStatus().equals(GroupStatus.ACTIVE))
+                .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
                 .toList()
                 .size();
     }

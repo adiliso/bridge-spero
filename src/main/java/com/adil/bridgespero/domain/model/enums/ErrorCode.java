@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
-    TEACHER_NOT_FOUND(HttpStatus.NOT_FOUND),
-    STUDENT_NOT_FOUND(HttpStatus.NOT_FOUND),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND),
     GROUP_NOT_FOUND(HttpStatus.NOT_FOUND),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND),
     TEACHER_ALREADY_EXISTS(HttpStatus.CONFLICT),

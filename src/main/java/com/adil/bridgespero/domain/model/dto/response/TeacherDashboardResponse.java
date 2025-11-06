@@ -12,6 +12,6 @@ public record TeacherDashboardResponse(
         Integer activeStudents,
         Double totalEarning,
         Double rating,
-        List<GroupTeacherCardResponse> groups
+        List<GroupTeacherDashboardResponse> groups
 ) {
 }

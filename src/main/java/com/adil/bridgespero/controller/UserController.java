@@ -1,6 +1,7 @@
 package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,10 @@ public class UserController {
     public ResponseEntity<ScheduleWeekResponse> getSchedule(@PathVariable Long id) {
         ScheduleWeekResponse schedule = userService.getSchedule(id);
         return ResponseEntity.ok(schedule);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDashboardResponse> getDashboard(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getDashboard(id));
     }
 }

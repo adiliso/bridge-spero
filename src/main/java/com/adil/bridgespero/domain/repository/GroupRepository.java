@@ -36,6 +36,19 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
     @Query("""
                 SELECT g
                 FROM GroupEntity g
+                JOIN g.users u
+                JOIN g.lessonSchedules ls
+                WHERE u.id = :userId
+                AND ls.dayOfWeek = :dayOfWeek
+                AND g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE
+            """)
+    List<GroupEntity> findAllByUserIdAndStatusAndDayOfWeek(
+            @Param("userId") Long userId,
+            @Param("dayOfWeek") DayOfWeek dayOfWeek);
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
                 WHERE g.teacher.id = :teacherId
                   AND (
                       g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE

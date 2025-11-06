@@ -1,8 +1,14 @@
 package com.adil.bridgespero.service;
 
+import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.repository.UserRepository;
+import com.adil.bridgespero.exception.UserNotFoundException;
+import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
+import com.adil.bridgespero.mapper.UserMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +25,10 @@ import java.time.temporal.TemporalAdjusters;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
+    UserRepository userRepository;
     GroupRepository groupRepository;
+    UserMapper userMapper;
+    GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
 
     public ScheduleWeekResponse getSchedule(Long id) {
@@ -28,5 +37,26 @@ public class UserService {
 
         var weekGroups = groupRepository.findAllByUserIdAndSchedule(id, startOfWeek, endOfWeek);
         return scheduleMapper.toScheduleWeekResponse(startOfWeek, endOfWeek, weekGroups);
+    }
+
+    public UserDashboardResponse getDashboard(Long id) {
+        checkUserExists(id);
+
+        var groups = groupRepository.findAllByUserIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now()));
+
+        return userMapper.toDashboardResponse(findById(id), groups
+                .stream()
+                .map(groupMapper::toGroupUserDashboardResponse)
+                .toList());
+    }
+
+    private UserEntity findById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    private void checkUserExists(Long id) {
+        if (!groupRepository.existsById(id)) {
+            throw new UserNotFoundException(id);
+        }
     }
 }
