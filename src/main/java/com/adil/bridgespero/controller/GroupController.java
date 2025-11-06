@@ -1,6 +1,7 @@
 package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
+import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,6 +85,14 @@ public class GroupController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(groupService.getSyllabus(id));
+    }
+
+    @PostMapping(value = "{id}/syllabus", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createSyllabus(
+            @PathVariable Long id,
+            SyllabusCreateRequest request
+    ){
+        return ResponseEntity.status(CREATED).body(groupService.createSyllabus(id, request));
     }
 
     @GetMapping("/{id}/recordings")

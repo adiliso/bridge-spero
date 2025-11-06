@@ -86,9 +86,17 @@ public class ScheduleMapper {
 
         var requestEntity = toEntity(id, request);
 
-        entity.setDayOfWeek(requestEntity.getDayOfWeek());
-        entity.setStartTime(requestEntity.getStartTime());
-        entity.setEndTime(requestEntity.getEndTime());
-        entity.setGroup(requestEntity.getGroup());
+        if (requestEntity.getDayOfWeek() != null) {
+            entity.setDayOfWeek(requestEntity.getDayOfWeek());
+        }
+        if (requestEntity.getStartTime() != null) {
+            entity.setStartTime(requestEntity.getStartTime());
+        }
+        if (requestEntity.getEndTime() != null) {
+            entity.setEndTime(requestEntity.getEndTime());
+        }
+        if (requestEntity.getGroup() != null) {
+            entity.setGroup(requestEntity.getGroup());
+        }
     }
 }

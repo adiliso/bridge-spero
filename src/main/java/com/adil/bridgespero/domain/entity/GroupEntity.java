@@ -34,7 +34,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true,
-        exclude = {"lessonSchedules", "teacher", "subjectCategory", "students", "recordings"})
+        exclude = {"lessonSchedules", "teacher", "subjectCategory", "students", "recordings", "resources"})
 @Table(name = "group")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
@@ -69,8 +69,7 @@ public class GroupEntity extends BaseEntity {
 
     String description;
 
-    @Builder.Default
-    UUID syllabus = UUID.randomUUID();
+    UUID syllabus;
 
     @Column(nullable = false)
     GroupStatus status;

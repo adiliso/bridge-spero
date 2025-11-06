@@ -3,6 +3,7 @@ package com.adil.bridgespero.service;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
+import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
@@ -61,12 +62,19 @@ public class GroupService {
         return groupMapper.toGroupDetailsResponse(getById(groupId));
     }
 
+    private void checkGroupExists(Long groupId) {
+        if (!groupRepository.existsById(groupId)) {
+            throw new GroupNotFoundException(groupId);
+        }
+    }
+
     public GroupEntity getById(Long groupId) {
         return groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
     }
 
     public List<ScheduleResponse> getScheduleByGroupId(Long groupId) {
+        checkGroupExists(groupId);
         return scheduleRepository.findAllByGroupId(groupId)
                 .stream()
                 .map(scheduleMapper::toScheduleResponse)
@@ -78,6 +86,7 @@ public class GroupService {
     }
 
     public List<RecordingResponse> getRecordings(Long id) {
+        checkGroupExists(id);
         return recordingRepository.findAllByGroupId(id)
                 .stream()
                 .map(groupMapper::toRecordingResponse)
@@ -85,6 +94,7 @@ public class GroupService {
     }
 
     public List<ResourceResponse> getResources(Long id) {
+        checkGroupExists(id);
         return resourceRepository.findAllByGroupId(id)
                 .stream()
                 .map(groupMapper::toResourceResponse)
@@ -92,8 +102,10 @@ public class GroupService {
     }
 
     @Transactional
-    public ScheduleResponse createSchedule(Long id, ScheduleRequest request) {
-        var entity = scheduleMapper.toEntity(id, request);
+    public ScheduleResponse createSchedule(Long groupId, ScheduleRequest request) {
+        checkGroupExists(groupId);
+
+        var entity = scheduleMapper.toEntity(groupId, request);
 
         LessonScheduleEntity saved = scheduleRepository.save(entity);
         return scheduleMapper.toScheduleResponse(saved);
@@ -107,13 +119,24 @@ public class GroupService {
         scheduleMapper.updateSchedule(id, entity, request);
     }
 
-    private LessonScheduleEntity getSchedule(Long id) {
-        return scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id));
+    private LessonScheduleEntity getSchedule(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId).orElseThrow(() -> new ScheduleNotFoundException(scheduleId));
     }
 
     private void checkScheduleExistsById(Long id) {
         if (!scheduleRepository.existsById(id)) {
             throw new ScheduleNotFoundException(id);
+        }
+    }
+
+    public String createSyllabus(Long groupId, SyllabusCreateRequest request) {
+        checkGroupExists(groupId);
+        checkSyllabusExists(groupId);
+    }
+
+    private void checkSyllabusExists(Long groupId) {
+        if (!scheduleRepository.existsById(groupId)) {
+            
         }
     }
 }
