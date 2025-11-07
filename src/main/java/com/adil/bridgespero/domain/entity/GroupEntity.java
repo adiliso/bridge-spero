@@ -69,7 +69,7 @@ public class GroupEntity extends BaseEntity {
 
     String description;
 
-    UUID syllabus;
+    String syllabus;
 
     @Column(nullable = false)
     GroupStatus status;

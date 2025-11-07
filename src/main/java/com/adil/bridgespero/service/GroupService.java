@@ -16,6 +16,7 @@ import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
+import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import lombok.AccessLevel;
@@ -41,8 +42,11 @@ public class GroupService {
     RecordingRepository recordingRepository;
     ScheduleRepository scheduleRepository;
     ResourceRepository resourceRepository;
+
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
+
+    FileStorageService fileStorageService;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -129,14 +133,22 @@ public class GroupService {
         }
     }
 
+    @Transactional
     public String createSyllabus(Long groupId, SyllabusCreateRequest request) {
-        checkGroupExists(groupId);
-        checkSyllabusExists(groupId);
+
+        var group = getById(groupId);
+        checkSyllabusExists(group);
+
+        String fileName = fileStorageService.savePublicFile(request.file(), "/syllabuses");
+
+        group.setSyllabus(fileName);
+
+        return fileName;
     }
 
-    private void checkSyllabusExists(Long groupId) {
-        if (!scheduleRepository.existsById(groupId)) {
-            
+    private void checkSyllabusExists(GroupEntity group) {
+        if (group.getSyllabus() != null) {
+            throw new SyllabusAlreadyExistsException(group.getId());
         }
     }
 }
