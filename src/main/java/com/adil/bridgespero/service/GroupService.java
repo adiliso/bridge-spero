@@ -14,6 +14,7 @@ import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.RecordingRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
+import com.adil.bridgespero.exception.BaseException;
 import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
 import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
@@ -28,9 +29,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
+import static com.adil.bridgespero.domain.model.enums.ErrorCode.INTERNAL_ERROR;
 import static com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE;
+import static com.adil.bridgespero.domain.model.enums.ResourceType.SYLLABUS;
 
 @Service
 @RequiredArgsConstructor
@@ -86,7 +90,7 @@ public class GroupService {
     }
 
     public String getSyllabus(Long id) {
-        return getById(id).getSyllabus().toString();
+        return getById(id).getSyllabus();
     }
 
     public List<RecordingResponse> getRecordings(Long id) {
@@ -139,7 +143,12 @@ public class GroupService {
         var group = getById(groupId);
         checkSyllabusExists(group);
 
-        String fileName = fileStorageService.savePublicFile(request.file(), "/syllabuses");
+        String fileName;
+        try {
+            fileName = fileStorageService.savePublicFile(request.file(), SYLLABUS);
+        } catch (IOException e) {
+            throw new BaseException("Something went wrong. Try again", INTERNAL_ERROR);
+        }
 
         group.setSyllabus(fileName);
 
