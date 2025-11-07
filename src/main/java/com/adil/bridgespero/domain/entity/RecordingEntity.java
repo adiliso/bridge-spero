@@ -8,7 +8,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -28,9 +26,9 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RecordingEntity extends BaseEntity {
 
-    @Builder.Default
-    @Column(updatable = false)
-    UUID uuid = UUID.randomUUID();
+    String filePath;
+
+    String name;
 
     @Column(nullable = false)
     LocalDate date;

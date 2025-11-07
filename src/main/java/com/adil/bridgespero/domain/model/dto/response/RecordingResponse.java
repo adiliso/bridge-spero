@@ -2,7 +2,7 @@ package com.adil.bridgespero.domain.model.dto.response;
 
 public record RecordingResponse(
 
-        String uuid,
-        String date
+        String filePath,
+        String name
 ) {
 }

@@ -4,6 +4,7 @@ import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.entity.ResourceEntity;
+import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
@@ -19,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_DATE_FORMATTER;
-import static com.adil.bridgespero.domain.model.constant.AppConstant.RECORDING_DATE_FORMATTER;
 
 @Component
 @RequiredArgsConstructor
@@ -92,8 +92,8 @@ public class GroupMapper {
 
     public RecordingResponse toRecordingResponse(RecordingEntity entity) {
         return new RecordingResponse(
-                entity.getUuid().toString(),
-                entity.getDate().format(RECORDING_DATE_FORMATTER)
+                entity.getFilePath(),
+                entity.getName()
         );
     }
 
@@ -102,5 +102,22 @@ public class GroupMapper {
                 entity.getUuid().toString(),
                 entity.getName()
         );
+    }
+
+    public RecordingEntity toRecordingEntity(Long groupId, String filePath, RecordingCreateRequest request) {
+        var date = LocalDate.now();
+        String name = request.name();
+        if (name == null || name.isEmpty()) {
+            name = date.format(GROUP_DATE_FORMATTER);
+        }
+
+        return RecordingEntity.builder()
+                .filePath(filePath)
+                .name(name)
+                .date(date)
+                .group(GroupEntity.builder()
+                        .id(groupId)
+                        .build())
+                .build();
     }
 }

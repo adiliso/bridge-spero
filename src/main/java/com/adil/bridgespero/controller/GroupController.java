@@ -1,5 +1,6 @@
 package com.adil.bridgespero.controller;
 
+import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -75,8 +77,16 @@ public class GroupController {
     public ResponseEntity<Void> updateSchedule(
             @PathVariable Long id,
             @Valid @RequestBody ScheduleRequest request
-    ){
+    ) {
         groupService.updateSchedule(id, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/schedule/{id}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long id
+    ) {
+        groupService.deleteSchedule(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -87,12 +97,18 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getSyllabus(id));
     }
 
-    @PostMapping(value = "{id}/syllabus", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{id}/syllabus", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createSyllabus(
             @PathVariable Long id,
             SyllabusCreateRequest request
-    ){
+    ) {
         return ResponseEntity.status(CREATED).body(groupService.createSyllabus(id, request));
+    }
+
+    @PatchMapping("/{id}/syllabus")
+    public ResponseEntity<Void> deleteSyllabus(@PathVariable Long id) {
+        groupService.deleteSyllabus(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/recordings")
@@ -100,6 +116,14 @@ public class GroupController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(groupService.getRecordings(id));
+    }
+
+    @PostMapping(value = "/{id}/recordings", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> createRecording(
+            @PathVariable Long id,
+            @Valid @RequestBody RecordingCreateRequest request
+    ) {
+        return ResponseEntity.status(CREATED).body(groupService.createRecording(id, request));
     }
 
     @GetMapping("/{id}/resources")

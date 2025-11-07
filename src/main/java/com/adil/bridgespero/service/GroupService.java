@@ -2,6 +2,8 @@ package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.entity.RecordingEntity;
+import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
@@ -10,6 +12,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.RecordingRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
@@ -28,12 +31,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.adil.bridgespero.domain.model.enums.ErrorCode.INTERNAL_ERROR;
 import static com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE;
+import static com.adil.bridgespero.domain.model.enums.ResourceType.RECORDING;
 import static com.adil.bridgespero.domain.model.enums.ResourceType.SYLLABUS;
 
 @Service
@@ -143,15 +148,30 @@ public class GroupService {
         var group = getById(groupId);
         checkSyllabusExists(group);
 
-        String fileName;
-        try {
-            fileName = fileStorageService.savePublicFile(request.file(), SYLLABUS);
-        } catch (IOException e) {
-            throw new BaseException("Something went wrong. Try again", INTERNAL_ERROR);
-        }
+        String fileName = saveFile(request.file(), SYLLABUS);
 
         group.setSyllabus(fileName);
 
+        return fileName;
+    }
+
+    @Transactional
+    public void deleteSyllabus(Long id) {
+        var group = getById(id);
+
+        deleteFile(group.getSyllabus());
+
+        group.setSyllabus(null);
+    }
+
+    private String saveFile(MultipartFile file, ResourceType resourceType) {
+
+        String fileName;
+        try {
+            fileName = fileStorageService.saveFile(file, resourceType);
+        } catch (IOException e) {
+            throw new BaseException("Something went wrong. Try again", INTERNAL_ERROR);
+        }
         return fileName;
     }
 
@@ -159,5 +179,32 @@ public class GroupService {
         if (group.getSyllabus() != null) {
             throw new SyllabusAlreadyExistsException(group.getId());
         }
+    }
+
+    private void deleteFile(String filePath) {
+        try {
+            fileStorageService.deleteFile(filePath);
+        } catch (IOException e) {
+            throw new BaseException("Something went wrong. Try again", INTERNAL_ERROR);
+        }
+    }
+
+    @Transactional
+    public void deleteSchedule(Long id) {
+        checkScheduleExistsById(id);
+
+        scheduleRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Long createRecording(Long id, RecordingCreateRequest request) {
+        checkGroupExists(id);
+
+        String filePath = saveFile(request.file(), RECORDING);
+
+        RecordingEntity entity = groupMapper.toRecordingEntity(id, filePath, request);
+
+        recordingRepository.save(entity);
+        return entity.getId();
     }
 }
