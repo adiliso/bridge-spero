@@ -3,6 +3,7 @@ package com.adil.bridgespero.service;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
+import com.adil.bridgespero.domain.model.dto.GroupFilter;
 import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
@@ -23,6 +24,7 @@ import com.adil.bridgespero.exception.ScheduleNotFoundException;
 import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
+import com.adil.bridgespero.util.GroupSpecificationUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -206,5 +208,19 @@ public class GroupService {
 
         recordingRepository.save(entity);
         return entity.getId();
+    }
+
+    public PageResponse<GroupCardResponse> search(GroupFilter filter, int pageNumber, int pageSize) {
+        final Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        var responses = groupRepository.findAll(GroupSpecificationUtils.getSpecification(filter), pageable)
+                .map(groupMapper::toCardResponse);
+
+        return new PageResponse<>(
+                responses.getContent(),
+                pageNumber,
+                pageSize,
+                responses.getTotalElements(),
+                responses.getTotalPages()
+        );
     }
 }

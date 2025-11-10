@@ -1,5 +1,6 @@
 package com.adil.bridgespero.controller;
 
+import com.adil.bridgespero.domain.model.dto.GroupFilter;
 import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
@@ -15,6 +16,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -131,5 +133,14 @@ public class GroupController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(groupService.getResources(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PageResponse<GroupCardResponse>> search(
+            @ParameterObject GroupFilter filter,
+            @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER, required = false) @Min(0) int pageNumber,
+            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE, required = false) @Min(1) int pageSize
+    ) {
+        return ResponseEntity.ok(groupService.search(filter, pageNumber, pageSize));
     }
 }
