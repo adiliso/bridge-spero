@@ -4,6 +4,7 @@ import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.TeacherDetailedCardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,15 +16,26 @@ import java.util.List;
 public class TeacherMapper {
 
     public TeacherCardResponse toCardResponse(TeacherDetailEntity entity) {
-        return TeacherCardResponse.builder()
-                .id(entity.getId())
-                .profilePictureUrl(entity.getUser().getProfilePictureUrl())
-                .name(entity.getUser().getName())
-                .surname(entity.getUser().getSurname())
-                .rating(entity.getRating())
-                .activeStudents(getActiveStudents(entity))
-                .experience(entity.getExperience().getDescription())
-                .build();
+        return new TeacherCardResponse(
+                entity.getId(),
+                entity.getUser().getProfilePictureUrl(),
+                entity.getUser().getName(),
+                entity.getUser().getSurname(),
+                entity.getRating(),
+                entity.getExperience().getDescription()
+        );
+    }
+
+    public TeacherDetailedCardResponse toDetailedCardResponse(TeacherDetailEntity entity) {
+        return new TeacherDetailedCardResponse(
+                entity.getId(),
+                entity.getUser().getProfilePictureUrl(),
+                entity.getUser().getName(),
+                entity.getUser().getSurname(),
+                entity.getRating(),
+                getActiveStudents(entity),
+                entity.getExperience().getDescription()
+        );
     }
 
     public TeacherDashboardResponse toDashboardResponse(TeacherDetailEntity entity, List<GroupTeacherCardResponse> groups) {

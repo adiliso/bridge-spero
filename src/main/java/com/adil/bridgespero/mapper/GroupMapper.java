@@ -86,7 +86,7 @@ public class GroupMapper {
                 entity.getMaxStudents(),
                 entity.getStartDate().format(GROUP_DATE_FORMATTER),
                 entity.getPrice(),
-                teacherMapper.toCardResponse(entity.getTeacher())
+                teacherMapper.toDetailedCardResponse(entity.getTeacher())
         );
     }
 
