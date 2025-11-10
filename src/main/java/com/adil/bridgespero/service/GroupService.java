@@ -211,7 +211,7 @@ public class GroupService {
     }
 
     public PageResponse<GroupCardResponse> search(GroupFilter filter, int pageNumber, int pageSize) {
-        final Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        final Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating"));
         var responses = groupRepository.findAll(GroupSpecificationUtils.getSpecification(filter), pageable)
                 .map(groupMapper::toCardResponse);
 

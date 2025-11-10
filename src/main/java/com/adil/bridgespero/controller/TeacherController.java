@@ -1,5 +1,6 @@
 package com.adil.bridgespero.controller;
 
+import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
@@ -10,6 +11,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,5 +58,13 @@ public class TeacherController {
     public ResponseEntity<ScheduleWeekResponse> getSchedule(
             @RequestHeader("User-Id") Long id) {
         return ResponseEntity.ok(teacherService.getSchedule(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PageResponse<TeacherCardResponse>> search(
+            @ParameterObject TeacherFilter filter,
+            @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER, required = false) @Min(0) int pageNumber,
+            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE, required = false) @Min(1) int pageSize) {
+        return ResponseEntity.ok(teacherService.search(filter, pageNumber, pageSize));
     }
 }
