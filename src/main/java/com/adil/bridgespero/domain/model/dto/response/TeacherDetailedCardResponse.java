@@ -1,9 +1,6 @@
 package com.adil.bridgespero.domain.model.dto.response;
 
-import lombok.Builder;
-
-@Builder
-public record TeacherCardResponse(
+public record TeacherDetailedCardResponse(
 
         Long id,
         String profilePictureName,

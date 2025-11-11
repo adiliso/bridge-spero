@@ -2,6 +2,7 @@ package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleDayResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
@@ -10,13 +11,14 @@ import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_DATE_FORMATTER;
-import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_TIME_FORMATTER;
+import static com.adil.bridgespero.domain.model.constant.AppConstant.TIME_FORMATTER;
 import static java.time.format.TextStyle.FULL;
 
 @Component
@@ -57,9 +59,44 @@ public class ScheduleMapper {
 
     public ScheduleResponse toScheduleResponse(LessonScheduleEntity entity) {
         return new ScheduleResponse(
+                entity.getId(),
                 entity.getDayOfWeek().getDisplayName(FULL, Locale.getDefault()),
-                entity.getStartTime().format(GROUP_TIME_FORMATTER),
-                entity.getEndTime().format(GROUP_TIME_FORMATTER)
+                entity.getStartTime().format(TIME_FORMATTER),
+                entity.getEndTime().format(TIME_FORMATTER)
         );
+    }
+
+    public LessonScheduleEntity toEntity(Long groupId, ScheduleRequest request) {
+        GroupEntity group = GroupEntity.builder()
+                .id(groupId)
+                .build();
+
+        return LessonScheduleEntity.builder()
+                .dayOfWeek(DayOfWeek.valueOf(request.dayOfWeek().toUpperCase()))
+                .startTime(LocalTime.parse(request.startTime(), TIME_FORMATTER))
+                .endTime(LocalTime.parse(request.endTime(), TIME_FORMATTER))
+                .group(group)
+                .build();
+    }
+
+    public void updateSchedule(Long id, LessonScheduleEntity entity, ScheduleRequest request) {
+        if (id == null && request == null) {
+            return;
+        }
+
+        var requestEntity = toEntity(id, request);
+
+        if (requestEntity.getDayOfWeek() != null) {
+            entity.setDayOfWeek(requestEntity.getDayOfWeek());
+        }
+        if (requestEntity.getStartTime() != null) {
+            entity.setStartTime(requestEntity.getStartTime());
+        }
+        if (requestEntity.getEndTime() != null) {
+            entity.setEndTime(requestEntity.getEndTime());
+        }
+        if (requestEntity.getGroup() != null) {
+            entity.setGroup(requestEntity.getGroup());
+        }
     }
 }

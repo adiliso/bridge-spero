@@ -21,19 +21,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true,
-        exclude = {"lessonSchedules", "teacher", "subjectCategory", "students", "recordings"})
+        exclude = {"lessonSchedules", "teacher", "subjectCategory", "students", "recordings", "resources"})
 @Table(name = "group")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
@@ -68,11 +68,13 @@ public class GroupEntity extends BaseEntity {
 
     String description;
 
-    @Builder.Default
-    UUID syllabus = UUID.randomUUID();
+    String syllabus;
 
     @Column(nullable = false)
     GroupStatus status;
+
+    @ManyToOne
+    SubjectCategoryEntity category;
 
     @Builder.Default
     @OneToMany(mappedBy = "group",
@@ -100,4 +102,11 @@ public class GroupEntity extends BaseEntity {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     List<RecordingEntity> recordings = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "group",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    List<ResourceEntity> resources = new ArrayList<>();
 }

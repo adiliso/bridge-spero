@@ -9,6 +9,5 @@ import java.time.format.DateTimeFormatter;
 public final class AppConstant {
 
     public static final DateTimeFormatter GROUP_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
-    public static final DateTimeFormatter GROUP_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 }

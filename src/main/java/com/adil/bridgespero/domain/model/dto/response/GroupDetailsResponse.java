@@ -10,6 +10,6 @@ public record GroupDetailsResponse(
         Integer maxStudents,
         String startDate,
         Double price,
-        TeacherCardResponse teacher
+        TeacherDetailedCardResponse teacher
 ) {
 }

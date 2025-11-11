@@ -1,6 +1,9 @@
 spring:
   application:
     name: bridge-spero
+    storage:
+      public-dir: static/uploads
+      private-dir: uploads
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}

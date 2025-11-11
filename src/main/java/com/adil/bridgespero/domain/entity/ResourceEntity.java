@@ -1,12 +1,10 @@
 package com.adil.bridgespero.domain.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,28 +15,26 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
-@Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true, exclude = {"subcategories", "parent"})
-@Table(name = "subject_category")
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Table(name = "resources")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SubjectCategoryEntity extends BaseEntity {
+public class ResourceEntity extends BaseEntity {
+
+    @Builder.Default
+    @Column(updatable = false)
+    UUID uuid = UUID.randomUUID();
 
     @Column(nullable = false)
     String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    SubjectCategoryEntity parent;
-
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    List<SubjectCategoryEntity> subcategories = new ArrayList<>();
+    @JoinColumn(name = "group_id")
+    GroupEntity group;
 }
-

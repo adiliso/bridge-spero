@@ -3,11 +3,17 @@ package com.adil.bridgespero.mapper;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
+import com.adil.bridgespero.domain.entity.ResourceEntity;
+import com.adil.bridgespero.domain.entity.SubjectCategoryEntity;
+import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
+import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
+import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -83,14 +89,64 @@ public class GroupMapper {
                 entity.getMaxStudents(),
                 entity.getStartDate().format(GROUP_DATE_FORMATTER),
                 entity.getPrice(),
-                teacherMapper.toCardResponse(entity.getTeacher())
+                teacherMapper.toDetailedCardResponse(entity.getTeacher())
         );
     }
 
     public RecordingResponse toRecordingResponse(RecordingEntity entity) {
         return new RecordingResponse(
+                entity.getFilePath(),
+                entity.getName()
+        );
+    }
+
+    public ResourceResponse toResourceResponse(ResourceEntity entity) {
+        return new ResourceResponse(
                 entity.getUuid().toString(),
                 entity.getName()
         );
+    }
+
+    public RecordingEntity toRecordingEntity(Long groupId, String filePath, RecordingCreateRequest request) {
+        var date = LocalDate.now();
+        String name = request.name();
+        if (name == null || name.isEmpty()) {
+            name = date.format(GROUP_DATE_FORMATTER);
+        }
+
+        return RecordingEntity.builder()
+                .filePath(filePath)
+                .name(name)
+                .date(date)
+                .group(GroupEntity.builder()
+                        .id(groupId)
+                        .build())
+                .build();
+    }
+
+    public GroupEntity toEntity(Long userId, GroupCreateRequest request) {
+        var teacher = TeacherDetailEntity.builder()
+                .id(userId)
+                .build();
+        var category = SubjectCategoryEntity.builder()
+                .id(request.categoryId())
+                .build();
+
+        LocalDate startDate = LocalDate.parse(request.startDate(), GROUP_DATE_FORMATTER);
+        LocalDate endDate = null;
+        if (request.durationInMonths() != null) endDate = startDate.plusMonths(request.durationInMonths());
+
+        return GroupEntity.builder()
+                .createdBy(userId)
+                .teacher(teacher)
+                .name(request.name())
+                .category(category)
+                .language(request.language())
+                .startDate(startDate)
+                .endDate(endDate)
+                .maxStudents(request.maxStudents())
+                .minStudents(request.minStudents())
+                .price(request.price())
+                .build();
     }
 }
