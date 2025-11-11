@@ -4,6 +4,7 @@ import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
+import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
@@ -58,6 +59,7 @@ public class GroupService {
     ScheduleMapper scheduleMapper;
 
     FileStorageService fileStorageService;
+    TeacherService teacherService;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -222,5 +224,14 @@ public class GroupService {
                 responses.getTotalElements(),
                 responses.getTotalPages()
         );
+    }
+
+    @Transactional
+    public Long create(Long userId, GroupCreateRequest request) {
+        teacherService.checkTeacherExists(userId);
+
+        var group = groupMapper.toEntity(userId, request);
+
+        return groupRepository.save(group).getId();
     }
 }

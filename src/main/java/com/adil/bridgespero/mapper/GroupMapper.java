@@ -4,6 +4,9 @@ import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.entity.ResourceEntity;
+import com.adil.bridgespero.domain.entity.SubjectCategoryEntity;
+import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
+import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
@@ -118,6 +121,32 @@ public class GroupMapper {
                 .group(GroupEntity.builder()
                         .id(groupId)
                         .build())
+                .build();
+    }
+
+    public GroupEntity toEntity(Long userId, GroupCreateRequest request) {
+        var teacher = TeacherDetailEntity.builder()
+                .id(userId)
+                .build();
+        var category = SubjectCategoryEntity.builder()
+                .id(request.categoryId())
+                .build();
+
+        LocalDate startDate = LocalDate.parse(request.startDate(), GROUP_DATE_FORMATTER);
+        LocalDate endDate = null;
+        if (request.durationInMonths() != null) endDate = startDate.plusMonths(request.durationInMonths());
+
+        return GroupEntity.builder()
+                .createdBy(userId)
+                .teacher(teacher)
+                .name(request.name())
+                .category(category)
+                .language(request.language())
+                .startDate(startDate)
+                .endDate(endDate)
+                .maxStudents(request.maxStudents())
+                .minStudents(request.minStudents())
+                .price(request.price())
                 .build();
     }
 }

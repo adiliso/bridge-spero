@@ -109,4 +109,10 @@ public class TeacherService {
                 responses.getTotalPages()
         );
     }
+
+    public void checkTeacherExists(Long userId) {
+        if(!teacherRepository.existsById(userId)) {
+            throw new TeacherNotFoundException(userId);
+        }
+    }
 }

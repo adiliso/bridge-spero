@@ -26,7 +26,6 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -73,6 +72,9 @@ public class GroupEntity extends BaseEntity {
 
     @Column(nullable = false)
     GroupStatus status;
+
+    @ManyToOne
+    SubjectCategoryEntity category;
 
     @Builder.Default
     @OneToMany(mappedBy = "group",

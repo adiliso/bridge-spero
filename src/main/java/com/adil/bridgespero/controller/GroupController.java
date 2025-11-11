@@ -1,6 +1,7 @@
 package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
+import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -142,5 +144,13 @@ public class GroupController {
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE, required = false) @Min(1) int pageSize
     ) {
         return ResponseEntity.ok(groupService.search(filter, pageNumber, pageSize));
+    }
+
+    @PostMapping
+    public ResponseEntity<Long> create(
+            @RequestHeader("User-Id") Long userId,
+            @Valid @RequestBody GroupCreateRequest request
+    ) {
+        return ResponseEntity.status(CREATED).body(groupService.create(userId, request));
     }
 }
