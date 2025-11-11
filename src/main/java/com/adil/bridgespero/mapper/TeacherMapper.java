@@ -22,7 +22,7 @@ public class TeacherMapper {
                 entity.getUser().getName(),
                 entity.getUser().getSurname(),
                 entity.getRating(),
-                entity.getExperience().getDescription()
+                getActiveStudents(entity)
         );
     }
 
