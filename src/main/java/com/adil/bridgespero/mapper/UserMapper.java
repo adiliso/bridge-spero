@@ -2,6 +2,7 @@ package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.UserEntity;
+import com.adil.bridgespero.domain.model.dto.UserDto;
 import com.adil.bridgespero.domain.model.dto.response.GroupUserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;

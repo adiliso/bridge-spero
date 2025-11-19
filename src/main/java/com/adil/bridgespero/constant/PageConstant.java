@@ -1,10 +1,10 @@
-package com.adil.bridgespero.domain.model.constant;
+package com.adil.bridgespero.constant;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PageConstants {
+public final class PageConstant {
 
     public static final String DEFAULT_PAGE_NUMBER = "0";
     public static final String DEFAULT_PAGE_SIZE = "10";

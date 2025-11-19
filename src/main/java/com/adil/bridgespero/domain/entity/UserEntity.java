@@ -1,6 +1,7 @@
 package com.adil.bridgespero.domain.entity;
 
 import com.adil.bridgespero.domain.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -46,8 +47,15 @@ public class UserEntity extends BaseEntity {
     @Column(unique = true, nullable = false)
     String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     String password;
+
+    @Column(name = "enabled", nullable = false)
+    Boolean enabled;
+
+    @Column(name = "agreed_to_terms", nullable = false)
+    Boolean agreedToTerms;
 
     @Enumerated(EnumType.STRING)
     Role role;
@@ -55,8 +63,10 @@ public class UserEntity extends BaseEntity {
     @Column(name = "profile_picture_url")
     String profilePictureUrl;
 
-    @Column(length = 500)
+    @Column(length = 1000)
     String bio;
+
+    String phone;
 
     @ElementCollection
     @CollectionTable(
