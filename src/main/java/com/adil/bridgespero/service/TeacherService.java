@@ -1,6 +1,7 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
+import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
@@ -9,6 +10,7 @@ import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
+import com.adil.bridgespero.domain.specification.TeacherSpecification;
 import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
@@ -109,8 +111,8 @@ public class TeacherService {
     }
 
     public void checkTeacherExists(Long userId) {
-        if(!teacherRepository.existsById(userId)) {
-            throw new TeacherNotFoundException(userId);
+        if (!teacherRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
         }
     }
 }
