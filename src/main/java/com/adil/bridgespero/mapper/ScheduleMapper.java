@@ -17,8 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_DATE_FORMATTER;
-import static com.adil.bridgespero.domain.model.constant.AppConstant.TIME_FORMATTER;
+import static com.adil.bridgespero.constant.AppConstant.GROUP_DATE_FORMATTER;
+import static com.adil.bridgespero.constant.AppConstant.TIME_FORMATTER;
 import static java.time.format.TextStyle.FULL;
 
 @Component

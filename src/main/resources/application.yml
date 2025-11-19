@@ -8,7 +8,39 @@ spring:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
 zoom:
   client-id: ${ZOOM_CLIENT_ID}
   client-secret: ${ZOOM_CLIENT_SECRET}
   redirect-uri: ${ZOOM_REDIRECT_URI}
+
+application:
+  security:
+    authentication:
+      jwt:
+        base64-secret: V2pOV2FHUnRSbmRaV0d4M1dWaEthbHBYZUd0YVYzaHdaRzFXZVdWWVRqVmpNMUpzWWxkR2QyTklUbXhaTTBwc1pFZDBiR1ZWUW10YVdGbHE=
+        access-token-validity-in-seconds: 900
+        refresh-token-validity-in-seconds: 3600
+  redis:
+    address: redis://localhost:6379
+    connection-pool-size: 4
+    connection-minimum-idle-size: 2
+    prefix: bs
+    token-prefix: bs:token
+    token-time-to-live: 3600
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        security: DEBUG
+
+server:
+  port: 8080

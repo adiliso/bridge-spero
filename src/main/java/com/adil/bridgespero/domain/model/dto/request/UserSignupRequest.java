@@ -1,5 +1,6 @@
 package com.adil.bridgespero.domain.model.dto.request;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -16,11 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 public class UserSignupRequest {
 
-    @NotBlank(message = "First name is required")
-    private String firstName;
+    @NotBlank(message = "Name is required")
+    private String name;
 
-    @NotBlank(message = "Last name is required")
-    private String lastName;
+    @NotBlank(message = "Surname is required")
+    private String surname;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email is not valid")
@@ -47,13 +48,14 @@ public class UserSignupRequest {
     @Size(max = 1000, message = "Bio cannot exceed 1000 characters")
     private String bio;
 
+    @AssertTrue(message = "You must agree to the terms")
     private boolean agreedToTerms;
 
     @Override
     public String toString() {
         return "UserSignupRequest{" +
-               "firstName='" + firstName + '\'' +
-               ", lastName='" + lastName + '\'' +
+               "firstName='" + name + '\'' +
+               ", lastName='" + surname + '\'' +
                ", email='" + email + '\'' +
                ", phoneCode='" + phoneCode + '\'' +
                ", phoneNumber='" + phoneNumber + '\'' +

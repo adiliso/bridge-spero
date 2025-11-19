@@ -1,6 +1,7 @@
 package com.adil.bridgespero.domain.model.dto.request;
 
 import com.adil.bridgespero.domain.model.enums.Experience;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,18 +13,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeacherSignupRequest {
 
-    @NotBlank(message = "First name is required")
-    private String firstName;
+    @NotBlank(message = "Name is required")
+    private String Name;
 
-    @NotBlank(message = "Last name is required")
-    private String lastName;
+    @NotBlank(message = "Surname is required")
+    private String Surname;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
@@ -45,7 +46,7 @@ public class TeacherSignupRequest {
     private String confirmPassword;
 
     @NotEmpty(message = "At least one subject must be selected")
-    private List<@NotBlank(message = "Subject cannot be empty") String> subjects;
+    private Set<@NotBlank(message = "Subject cannot be empty") String> subjects;
 
     @NotNull(message = "Experience selection is required")
     private Experience experience;
@@ -56,13 +57,14 @@ public class TeacherSignupRequest {
     @NotNull(message = "Demo video is required")
     private MultipartFile demoVideo;
 
+    @AssertTrue(message = "You must agree to the terms")
     private boolean agreedToTerms;
 
     @Override
     public String toString() {
         return "TeacherSignupRequest{" +
-               "firstName='" + firstName + '\'' +
-               ", lastName='" + lastName + '\'' +
+               "firstName='" + Name + '\'' +
+               ", lastName='" + Surname + '\'' +
                ", email='" + email + '\'' +
                ", phoneCode='" + phoneCode + '\'' +
                ", phoneNumber='" + phoneNumber + '\'' +

@@ -1,4 +1,4 @@
-package com.adil.bridgespero.domain.model.constant;
+package com.adil.bridgespero.constant;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
