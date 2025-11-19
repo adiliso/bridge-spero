@@ -2,7 +2,7 @@ package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
@@ -11,7 +11,7 @@ import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
 import com.adil.bridgespero.domain.specification.TeacherSpecification;
-import com.adil.bridgespero.exception.TeacherNotFoundException;
+import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.TeacherMapper;
@@ -59,15 +59,15 @@ public class TeacherService {
 
     public TeacherDashboardResponse getDashboard(Long id) {
         return teacherMapper.toDashboardResponse(teacherRepository.findById(id)
-                        .orElseThrow(() -> new TeacherNotFoundException(id)),
+                        .orElseThrow(() -> new UserNotFoundException(id)),
                 groupRepository.findAllByTeacherIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now()))
                         .stream()
                         .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
-                        .map(groupMapper::toGroupTeacherCardResponse)
+                        .map(groupMapper::toGroupTeacherDashboardResponse)
                         .toList());
     }
 
-    public List<GroupTeacherCardResponse> getGroups(Long id, int parameter) {
+    public List<GroupTeacherDashboardResponse> getGroups(Long id, int parameter) {
         List<GroupEntity> entities = switch (parameter) {
             case 0 -> groupRepository.findAllByTeacherIdAndStatus(id, ACTIVE);
             case 1 -> groupRepository.findAllByTeacherIdAndStatus(id, GroupStatus.PENDING);
@@ -77,7 +77,7 @@ public class TeacherService {
         };
         return entities
                 .stream()
-                .map(groupMapper::toGroupTeacherCardResponse)
+                .map(groupMapper::toGroupTeacherDashboardResponse)
                 .toList();
     }
 
@@ -111,8 +111,8 @@ public class TeacherService {
     }
 
     public void checkTeacherExists(Long userId) {
-        if(!teacherRepository.existsById(userId)) {
-            throw new TeacherNotFoundException(userId);
+        if (!teacherRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
         }
     }
 }

@@ -66,7 +66,7 @@ public class UserEntity extends BaseEntity {
     @Column(name = "subject")
     List<String> interests;
 
-    @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
     List<GroupEntity> groups;
 }
 

@@ -36,6 +36,19 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
     @Query("""
                 SELECT g
                 FROM GroupEntity g
+                JOIN g.users u
+                JOIN g.lessonSchedules ls
+                WHERE u.id = :userId
+                AND ls.dayOfWeek = :dayOfWeek
+                AND g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE
+            """)
+    List<GroupEntity> findAllByUserIdAndStatusAndDayOfWeek(
+            @Param("userId") Long userId,
+            @Param("dayOfWeek") DayOfWeek dayOfWeek);
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
                 WHERE g.teacher.id = :teacherId
                   AND (
                       g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE
@@ -50,4 +63,58 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
             @Param("startOfWeek") LocalDate startOfWeek,
             @Param("endOfWeek") LocalDate endOfWeek
     );
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.users u
+                WHERE u.id = :userId
+                  AND (
+                      g.status = com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE
+                      OR (
+                          g.startDate <= :endOfWeek
+                          AND g.endDate >= :startOfWeek
+                      )
+                  )
+            """)
+    List<GroupEntity> findAllByUserIdAndSchedule(
+            @Param("userId") Long userId,
+            @Param("startOfWeek") LocalDate startOfWeek,
+            @Param("endOfWeek") LocalDate endOfWeek
+    );
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.users u
+                WHERE u.id = :studentId
+                AND g.status = :status
+            """)
+    List<GroupEntity> findAllByStudentIdAndStatus(
+            @Param("studentId") Long studentId,
+            @Param("status") GroupStatus status
+    );
+
+    @Query("""
+        SELECT g
+        FROM GroupEntity g
+        JOIN g.users u
+        WHERE u.id = :studentId
+          AND g.lessonSchedules = :daysOfWeek
+          AND g.status = :status
+    """)
+    List<GroupEntity> findAllByStudentIdAndDayOfWeekAndStatus(
+            @Param("studentId") Long studentId,
+            @Param("dayOfWeek") DayOfWeek dayOfWeek,
+            @Param("status") GroupStatus status
+    );
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.users u
+                WHERE u.id = :studentId
+            """)
+    List<GroupEntity> findAllByStudentId(
+            @Param("studentId") Long studentId);
 }
