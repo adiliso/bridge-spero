@@ -7,11 +7,13 @@ import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -23,18 +25,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public CustomUserPrincipal loadUserByUsername(String email) {
+    public UserDetails loadUserByUsername(String email) {
         final UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 
         if (!userEntity.getEnabled()) throw new UserNotEnabledException();
+
+        List<SimpleGrantedAuthority> authorities
+                = List.of(new SimpleGrantedAuthority("ROLE_" + userEntity.getRole().name()));
 
         return new CustomUserPrincipal(email,
                 userEntity.getPassword(),
                 getFullName(userEntity),
                 userEntity.getEnabled(),
                 userEntity.getRole(),
-                Collections.emptyList());
+                authorities);
     }
 
     private String getFullName(UserEntity userEntity) {

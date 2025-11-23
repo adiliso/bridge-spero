@@ -23,7 +23,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.function.Supplier;
 public class TokenProvider {
 
     private Key key;
-    private static final List<GrantedAuthority> AUTHORITIES = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    private static final List<GrantedAuthority> AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
 
     @Value("${application.security.authentication.jwt.base64-secret:}")
     private String base64Secret;
@@ -54,12 +53,8 @@ public class TokenProvider {
 
     public boolean isValidToken(String authToken) {
         try {
-            Jwts.parser()
-                    .verifyWith((SecretKey) key)
-                    .build()
-                    .parseSignedClaims(authToken);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
             return true;
-
         } catch (SecurityException | MalformedJwtException e) {
             log.warn("Invalid JWT signature");
         } catch (ExpiredJwtException e) {
@@ -74,7 +69,6 @@ public class TokenProvider {
         return false;
     }
 
-
     public Authentication parseAuthentication(String authToken) {
         validateToken(authToken, () -> new AuthException("Invalid token!", ErrorCode.UNAUTHORIZED));
         final Claims claims = extractClaim(authToken);
@@ -83,11 +77,11 @@ public class TokenProvider {
     }
 
     private Claims extractClaim(String authToken) {
-        return Jwts.parser()
-                .verifyWith((SecretKey) key)
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
                 .build()
-                .parseSignedClaims(authToken)
-                .getPayload();
+                .parseClaimsJws(authToken)
+                .getBody();
     }
 
     private CustomUserPrincipal getPrincipal(Claims claims, Collection<? extends GrantedAuthority> authorities) {
