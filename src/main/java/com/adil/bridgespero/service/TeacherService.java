@@ -1,6 +1,7 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
+import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
@@ -114,5 +115,9 @@ public class TeacherService {
         if (!teacherRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
+    }
+
+    public void save(TeacherDto teacherDto) {
+        var entity = teacherMapper.toEntity(teacherDto);
     }
 }

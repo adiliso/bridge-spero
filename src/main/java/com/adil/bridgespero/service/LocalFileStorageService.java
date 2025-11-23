@@ -1,6 +1,7 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.model.enums.ResourceType;
+import com.adil.bridgespero.exception.BaseException;
 import com.adil.bridgespero.exception.IllegalArgumentException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import static com.adil.bridgespero.domain.model.enums.ErrorCode.INTERNAL_ERROR;
+
 @Service
 public class LocalFileStorageService implements FileStorageService {
 
@@ -22,7 +25,18 @@ public class LocalFileStorageService implements FileStorageService {
     @Value("${spring.application.storage.private-dir}")
     String privateUploadDir;
 
-    public String saveFile(MultipartFile file, ResourceType resourceType) throws IOException {
+    @Override
+    public String saveFile(MultipartFile file, ResourceType resourceType) {
+        String fileName;
+        try {
+            fileName = save(file, resourceType);
+        } catch (IOException e) {
+            throw new BaseException("Something went wrong. Try again", INTERNAL_ERROR);
+        }
+        return fileName;
+    }
+
+    private String save(MultipartFile file, ResourceType resourceType) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is null or empty");
         }
@@ -66,7 +80,7 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public byte[] loadFile(String filePath) throws IOException {
+    public byte[] loadFile(String filePath) {
         if (filePath == null || filePath.isEmpty()) {
             throw new IllegalArgumentException("File path cannot be null or empty");
         }
@@ -77,11 +91,15 @@ public class LocalFileStorageService implements FileStorageService {
             throw new IllegalArgumentException("File not found: " + filePath);
         }
 
-        return Files.readAllBytes(path);
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            throw new BaseException("Something went wrong. Try again", INTERNAL_ERROR);
+        }
     }
 
     @Override
-    public void deleteFile(String filePath) throws IOException {
+    public void deleteFile(String filePath) {
         if (filePath == null || filePath.isEmpty()) {
             throw new IllegalArgumentException("File path cannot be null or empty");
         }
@@ -98,6 +116,10 @@ public class LocalFileStorageService implements FileStorageService {
             throw new IllegalArgumentException("File not found: " + filePath);
         }
 
-        Files.delete(targetPath);
+        try {
+            Files.delete(targetPath);
+        } catch (IOException e) {
+            throw new BaseException("Something went wrong. Try again", INTERNAL_ERROR);
+        }
     }
 }

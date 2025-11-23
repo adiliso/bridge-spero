@@ -13,6 +13,10 @@ public enum ResourceType {
             List.of(".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png")),
 
     RECORDING("/recordings", 10240, false,
+
+            List.of(".mp4")),
+
+    DEMO_VIDEO("/demo_videos", 500, true,
             List.of(".mp4"));
 
     private final String folder;

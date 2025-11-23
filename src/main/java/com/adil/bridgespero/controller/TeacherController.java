@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.adil.bridgespero.domain.model.constant.PageConstants.DEFAULT_PAGE_NUMBER;
-import static com.adil.bridgespero.domain.model.constant.PageConstants.DEFAULT_PAGE_SIZE;
+import static com.adil.bridgespero.constant.PageConstant.DEFAULT_PAGE_NUMBER;
+import static com.adil.bridgespero.constant.PageConstant.DEFAULT_PAGE_SIZE;
 
 @Validated
 @RestController

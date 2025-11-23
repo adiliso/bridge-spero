@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-import static com.adil.bridgespero.domain.model.constant.AppConstant.GROUP_DATE_FORMATTER;
+import static com.adil.bridgespero.constant.AppConstant.GROUP_DATE_FORMATTER;
 
 @Component
 @RequiredArgsConstructor

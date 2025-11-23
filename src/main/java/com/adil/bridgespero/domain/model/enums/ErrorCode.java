@@ -14,6 +14,7 @@ public enum ErrorCode {
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
     BAD_REQUEST(HttpStatus.BAD_REQUEST),
     ALREADY_EXISTS(HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED),
     FORBIDDEN(HttpStatus.FORBIDDEN);
 
     private final HttpStatus httpStatus;

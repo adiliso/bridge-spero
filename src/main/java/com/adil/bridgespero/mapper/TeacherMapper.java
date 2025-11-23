@@ -1,6 +1,8 @@
 package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
+import com.adil.bridgespero.domain.entity.UserEntity;
+import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
@@ -46,6 +48,34 @@ public class TeacherMapper {
                 .totalEarning(null)
                 .rating(entity.getRating())
                 .groups(groups)
+                .build();
+    }
+
+    public TeacherDetailEntity toEntity(TeacherDto dto) {
+        if (dto == null) return null;
+
+        UserEntity user = UserEntity.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .surname(dto.getSurname())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .enabled(dto.getEnabled())
+                .agreedToTerms(dto.getAgreedToTerms())
+                .bio(dto.getBio())
+                .phone(dto.getPhone())
+                .role(dto.getRole())
+                .interests(dto.getInterests())
+                .build();
+
+        return TeacherDetailEntity.builder()
+                .id(dto.getId())
+                .user(user)
+                .experience(dto.getExperience())
+                .demoVideoUrl(dto.getDemoVideoUrl())
+                .rating(dto.getRating())
+                .ratingCount(dto.getRatingCount())
+                .subjects(dto.getSubjects())
                 .build();
     }
 
