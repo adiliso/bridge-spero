@@ -34,7 +34,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true,
         exclude = {"lessonSchedules", "teacher", "subjectCategory", "users", "recordings"})
-@Table(name = "group")
+@Table(name = "groups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
 

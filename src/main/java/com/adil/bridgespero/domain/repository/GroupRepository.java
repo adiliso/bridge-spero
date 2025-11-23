@@ -82,39 +82,4 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
             @Param("startOfWeek") LocalDate startOfWeek,
             @Param("endOfWeek") LocalDate endOfWeek
     );
-
-    @Query("""
-                SELECT g
-                FROM GroupEntity g
-                JOIN g.users u
-                WHERE u.id = :studentId
-                AND g.status = :status
-            """)
-    List<GroupEntity> findAllByStudentIdAndStatus(
-            @Param("studentId") Long studentId,
-            @Param("status") GroupStatus status
-    );
-
-    @Query("""
-        SELECT g
-        FROM GroupEntity g
-        JOIN g.users u
-        WHERE u.id = :studentId
-          AND g.lessonSchedules = :daysOfWeek
-          AND g.status = :status
-    """)
-    List<GroupEntity> findAllByStudentIdAndDayOfWeekAndStatus(
-            @Param("studentId") Long studentId,
-            @Param("dayOfWeek") DayOfWeek dayOfWeek,
-            @Param("status") GroupStatus status
-    );
-
-    @Query("""
-                SELECT g
-                FROM GroupEntity g
-                JOIN g.users u
-                WHERE u.id = :studentId
-            """)
-    List<GroupEntity> findAllByStudentId(
-            @Param("studentId") Long studentId);
 }
