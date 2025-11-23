@@ -62,7 +62,7 @@ public class UserService {
     }
 
     private void checkUserExists(Long id) {
-        if (!groupRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(id);
         }
     }

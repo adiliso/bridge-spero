@@ -122,7 +122,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<GlobalErrorResponse> handleAuthException(AuthenticationException ex) {
         addErrorLog(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex.getClass().getSimpleName());
-        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(GlobalErrorResponse.builder()
                         .errorCode(ErrorCode.UNAUTHORIZED)
