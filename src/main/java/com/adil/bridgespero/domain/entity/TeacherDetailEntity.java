@@ -24,6 +24,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +62,15 @@ public class TeacherDetailEntity {
     @Builder.Default
     @Column(name = "rating_count")
     Integer ratingCount = 1;
+
+    @Column(name = "zoom_access_token")
+    String zoomAccessToken;
+
+    @Column(name = "zoom_refresh_token")
+    String zoomRefreshToken;
+
+    @Column(name = "zoom_token_expiry")
+    LocalDateTime zoomTokenExpiry;
 
     @ElementCollection
     @Builder.Default
