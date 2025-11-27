@@ -34,7 +34,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities
                 = List.of(new SimpleGrantedAuthority("ROLE_" + userEntity.getRole().name()));
 
-        return new CustomUserPrincipal(email,
+        return new CustomUserPrincipal(
+                userEntity.getId(),
+                email,
                 userEntity.getPassword(),
                 getFullName(userEntity),
                 userEntity.getEnabled(),

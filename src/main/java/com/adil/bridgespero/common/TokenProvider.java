@@ -85,11 +85,12 @@ public class TokenProvider {
     }
 
     private CustomUserPrincipal getPrincipal(Claims claims, Collection<? extends GrantedAuthority> authorities) {
+        Long id = claims.get(TokenKey.ID, Long.class);
         String subject = claims.getSubject();
         String tokenType = claims.get(TokenKey.TOKEN_TYPE, String.class);
         String fullName = claims.get(TokenKey.FULL_NAME, String.class);
         Role role = Role.valueOf(claims.get(TokenKey.ROLE, String.class));
-        return new CustomUserPrincipal(subject, fullName, tokenType, "USER", role, authorities);
+        return new CustomUserPrincipal(id, subject, fullName, tokenType, "USER", role, authorities);
     }
 
 }

@@ -54,6 +54,7 @@ public class TokenCreator {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
+                .claim(TokenKey.ID, customUserPrincipal.getId())
                 .claim(TokenKey.TOKEN_TYPE, tokenType)
                 .claim(TokenKey.AUTHORITIES, authorities)
                 .claim(TokenKey.FULL_NAME, customUserPrincipal.getFullName())
