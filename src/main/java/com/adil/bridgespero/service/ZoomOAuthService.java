@@ -1,6 +1,6 @@
 package com.adil.bridgespero.service;
 
-import com.adil.bridgespero.config.properties.ZoomOAuthProperties;
+import com.adil.bridgespero.config.properties.ZoomProperties;
 import com.adil.bridgespero.domain.model.dto.TokenPair;
 import com.adil.bridgespero.domain.repository.StateRedisRepository;
 import com.adil.bridgespero.domain.repository.ZoomTokenRedisRepository;
@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ZoomOAuthService {
 
-    private final ZoomOAuthProperties props;
+    private final ZoomProperties props;
     private final ZoomTokenRedisRepository zoomTokenRedisRepository;
     private final StateRedisRepository stateRedisRepository;
     private final HttpClient httpClient;

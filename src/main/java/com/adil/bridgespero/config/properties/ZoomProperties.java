@@ -7,8 +7,9 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "zoom")
-public class ZoomOAuthProperties {
+public class ZoomProperties {
     private String clientId;
     private String clientSecret;
     private String redirectUri;
+    private String webhookSecret;
 }

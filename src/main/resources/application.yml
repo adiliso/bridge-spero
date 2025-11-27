@@ -22,6 +22,7 @@ zoom:
   client-id: ${ZOOM_CLIENT_ID}
   client-secret: ${ZOOM_CLIENT_SECRET}
   redirect-uri: ${ZOOM_REDIRECT_URI}
+  webhook-secret: ${ZOOM_WEBHOOK_SECRET}
 
 application:
   security:
