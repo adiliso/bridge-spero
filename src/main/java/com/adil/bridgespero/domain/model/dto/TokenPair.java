@@ -19,5 +19,6 @@ public class TokenPair implements Serializable {
 
     private String accessToken;
     private String refreshToken;
+    private Long expiresAt;
 }
 
