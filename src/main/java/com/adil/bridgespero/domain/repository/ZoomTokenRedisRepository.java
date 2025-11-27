@@ -12,12 +12,12 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Repository
-public class RedisRepository {
+public class ZoomTokenRedisRepository {
 
     private final RedissonClient redissonClient;
     private final ApplicationProperties.Redis props;
 
-    public RedisRepository(RedissonClient redissonClient, ApplicationProperties properties) {
+    public ZoomTokenRedisRepository(RedissonClient redissonClient, ApplicationProperties properties) {
         this.redissonClient = redissonClient;
         this.props = properties.getRedis();
     }
@@ -48,12 +48,13 @@ public class RedisRepository {
 
     private void saveOrUpdate(String name, TokenPair tokenPair) {
         RBucket<TokenPair> bucket = redissonClient.getBucket(bucketName(name));
-        bucket.set(tokenPair, props.getTokenTimeToLive(), TimeUnit.SECONDS);
+        bucket.set(tokenPair, props.getZoomTokenTimeToLive(), TimeUnit.SECONDS);
     }
 
     private String bucketName(String name) {
-        return String.join(":", props.getTokenPrefix(), name);
+        return String.join(":", props.getZoomTokenPrefix(), name);
     }
 
 }
+
 

@@ -1,62 +1,36 @@
 package com.adil.bridgespero.controller;
 
-import java.net.URI;
+import com.adil.bridgespero.security.model.CustomUserPrincipal;
+import com.adil.bridgespero.service.ZoomOAuthService;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("/api/zoom")
+@RequestMapping("/api/v1/zoom/oauth")
 @RequiredArgsConstructor
 public class ZoomOAuthController {
 
-    @Value("${zoom.client-id}")
-    private String clientId;
-
-    @Value("${zoom.client-secret}")
-    private String clientSecret;
-
-    @Value("${zoom.redirect-uri}")
-    private String redirectUri;
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final ZoomOAuthService service;
 
     @GetMapping("/authorize")
-    public ResponseEntity<Void> redirectToZoom() {
-        String url = "https://zoom.us/oauth/authorize" +
-                "?response_type=code" +
-                "&client_id=" + clientId +
-                "&redirect_uri=" + redirectUri;
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(url))
-                .build();
+    public String authorize(@AuthenticationPrincipal CustomUserPrincipal user) {
+        return "redirect:" + service.buildAuthorizationUrl(user.getUsername());
     }
 
-    @GetMapping("/oauth/callback")
-    public ResponseEntity<String> handleCallback(@RequestParam("code") String code) {
-        String tokenUrl = "https://zoom.us/oauth/token";
+    @GetMapping("/callback")
+    public String callback(@RequestParam String code,
+                           @RequestParam String state) {
+        service.handleOAuthCallback(code, state);
+        return "Zoom connected successfully";
+    }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(clientId, clientSecret);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("code", code);
-        body.add("redirect_uri", redirectUri);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                tokenUrl, HttpMethod.POST, request, String.class);
-
-        return ResponseEntity.ok(response.getBody());
+    @GetMapping("/verify")
+    public JsonNode verify(String email) {
+        return service.getZoomProfile(email);
     }
 }

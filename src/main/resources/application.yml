@@ -25,15 +25,19 @@ application:
     authentication:
       jwt:
         base64-secret: V2pOV2FHUnRSbmRaV0d4M1dWaEthbHBYZUd0YVYzaHdaRzFXZVdWWVRqVmpNMUpzWWxkR2QyTklUbXhaTTBwc1pFZDBiR1ZWUW10YVdGbHE=
-        access-token-validity-in-seconds: 900
-        refresh-token-validity-in-seconds: 3600
+        access-token-validity-in-seconds: 86400 # 1 day
+        refresh-token-validity-in-seconds: 604800 # 1 week
   redis:
     address: redis://localhost:6379
     connection-pool-size: 4
     connection-minimum-idle-size: 2
     prefix: bs
     token-prefix: bs:token
-    token-time-to-live: 3600
+    token-time-to-live: 604800
+    zoom-token-prefix: bs:token:zoom
+    zoom-token-time-to-live: 7776000  # 90 days
+    zoom-state-prefix: bs:zoom:state
+    zoom-state-time-to-live: 30
 
 logging:
   level:

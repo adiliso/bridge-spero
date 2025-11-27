@@ -9,7 +9,7 @@ import com.adil.bridgespero.domain.model.dto.request.TeacherSignupRequest;
 import com.adil.bridgespero.domain.model.dto.request.UserSignupRequest;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.model.enums.Role;
-import com.adil.bridgespero.domain.repository.RedisRepository;
+import com.adil.bridgespero.domain.repository.TokenRedisRepository;
 import com.adil.bridgespero.exception.EmailAlreadyExistsException;
 import com.adil.bridgespero.exception.InvalidAccessTokenException;
 import com.adil.bridgespero.exception.InvalidRefreshTokenException;
@@ -42,7 +42,7 @@ public class AuthenticationService {
     TokenCreator tokenCreator;
     TokenProvider tokenProvider;
     PasswordEncoder passwordEncoder;
-    RedisRepository redisRepository;
+    TokenRedisRepository tokenRedisRepository;
     AuthenticationManager authenticationManager;
 
 
@@ -101,18 +101,18 @@ public class AuthenticationService {
     public void signout(String authHeader) {
         final String accessToken = TokenUtil.extractToken(authHeader);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final TokenPair currentTokenPair = redisRepository.read(authentication.getName());
+        final TokenPair currentTokenPair = tokenRedisRepository.read(authentication.getName());
 
         if (currentTokenPair == null || !Objects.equals(accessToken, currentTokenPair.getAccessToken()))
             throw new InvalidAccessTokenException();
 
-        redisRepository.delete(authentication.getName());
+        tokenRedisRepository.delete(authentication.getName());
     }
 
     public void verify(String authHeader) {
         final String accessToken = TokenUtil.extractToken(authHeader);
         final Authentication authentication = tokenProvider.parseAuthentication(accessToken);
-        final TokenPair tokenPair = redisRepository.read(authentication.getName());
+        final TokenPair tokenPair = tokenRedisRepository.read(authentication.getName());
 
         Optional.ofNullable(tokenPair)
                 .map(TokenPair::getAccessToken)
@@ -123,19 +123,19 @@ public class AuthenticationService {
     public TokenPair refreshToken(String refreshToken) {
         tokenProvider.validateToken(refreshToken, InvalidRefreshTokenException::new);
         final Authentication authentication = tokenProvider.parseAuthentication(refreshToken);
-        final TokenPair currentTokenPair = redisRepository.read(authentication.getName());
+        final TokenPair currentTokenPair = tokenRedisRepository.read(authentication.getName());
 
         if (currentTokenPair == null || !Objects.equals(refreshToken, currentTokenPair.getRefreshToken()))
             throw new InvalidRefreshTokenException();
 
         final TokenPair newTokenPair = tokenCreator.createTokenPair(authentication);
-        redisRepository.update(authentication.getName(), newTokenPair);
+        tokenRedisRepository.update(authentication.getName(), newTokenPair);
         return newTokenPair;
     }
 
     private TokenPair createAndSaveToken(Authentication authentication) {
         final TokenPair tokenPair = tokenCreator.createTokenPair(authentication);
-        redisRepository.save(authentication.getName(), tokenPair);
+        tokenRedisRepository.save(authentication.getName(), tokenPair);
         return tokenPair;
     }
 }

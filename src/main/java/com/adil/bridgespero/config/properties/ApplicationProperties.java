@@ -21,6 +21,10 @@ public class ApplicationProperties {
         private String prefix;
         private String tokenPrefix;
         private long tokenTimeToLive;
+        private String zoomTokenPrefix;
+        private long zoomTokenTimeToLive;
+        private String zoomStatePrefix;
+        private long zoomStateTimeToLive;
     }
 
 }

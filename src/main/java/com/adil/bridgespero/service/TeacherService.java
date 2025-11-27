@@ -117,7 +117,9 @@ public class TeacherService {
         }
     }
 
+    @Transactional
     public void save(TeacherDto teacherDto) {
         var entity = teacherMapper.toEntity(teacherDto);
+        teacherRepository.save(entity);
     }
 }
