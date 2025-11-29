@@ -2,19 +2,20 @@ spring:
   application:
     name: bridge-spero
     storage:
-      public-dir: static/uploads
-      private-dir: uploads
+      public-dir: ${STATIC_DIR:static/uploads}
+      private-dir: ${PRIV_DIR:uploads}
   datasource:
     url: ${DATASOURCE_URL}
+    replicaUrl: ${REPLICA_DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
   jpa:
-    show_sql: true
+    show_sql: ${JPA_SHOWSQL:false}
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
+        format_sql: ${JPA_FORMATSQL:false}
   liquibase:
     change-log: classpath:db/changelog-master.yaml
 zoom:
@@ -50,8 +51,8 @@ logging:
   level:
     org:
       springframework:
-        web: DEBUG
-        security: DEBUG
+        web: ${LOG_LEVEL:INFO}
+        security: ${LOG_LEVEL:INFO}
 
 server:
-  port: 8080
+  port: ${SPRING_PORT:8080}
