@@ -16,7 +16,6 @@ spring:
       hibernate:
         format_sql: true
   liquibase:
-    enabled: false
     change-log: classpath:db/changelog-master.yaml
 zoom:
   client-id: ${ZOOM_CLIENT_ID}
@@ -32,7 +31,7 @@ application:
         access-token-validity-in-seconds: 86400 # 1 day
         refresh-token-validity-in-seconds: 604800 # 1 week
   redis:
-    address: redis://localhost:6379
+    address: ${REDIS_ADDRESS}
     connection-pool-size: 4
     connection-minimum-idle-size: 2
     prefix: bs

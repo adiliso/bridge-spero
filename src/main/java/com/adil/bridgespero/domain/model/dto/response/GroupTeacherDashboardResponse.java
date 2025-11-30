@@ -11,6 +11,8 @@ public record GroupTeacherDashboardResponse(
         String startTime,
         int numberOfStudents,
         int maxStudents,
-        Integer minStudents
+        Integer minStudents,
+        String startUrl,
+        boolean isMeetingActive
 ) {
 }

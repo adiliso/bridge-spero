@@ -74,8 +74,13 @@ public class GroupEntity extends BaseEntity {
     GroupStatus status;
 
     Long meetingId;
+
+    @Column(length = 2083)
     String startUrl;
+
+    @Column(length = 2083)
     String joinUrl;
+
     boolean isMeetingActive;
 
     @Builder.Default

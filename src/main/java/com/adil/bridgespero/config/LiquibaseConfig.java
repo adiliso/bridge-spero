@@ -20,12 +20,15 @@ public class LiquibaseConfig {
     @Value("${super-admin.password}")
     private String password;
 
+    @Value("${spring.liquibase.change-log}")
+    private String changeLog;
+
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
 
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("classpath:db/changelog-master.yaml");
+        liquibase.setChangeLog(changeLog);
 
         Map<String, String> params;
         params = new HashMap<>();

@@ -2,13 +2,14 @@ package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
+import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,14 +21,14 @@ public class UserController {
 
     UserService userService;
 
-    @GetMapping("/{id}/schedule")
-    public ResponseEntity<ScheduleWeekResponse> getSchedule(@PathVariable Long id) {
-        ScheduleWeekResponse schedule = userService.getSchedule(id);
+    @GetMapping("/schedule")
+    public ResponseEntity<ScheduleWeekResponse> getSchedule(@AuthenticationPrincipal CustomUserPrincipal user) {
+        ScheduleWeekResponse schedule = userService.getSchedule(user.getId());
         return ResponseEntity.ok(schedule);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDashboardResponse> getDashboard(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getDashboard(id));
+    @GetMapping
+    public ResponseEntity<UserDashboardResponse> getDashboard(@AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(userService.getDashboard(user.getId()));
     }
 }

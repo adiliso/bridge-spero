@@ -219,6 +219,7 @@ public class GroupService {
 
     @Transactional
     public String startLesson(Long id, String email) {
+        teacherService.checkTeacherExists(id);
         var group = getById(id);
 
         var zoomMeeting = zoomService.createMeeting(email, group);
@@ -229,6 +230,12 @@ public class GroupService {
 
         return zoomMeeting.getStartUrl();
     }
+
+    public String joinLesson(Long id) {
+        var group = getById(id);
+        return group.getJoinUrl();
+    }
+
 
     @Transactional
     public void endLessonByZoomMeetingId(Long meetingId) {
