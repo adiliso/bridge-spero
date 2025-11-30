@@ -19,6 +19,7 @@ import com.adil.bridgespero.domain.repository.RecordingRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.exception.GroupNotFoundException;
+import com.adil.bridgespero.exception.GroupWithZoomIdNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
 import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
@@ -55,6 +56,7 @@ public class GroupService {
 
     FileStorageService fileStorageService;
     TeacherService teacherService;
+    ZoomService zoomService;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -213,5 +215,40 @@ public class GroupService {
         var group = groupMapper.toEntity(userId, request);
 
         return groupRepository.save(group).getId();
+    }
+
+    @Transactional
+    public String startLesson(Long id, String email) {
+        teacherService.checkTeacherExists(id);
+        var group = getById(id);
+
+        var zoomMeeting = zoomService.createMeeting(email, group);
+
+        group.setStartUrl(zoomMeeting.getStartUrl());
+        group.setJoinUrl(zoomMeeting.getJoinUrl());
+        group.setMeetingActive(true);
+
+        return zoomMeeting.getStartUrl();
+    }
+
+    public String joinLesson(Long id) {
+        var group = getById(id);
+        return group.getJoinUrl();
+    }
+
+
+    @Transactional
+    public void endLessonByZoomMeetingId(Long meetingId) {
+        var group = getByZoomMeetingId(meetingId);
+
+        group.setMeetingId(null);
+        group.setStartUrl(null);
+        group.setJoinUrl(null);
+        group.setMeetingActive(false);
+    }
+
+    private GroupEntity getByZoomMeetingId(Long meetingId) {
+        return groupRepository.findByMeetingId(meetingId)
+                .orElseThrow(() -> new GroupWithZoomIdNotFoundException(meetingId));
     }
 }

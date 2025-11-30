@@ -154,4 +154,14 @@ public class GroupController {
     ) {
         return ResponseEntity.status(CREATED).body(groupService.create(user.getId(), request));
     }
+
+    @GetMapping("{id}/start-lesson")
+    public ResponseEntity<String> startLesson(@PathVariable Long id, @AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(groupService.startLesson(id, user.getUsername()));
+    }
+
+    @GetMapping("{id}/join-lesson")
+    public ResponseEntity<String> joinLesson(@PathVariable Long id) {
+        return ResponseEntity.ok(groupService.joinLesson(id));
+    }
 }

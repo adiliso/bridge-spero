@@ -6,6 +6,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
+import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.TeacherService;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -13,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,21 +44,21 @@ public class TeacherController {
     }
 
     @GetMapping
-    public ResponseEntity<TeacherDashboardResponse> getDashboard(@RequestHeader("User-Id") Long id) {
-        return ResponseEntity.ok(teacherService.getDashboard(id));
+    public ResponseEntity<TeacherDashboardResponse> getDashboard(@AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(teacherService.getDashboard(user.getId()));
     }
 
     @GetMapping("/groups")
     public ResponseEntity<List<GroupTeacherDashboardResponse>> getGroups(
-            @RequestHeader("User-Id") Long id,
+            @AuthenticationPrincipal CustomUserPrincipal user,
             @RequestParam int parameter) {
-        return ResponseEntity.ok(teacherService.getGroups(id, parameter));
+        return ResponseEntity.ok(teacherService.getGroups(user.getId(), parameter));
     }
 
     @GetMapping("/schedule")
     public ResponseEntity<ScheduleWeekResponse> getSchedule(
-            @RequestHeader("User-Id") Long id) {
-        return ResponseEntity.ok(teacherService.getSchedule(id));
+            @AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(teacherService.getSchedule(user.getId()));
     }
 
     @GetMapping("/search")

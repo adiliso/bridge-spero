@@ -1,10 +1,10 @@
 package com.adil.bridgespero.mapper;
 
+import com.adil.bridgespero.domain.entity.CategoryEntity;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.entity.ResourceEntity;
-import com.adil.bridgespero.domain.entity.CategoryEntity;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
@@ -55,6 +55,8 @@ public class GroupMapper {
                 .numberOfStudents(entity.getUsers().size())
                 .maxStudents(entity.getMaxStudents())
                 .minStudents(entity.getMinStudents())
+                .startUrl(entity.getStartUrl())
+                .isMeetingActive(entity.isMeetingActive())
                 .build();
     }
 
@@ -65,7 +67,9 @@ public class GroupMapper {
                 entity.getName(),
                 entity.getStatus().toString().toLowerCase(),
                 getStartTime(entity),
-                getTeacherNameSurname(entity)
+                getTeacherNameSurname(entity),
+                entity.getJoinUrl(),
+                entity.isMeetingActive()
         );
     }
 

@@ -7,6 +7,8 @@ public record GroupUserDashboardResponse(
         String name,
         String status,
         String startTime,
-        String teacher
+        String teacher,
+        String joinUrl,
+        boolean isMeetingActive
 ) {
 }

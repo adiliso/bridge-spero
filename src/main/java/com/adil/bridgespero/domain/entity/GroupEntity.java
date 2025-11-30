@@ -73,6 +73,16 @@ public class GroupEntity extends BaseEntity {
     @Column(nullable = false)
     GroupStatus status;
 
+    Long meetingId;
+
+    @Column(length = 2083)
+    String startUrl;
+
+    @Column(length = 2083)
+    String joinUrl;
+
+    boolean isMeetingActive;
+
     @Builder.Default
     @OneToMany(mappedBy = "group",
             cascade = CascadeType.ALL,
