@@ -11,6 +11,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.GroupService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -20,6 +21,7 @@ import lombok.experimental.FieldDefaults;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -148,9 +149,9 @@ public class GroupController {
 
     @PostMapping
     public ResponseEntity<Long> create(
-            @RequestHeader("User-Id") Long userId,
+            @AuthenticationPrincipal CustomUserPrincipal user,
             @Valid @RequestBody GroupCreateRequest request
     ) {
-        return ResponseEntity.status(CREATED).body(groupService.create(userId, request));
+        return ResponseEntity.status(CREATED).body(groupService.create(user.getId(), request));
     }
 }

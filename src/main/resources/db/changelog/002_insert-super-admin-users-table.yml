@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001_insert-super-admin-users-table
+      author: Adil Ismayilov
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO users (email, password, role, enabled, agreed_to_terms)
+              SELECT
+                '${superAdminEmail}',
+                '${superAdminPassword}',
+                'SUPER_ADMIN',
+                true,
+                true
+              WHERE NOT EXISTS (
+                SELECT 1 FROM users WHERE email = '${superAdminEmail}'
+              )

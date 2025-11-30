@@ -12,10 +12,10 @@ public record GroupCreateRequest(
         @NotBlank(message = "Group name is missing")
         String name,
 
-        @NotBlank(message = "Category id is missing")
+        @NotNull(message = "Category id is missing")
         Long categoryId,
 
-        @NotBlank(message = "Language is missing")
+        @NotNull(message = "Language is missing")
         Language language,
 
         @NotBlank(message = "Start date is missing")

@@ -34,7 +34,6 @@ import java.util.function.Supplier;
 public class TokenProvider {
 
     private Key key;
-    private static final List<GrantedAuthority> AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
 
     @Value("${application.security.authentication.jwt.base64-secret:}")
     private String base64Secret;
@@ -72,8 +71,8 @@ public class TokenProvider {
     public Authentication parseAuthentication(String authToken) {
         validateToken(authToken, () -> new AuthException("Invalid token!", ErrorCode.UNAUTHORIZED));
         final Claims claims = extractClaim(authToken);
-        final User principal = getPrincipal(claims, AUTHORITIES);
-        return new UsernamePasswordAuthenticationToken(principal, authToken, AUTHORITIES);
+        final User principal = getPrincipal(claims);
+        return new UsernamePasswordAuthenticationToken(principal, authToken, principal.getAuthorities());
     }
 
     private Claims extractClaim(String authToken) {
@@ -84,12 +83,13 @@ public class TokenProvider {
                 .getBody();
     }
 
-    private CustomUserPrincipal getPrincipal(Claims claims, Collection<? extends GrantedAuthority> authorities) {
+    private CustomUserPrincipal getPrincipal(Claims claims) {
         Long id = claims.get(TokenKey.ID, Long.class);
         String subject = claims.getSubject();
         String tokenType = claims.get(TokenKey.TOKEN_TYPE, String.class);
         String fullName = claims.get(TokenKey.FULL_NAME, String.class);
         Role role = Role.valueOf(claims.get(TokenKey.ROLE, String.class));
+        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
         return new CustomUserPrincipal(id, subject, fullName, tokenType, "USER", role, authorities);
     }
 

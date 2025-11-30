@@ -4,7 +4,7 @@ import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.entity.ResourceEntity;
-import com.adil.bridgespero.domain.entity.SubjectCategoryEntity;
+import com.adil.bridgespero.domain.entity.CategoryEntity;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
@@ -15,6 +15,7 @@ import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardRespo
 import com.adil.bridgespero.domain.model.dto.response.GroupUserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
+import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ public class GroupMapper {
                 entity.getId(),
                 entity.getTeacher().getId(),
                 entity.getImageUrl(),
-                entity.getSubjectCategory().toString(),
+                entity.getCategory().toString(),
                 entity.getLanguage().getValue(),
                 entity.getName(),
                 entity.getTeacher().getUser().getName(),
@@ -102,7 +103,7 @@ public class GroupMapper {
     public GroupDetailsResponse toGroupDetailsResponse(GroupEntity entity) {
         return new GroupDetailsResponse(
                 entity.getName(),
-                entity.getSubjectCategory().getName(),
+                entity.getCategory().getName(),
                 entity.getLanguage().getValue(),
                 entity.getDescription(),
                 ChronoUnit.WEEKS.between(entity.getStartDate(), entity.getEndDate()),
@@ -149,7 +150,7 @@ public class GroupMapper {
         var teacher = TeacherDetailEntity.builder()
                 .id(userId)
                 .build();
-        var category = SubjectCategoryEntity.builder()
+        var category = CategoryEntity.builder()
                 .id(request.categoryId())
                 .build();
 
@@ -165,6 +166,7 @@ public class GroupMapper {
                 .language(request.language())
                 .startDate(startDate)
                 .endDate(endDate)
+                .status(GroupStatus.ACTIVE)
                 .maxStudents(request.maxStudents())
                 .minStudents(request.minStudents())
                 .price(request.price())

@@ -15,6 +15,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  liquibase:
+    enabled: false
+    change-log: classpath:db/changelog-master.yaml
 zoom:
   client-id: ${ZOOM_CLIENT_ID}
   client-secret: ${ZOOM_CLIENT_SECRET}
@@ -24,7 +27,7 @@ application:
   security:
     authentication:
       jwt:
-        base64-secret: V2pOV2FHUnRSbmRaV0d4M1dWaEthbHBYZUd0YVYzaHdaRzFXZVdWWVRqVmpNMUpzWWxkR2QyTklUbXhaTTBwc1pFZDBiR1ZWUW10YVdGbHE=
+        base64-secret: ${JWT_SECRET}
         access-token-validity-in-seconds: 86400 # 1 day
         refresh-token-validity-in-seconds: 604800 # 1 week
   redis:
@@ -38,6 +41,10 @@ application:
     zoom-token-time-to-live: 7776000  # 90 days
     zoom-state-prefix: bs:zoom:state
     zoom-state-time-to-live: 30
+
+super-admin:
+  email: ${SUPER_ADMIN_EMAIL}
+  password: ${SUPER_ADMIN_PASSWORD}
 
 logging:
   level:

@@ -6,6 +6,7 @@ import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.UserRepository;
+import com.adil.bridgespero.exception.EmailAlreadyExistsException;
 import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
@@ -69,7 +70,18 @@ public class UserService {
 
     @Transactional
     public UserDto save(UserDto userDto) {
+        checkEmailAlreadyExists(userDto.getEmail());
         UserEntity userEntity = userMapper2.toEntity(userDto);
         return userMapper2.toDto(userRepository.save(userEntity));
+    }
+
+    @Transactional
+    public void deleteById(Long id) {
+        checkUserExists(id);
+        userRepository.deleteById(id);
+    }
+
+    private void checkEmailAlreadyExists(String email) {
+        if (isEmailExist(email)) throw new EmailAlreadyExistsException();
     }
 }
