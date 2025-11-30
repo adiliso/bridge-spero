@@ -1,0 +1,94 @@
+name: Update GitOps
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'Image version'
+        required: true
+        type: string
+    secrets:
+      GITOPS_REPO:
+        required: true
+      GITOPS_SSH_KEY:
+        required: true
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version'
+        required: true
+        type: string
+      environment:
+        description: 'Environment'
+        required: false
+        type: choice
+        options:
+          - ""
+          - dev
+          - bluegreen
+        default: ""
+
+jobs:
+  update-gitops:
+    runs-on: ubuntu-latest
+    env:
+      RETRIES: 5
+      BRANCH: rollouts
+      VALUES_FILE: brsp/values.yaml
+      TAG_PARENT_KEY: .spring.image.tag
+      IMAGE_TAG: ${{ inputs.version }}
+      ENVIRONMENT: ${{ inputs.environment }}
+    steps:
+
+    - name: Set environment
+      if: ${{ !inputs.envrionment }} 
+      run: echo "ENVIRONMENT=$([[ ${{ github.ref }} == 'refs/heads/dev' ]] && echo dev || echo bluegreen)" >> "$GITHUB_ENV"
+
+    - name: Set image tag
+      run: echo "IMAGE_TAG=$([[ ${{ github.ref }} == 'refs/heads/dev' ]] && echo dev-)$IMAGE_TAG" >> "$GITHUB_ENV"
+
+    - name: Check out the gitops repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ secrets.GITOPS_REPO }}
+        ref: ${{ env.BRANCH }}
+        ssh-key: ${{ secrets.GITOPS_SSH_KEY }}
+
+    - name: Update image tag
+      uses: mikefarah/yq@master
+      with:
+        cmd: yq -i '${{ env.TAG_PARENT_KEY }}.${{ env.ENVIRONMENT }} = "${{ env.IMAGE_TAG }}"' "${{ env.VALUES_FILE }}"
+
+    - name: Push possible changes
+      run: |
+        set -e
+
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add "$VALUES_FILE"
+        git commit -m "chore(gitops): update $TAG_PARENT_KEY.$ENVIRONMENT to $IMAGE_TAG" || exit 0
+
+        n=0
+        until [ $n -ge $RETRIES ]
+        do
+          git pull --rebase origin "$BRANCH" || git rebase --abort
+          if git push origin "$BRANCH"; then
+            echo "Push succeeded"
+            break
+          fi
+          n=$((n+1))
+          echo "Push failed, retrying ($n)..."
+          sleep 2
+        done
+
+        if [ $n -ge 5 ]; then
+          echo "Push failed after $RETRIES retries"
+          exit 1
+        fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-deploy
+  cancel-in-progress: true

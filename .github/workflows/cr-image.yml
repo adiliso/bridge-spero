@@ -1,0 +1,65 @@
+name: Container Image Build
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+
+jobs:
+  build-cr-image:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-build
+      cancel-in-progress: true
+    outputs:
+      image-exists: ${{ steps.image-exists.outputs.IMAGE_EXISTS }}
+      version: ${{ steps.set-env.outputs.APP_VERSION }}
+    env:
+      CR_REPO: ghcr.io/${{ vars.CR_USERNAME }}/brsp-spring
+    steps:
+
+    - name: Log in to GHCR
+      run: echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ vars.CR_USERNAME }} --password-stdin
+
+    - name: Check out the repo
+      uses: actions/checkout@v4
+
+    - name: Set image tags
+      id: set-env
+      run: |
+        export APP_VERSION=$(./gradlew -q printVersion)
+        cat <<EOF >> "$GITHUB_ENV"
+        IMAGE_TAG=$([[ ${{ github.ref }} == 'refs/heads/dev' ]] && echo dev-)$APP_VERSION
+        IMAGE_LATEST_TAG=$([[ ${{ github.ref }} == 'refs/heads/dev' ]] && echo dev-)latest
+        EOF
+        echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_OUTPUT"
+      
+    - name: Skip if image exists
+      id: image-exists
+      run: echo "IMAGE_EXISTS=$(docker manifest inspect "$CR_REPO:$IMAGE_TAG" >/dev/null 2>/dev/null && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build the image
+      if: ${{ steps.image-exists.outputs.IMAGE_EXISTS == 'false' }}
+      run: |
+        docker build . -t "$CR_REPO:$IMAGE_TAG"
+
+    - name: Tag as latest image
+      if: ${{ steps.image-exists.outputs.IMAGE_EXISTS == 'false'  }}
+      run: |
+        docker image tag "$CR_REPO:$IMAGE_TAG" "$CR_REPO:$IMAGE_LATEST_TAG"
+
+    - name: Push images
+      if: ${{ steps.image-exists.outputs.IMAGE_EXISTS == 'false'  }}
+      run: |
+        docker push -a "$CR_REPO"
+
+  trigger-cd:
+    if: ${{ needs.build-cr-image.outputs.image-exists == 'false' }}
+    uses: ./.github/workflows/update-gitops.yaml
+    needs: build-cr-image
+    with:
+      version: ${{ needs.build-cr-image.outputs.version }}
+    secrets: inherit
