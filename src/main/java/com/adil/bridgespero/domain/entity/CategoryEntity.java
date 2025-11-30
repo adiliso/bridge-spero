@@ -26,19 +26,19 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true, exclude = {"subcategories", "parent"})
-@Table(name = "subject_category")
+@Table(name = "category")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SubjectCategoryEntity extends BaseEntity {
+public class CategoryEntity extends BaseEntity {
 
     @Column(nullable = false)
     String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    SubjectCategoryEntity parent;
+    CategoryEntity parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
-    List<SubjectCategoryEntity> subcategories = new ArrayList<>();
+    List<CategoryEntity> subcategories = new ArrayList<>();
 }
 

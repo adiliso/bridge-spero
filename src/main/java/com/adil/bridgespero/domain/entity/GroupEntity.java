@@ -33,7 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true,
-        exclude = {"lessonSchedules", "teacher", "subjectCategory", "users", "recordings"})
+        exclude = {"lessonSchedules", "teacher", "category", "users", "recordings"})
 @Table(name = "groups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
@@ -44,8 +44,8 @@ public class GroupEntity extends BaseEntity {
     String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_category_id")
-    SubjectCategoryEntity subjectCategory;
+    @JoinColumn(name = "category_id")
+    CategoryEntity category;
 
     @Column(name = "start_date", nullable = false)
     LocalDate startDate;
@@ -72,9 +72,6 @@ public class GroupEntity extends BaseEntity {
 
     @Column(nullable = false)
     GroupStatus status;
-
-    @ManyToOne
-    SubjectCategoryEntity category;
 
     @Builder.Default
     @OneToMany(mappedBy = "group",

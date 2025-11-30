@@ -6,6 +6,7 @@ import com.adil.bridgespero.domain.model.dto.request.SigninRequest;
 import com.adil.bridgespero.domain.model.dto.request.TeacherSignupRequest;
 import com.adil.bridgespero.domain.model.dto.request.UserSignupRequest;
 import com.adil.bridgespero.service.AuthenticationService;
+import com.adil.bridgespero.util.CookieUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.adil.bridgespero.constant.CommonConstant.HttpAttribute.SET_COOKIE;
 
 @Validated
 @RestController
@@ -45,7 +48,11 @@ public class AuthenticationController {
 
     @PostMapping("/signin")
     public ResponseEntity<TokenPair> signin(@Valid @RequestBody SigninRequest signinRequest) {
-        return ResponseEntity.ok(authenticationService.signin(signinRequest));
+        TokenPair tokenPair = authenticationService.signin(signinRequest);
+        return ResponseEntity.ok()
+                .header(SET_COOKIE, CookieUtils.createHttpOnlyCookie("access_token", tokenPair.getAccessToken()))
+                .header(SET_COOKIE, CookieUtils.createHttpOnlyCookie("refresh_token", tokenPair.getRefreshToken()))
+                .body(tokenPair);
     }
 
     @GetMapping("/signout")

@@ -10,7 +10,6 @@ import com.adil.bridgespero.domain.model.dto.request.UserSignupRequest;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.model.enums.Role;
 import com.adil.bridgespero.domain.repository.TokenRedisRepository;
-import com.adil.bridgespero.exception.EmailAlreadyExistsException;
 import com.adil.bridgespero.exception.InvalidAccessTokenException;
 import com.adil.bridgespero.exception.InvalidRefreshTokenException;
 import com.adil.bridgespero.exception.PasswordMismatchException;
@@ -45,9 +44,7 @@ public class AuthenticationService {
     TokenRedisRepository tokenRedisRepository;
     AuthenticationManager authenticationManager;
 
-
     public void signupUser(UserSignupRequest signupRequest) {
-        checkEmailAlreadyExists(signupRequest.getEmail());
         checkPasswordsMatch(signupRequest.getPassword(), signupRequest.getConfirmPassword());
         UserDto userDto = UserDto.builder()
                 .email(signupRequest.getEmail())
@@ -63,14 +60,13 @@ public class AuthenticationService {
     }
 
     public void signupTeacher(TeacherSignupRequest signupRequest) {
-        checkEmailAlreadyExists(signupRequest.getEmail());
         checkPasswordsMatch(signupRequest.getPassword(), signupRequest.getConfirmPassword());
         TeacherDto teacherDto = TeacherDto.builder()
                 .email(signupRequest.getEmail())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .name(signupRequest.getName())
                 .surname(signupRequest.getSurname())
-                    .role(Role.USER)
+                .role(Role.USER)
                 .phone(signupRequest.getPhoneCode() + signupRequest.getPhoneNumber())
                 .subjects(signupRequest.getSubjects())
                 .enabled(true)
@@ -80,10 +76,6 @@ public class AuthenticationService {
                 .demoVideoUrl(fileStorageService.saveFile(signupRequest.getDemoVideo(), ResourceType.DEMO_VIDEO))
                 .build();
         teacherService.save(teacherDto);
-    }
-
-    private void checkEmailAlreadyExists(String email) {
-        if (userService.isEmailExist(email)) throw new EmailAlreadyExistsException();
     }
 
     private void checkPasswordsMatch(String password, String confirmPassword) {

@@ -13,6 +13,7 @@ public final class CommonConstant {
         public static final String X_FORWARDED_FOR = "X-Forwarded-For";
         public static final String AUTHORIZATION = "Authorization";
         public static final String BEARER = "Bearer ";
+        public static final String SET_COOKIE = "Set-Cookie";
     }
 
 }

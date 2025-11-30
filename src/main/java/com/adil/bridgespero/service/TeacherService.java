@@ -12,6 +12,7 @@ import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
 import com.adil.bridgespero.domain.specification.TeacherSpecification;
+import com.adil.bridgespero.exception.TeacherNotFoundException;
 import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
@@ -71,9 +72,7 @@ public class TeacherService {
     public List<GroupTeacherDashboardResponse> getGroups(Long id, int parameter) {
         List<GroupEntity> entities = switch (parameter) {
             case 0 -> groupRepository.findAllByTeacherIdAndStatus(id, ACTIVE);
-            case 1 -> groupRepository.findAllByTeacherIdAndStatus(id, GroupStatus.PENDING);
             case 2 -> groupRepository.findAllByTeacherIdAndStatus(id, GroupStatus.COMPLETED);
-            case 3 -> groupRepository.findAllByTeacherIdAndStatus(id, GroupStatus.DRAFT);
             default -> new ArrayList<>();
         };
         return entities
@@ -113,7 +112,7 @@ public class TeacherService {
 
     public void checkTeacherExists(Long userId) {
         if (!teacherRepository.existsById(userId)) {
-            throw new UserNotFoundException(userId);
+            throw new TeacherNotFoundException(userId);
         }
     }
 
