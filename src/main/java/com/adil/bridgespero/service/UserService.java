@@ -70,7 +70,6 @@ public class UserService {
 
     @Transactional
     public UserDto save(UserDto userDto) {
-        checkEmailAlreadyExists(userDto.getEmail());
         UserEntity userEntity = userMapper2.toEntity(userDto);
         return userMapper2.toDto(userRepository.save(userEntity));
     }
@@ -81,7 +80,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private void checkEmailAlreadyExists(String email) {
+    public void checkEmailAlreadyExists(String email) {
         if (isEmailExist(email)) throw new EmailAlreadyExistsException();
     }
 }
