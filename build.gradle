@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'az.brsp'
-version = '0.1'
+version = '0.1.1'
 description = 'bridge-spero'
 
 jar {
