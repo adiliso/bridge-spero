@@ -57,6 +57,7 @@ public class GroupService {
     FileStorageService fileStorageService;
     TeacherService teacherService;
     ZoomService zoomService;
+    CategoryService categoryService;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -211,6 +212,7 @@ public class GroupService {
     @Transactional
     public Long create(Long userId, GroupCreateRequest request) {
         teacherService.checkTeacherExists(userId);
+        categoryService.checkCategoryExists(request.categoryId());
 
         var group = groupMapper.toEntity(userId, request);
 
