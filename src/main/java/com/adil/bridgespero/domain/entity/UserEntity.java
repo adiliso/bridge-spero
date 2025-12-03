@@ -1,6 +1,7 @@
 package com.adil.bridgespero.domain.entity;
 
 import com.adil.bridgespero.domain.model.enums.Role;
+import com.adil.bridgespero.domain.model.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -14,12 +15,15 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
 import java.util.List;
@@ -30,9 +34,11 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @Table(name = "users")
+@EqualsAndHashCode(callSuper = true)
+@SQLRestriction("status != 'DELETED'")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SQLDelete(sql = "UPDATE users SET status = 'DELETED' WHERE id = ?")
 public class UserEntity extends BaseEntity {
 
     @Serial
@@ -57,6 +63,10 @@ public class UserEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "profile_picture_url")
     String profilePictureUrl;

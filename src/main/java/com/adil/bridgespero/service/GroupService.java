@@ -31,6 +31,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,6 +101,8 @@ public class GroupService {
         return getById(id).getSyllabus();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)" +
+                  " or @securityService.isStudentOfGroup(#id)")
     public List<RecordingResponse> getRecordings(Long id) {
         checkGroupExists(id);
         return recordingRepository.findAllByGroupId(id)
@@ -108,6 +111,8 @@ public class GroupService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)" +
+                  " or @securityService.isStudentOfGroup(#id)")
     public List<ResourceResponse> getResources(Long id) {
         checkGroupExists(id);
         return resourceRepository.findAllByGroupId(id)
@@ -117,6 +122,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)")
     public ScheduleResponse createSchedule(Long groupId, ScheduleRequest request) {
         checkGroupExists(groupId);
 
@@ -127,6 +133,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
     public void updateSchedule(Long id, ScheduleRequest request) {
         checkScheduleExistsById(id);
         LessonScheduleEntity entity = getSchedule(id);
@@ -145,6 +152,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)")
     public String createSyllabus(Long groupId, SyllabusCreateRequest request) {
 
         var group = getById(groupId);
@@ -158,6 +166,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
     public void deleteSyllabus(Long id) {
         var group = getById(id);
 
@@ -177,6 +186,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
     public void deleteSchedule(Long id) {
         checkScheduleExistsById(id);
 
@@ -184,6 +194,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
     public Long createRecording(Long id, RecordingCreateRequest request) {
         checkGroupExists(id);
 
@@ -210,6 +221,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('TEACHER')")
     public Long create(Long userId, GroupCreateRequest request) {
         teacherService.checkTeacherExists(userId);
         categoryService.checkCategoryExists(request.categoryId());
@@ -220,6 +232,7 @@ public class GroupService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
     public String startLesson(Long id, String email) {
         teacherService.checkTeacherExists(id);
         var group = getById(id);
@@ -233,6 +246,8 @@ public class GroupService {
         return zoomMeeting.getStartUrl();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)" +
+                  " or @securityService.isStudentOfGroup(#id)")
     public String joinLesson(Long id) {
         var group = getById(id);
         return group.getJoinUrl();

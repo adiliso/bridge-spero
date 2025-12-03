@@ -6,6 +6,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.TeacherService;
 import jakarta.validation.constraints.Min;
@@ -51,8 +52,8 @@ public class TeacherController {
     @GetMapping("/groups")
     public ResponseEntity<List<GroupTeacherDashboardResponse>> getGroups(
             @AuthenticationPrincipal CustomUserPrincipal user,
-            @RequestParam int parameter) {
-        return ResponseEntity.ok(teacherService.getGroups(user.getId(), parameter));
+            @RequestParam GroupStatus status) {
+        return ResponseEntity.ok(teacherService.getGroups(user.getId(), status));
     }
 
     @GetMapping("/schedule")

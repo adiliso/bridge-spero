@@ -24,6 +24,10 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
 
     Optional<GroupEntity> findByMeetingId(Long currentMeetingId);
 
+    boolean existsByIdAndTeacher_Id(Long groupId, Long teacherId);
+
+    boolean existsByIdAndUsers_Id(Long groupId, Long userId);
+
     @Query("""
                 SELECT g
                 FROM GroupEntity g

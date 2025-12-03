@@ -6,6 +6,8 @@ import com.adil.bridgespero.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -58,6 +60,16 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        String hierarchy =
+                """
+                        ROLE_SUPER_ADMIN > ROLE_ADMIN\s
+                        ROLE_TEACHER > ROLE_USER""";
+
+        return RoleHierarchyImpl.fromHierarchy(hierarchy);
     }
 
     @Bean
