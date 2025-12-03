@@ -4,6 +4,10 @@ spring:
     storage:
       public-dir: ${STATIC_DIR:static/uploads}
       private-dir: ${PRIV_DIR:uploads}
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 10GB
   datasource:
     url: ${DATASOURCE_URL}
     replicaUrl: ${REPLICA_DATASOURCE_URL}

@@ -1,6 +1,5 @@
 package com.adil.bridgespero.service;
 
-import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
@@ -23,16 +22,14 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +56,7 @@ public class TeacherService {
                 responses.getTotalPages());
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     public TeacherDashboardResponse getDashboard(Long id) {
         return teacherMapper.toDashboardResponse(teacherRepository.findById(id)
                         .orElseThrow(() -> new UserNotFoundException(id)),
@@ -69,18 +67,15 @@ public class TeacherService {
                         .toList());
     }
 
-    public List<GroupTeacherDashboardResponse> getGroups(Long id, int parameter) {
-        List<GroupEntity> entities = switch (parameter) {
-            case 0 -> groupRepository.findAllByTeacherIdAndStatus(id, ACTIVE);
-            case 2 -> groupRepository.findAllByTeacherIdAndStatus(id, GroupStatus.COMPLETED);
-            default -> new ArrayList<>();
-        };
-        return entities
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<GroupTeacherDashboardResponse> getGroups(Long id, GroupStatus status) {
+        return groupRepository.findAllByTeacherIdAndStatus(id, status)
                 .stream()
                 .map(groupMapper::toGroupTeacherDashboardResponse)
                 .toList();
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     public ScheduleWeekResponse getSchedule(Long id) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate endOfWeek = startOfWeek.plusDays(7);

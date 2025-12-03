@@ -46,6 +46,7 @@ public class AuthenticationService {
 
     public void signupUser(UserSignupRequest signupRequest) {
         checkPasswordsMatch(signupRequest.getPassword(), signupRequest.getConfirmPassword());
+        userService.checkEmailAlreadyExists(signupRequest.getEmail());
         UserDto userDto = UserDto.builder()
                 .email(signupRequest.getEmail())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
@@ -61,12 +62,13 @@ public class AuthenticationService {
 
     public void signupTeacher(TeacherSignupRequest signupRequest) {
         checkPasswordsMatch(signupRequest.getPassword(), signupRequest.getConfirmPassword());
+        userService.checkEmailAlreadyExists(signupRequest.getEmail());
         TeacherDto teacherDto = TeacherDto.builder()
                 .email(signupRequest.getEmail())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .name(signupRequest.getName())
                 .surname(signupRequest.getSurname())
-                .role(Role.USER)
+                .role(Role.TEACHER)
                 .phone(signupRequest.getPhoneCode() + signupRequest.getPhoneNumber())
                 .subjects(signupRequest.getSubjects())
                 .enabled(true)

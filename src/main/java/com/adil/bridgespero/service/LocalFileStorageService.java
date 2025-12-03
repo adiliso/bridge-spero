@@ -44,7 +44,7 @@ public class LocalFileStorageService implements FileStorageService {
         final long MAX_SIZE = resourceType.getMaxSizeInMb() * 1024 * 1024;
 
         if (file.getSize() > MAX_SIZE) {
-            throw new IllegalArgumentException("File size exceeds limit of 5MB");
+            throw new IllegalArgumentException("File size exceeds limit of " + resourceType.getMaxSizeInMb() + " mb");
         }
 
         String root = resourceType.isPublic() ? publicUploadDir : privateUploadDir;

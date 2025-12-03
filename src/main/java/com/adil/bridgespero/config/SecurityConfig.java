@@ -6,7 +6,8 @@ import com.adil.bridgespero.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -40,11 +41,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/public/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/v1/zoom/oauth/callback"
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/v1/groups/top-rated",
+                                "/api/v1/teachers/top-rated",
+                                "/api/v1/health",
+                                "/api/v1/zoom/oauth/callback",
+                                "/public/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -55,6 +60,16 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        String hierarchy =
+                """
+                        ROLE_SUPER_ADMIN > ROLE_ADMIN\s
+                        ROLE_TEACHER > ROLE_USER""";
+
+        return RoleHierarchyImpl.fromHierarchy(hierarchy);
     }
 
     @Bean

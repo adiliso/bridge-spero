@@ -7,6 +7,7 @@ import com.adil.bridgespero.exception.CategoryNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,19 +20,25 @@ public class CategoryService {
     CategoryRepository categoryRepository;
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Long create(CategoryCreateRequest request) {
         Long id = request.parentId();
         var entity = CategoryEntity.builder()
                 .name(request.name())
-                .parent(id == null ? null : getParentById(id))
+                .parent(id == null ? null : getById(id))
                 .build();
         return categoryRepository.save(entity).getId();
     }
 
-    private CategoryEntity getParentById(Long id) {
+    public CategoryEntity getById(Long id) {
         return categoryRepository.findById(id).orElseThrow(
                 () -> new CategoryNotFoundException(id)
         );
     }
 
+    public void checkCategoryExists(Long id) {
+        if(!categoryRepository.existsById(id)) {
+            throw new CategoryNotFoundException(id);
+        }
+    }
 }
