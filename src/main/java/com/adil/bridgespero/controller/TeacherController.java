@@ -44,7 +44,7 @@ public class TeacherController {
         return ResponseEntity.ok(teacherService.getTopRated(pageNumber, pageSize));
     }
 
-    @GetMapping
+    @GetMapping("/dashboard")
     public ResponseEntity<TeacherDashboardResponse> getDashboard(@AuthenticationPrincipal CustomUserPrincipal user) {
         return ResponseEntity.ok(teacherService.getDashboard(user.getId()));
     }

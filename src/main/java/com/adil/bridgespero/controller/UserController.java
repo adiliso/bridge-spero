@@ -29,7 +29,7 @@ public class UserController {
         return ResponseEntity.ok(schedule);
     }
 
-    @GetMapping
+    @GetMapping("/dashboard")
     public ResponseEntity<UserDashboardResponse> getDashboard(@AuthenticationPrincipal CustomUserPrincipal user) {
         return ResponseEntity.ok(userService.getDashboard(user.getId()));
     }
