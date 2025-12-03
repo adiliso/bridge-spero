@@ -5,13 +5,14 @@ databaseChangeLog:
       changes:
         - sql:
             sql: |
-              INSERT INTO users (email, password, role, enabled, agreed_to_terms)
+              INSERT INTO users (email, password, role, enabled, agreed_to_terms, status)
               SELECT
                 '${superAdminEmail}',
                 '${superAdminPassword}',
                 'SUPER_ADMIN',
                 true,
-                true
+                true,
+                'ACTIVE'
               WHERE NOT EXISTS (
                 SELECT 1 FROM users WHERE email = '${superAdminEmail}'
               )

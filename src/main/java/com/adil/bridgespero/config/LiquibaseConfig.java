@@ -23,12 +23,16 @@ public class LiquibaseConfig {
     @Value("${spring.liquibase.change-log}")
     private String changeLog;
 
+    @Value("${spring.liquibase.drop-first}")
+    private boolean isDropFirst;
+
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
 
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(changeLog);
+        liquibase.setDropFirst(isDropFirst);
 
         Map<String, String> params;
         params = new HashMap<>();
