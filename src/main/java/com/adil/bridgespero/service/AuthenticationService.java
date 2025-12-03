@@ -68,7 +68,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .name(signupRequest.getName())
                 .surname(signupRequest.getSurname())
-                .role(Role.USER)
+                .role(Role.TEACHER)
                 .phone(signupRequest.getPhoneCode() + signupRequest.getPhoneNumber())
                 .subjects(signupRequest.getSubjects())
                 .enabled(true)

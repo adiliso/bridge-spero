@@ -12,9 +12,13 @@ import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.UserMapper;
 import com.adil.bridgespero.security.mapper.UserMapper2;
+import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,9 +79,20 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteById(Long id) {
         checkUserExists(id);
         userRepository.deleteById(id);
+    }
+
+    public Long getCurrentUserId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof CustomUserPrincipal) {
+            return ((CustomUserPrincipal) principal).getId();
+        }
+
+        throw new AccessDeniedException("Authenticated principal is not of the expected CustomUserDetails type.");
     }
 
     public void checkEmailAlreadyExists(String email) {
