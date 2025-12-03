@@ -22,6 +22,7 @@ spring:
         format_sql: ${JPA_FORMATSQL:false}
   liquibase:
     change-log: classpath:db/changelog-master.yaml
+    drop-first: ${IS_DROP_FIRST}
 zoom:
   client-id: ${ZOOM_CLIENT_ID}
   client-secret: ${ZOOM_CLIENT_SECRET}
