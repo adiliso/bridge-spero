@@ -64,13 +64,15 @@ public class SecurityConfig {
 
     @Bean
     public RoleHierarchy roleHierarchy() {
-        String hierarchy =
-                """
-                        ROLE_SUPER_ADMIN > ROLE_ADMIN\s
-                        ROLE_TEACHER > ROLE_USER""";
+        String hierarchy = """
+                ROLE_SUPER_ADMIN > ROLE_ADMIN
+                ROLE_ADMIN > ROLE_TEACHER
+                ROLE_TEACHER > ROLE_USER
+                """;
 
         return RoleHierarchyImpl.fromHierarchy(hierarchy);
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
