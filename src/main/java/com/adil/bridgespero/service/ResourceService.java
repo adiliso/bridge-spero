@@ -9,7 +9,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.core.io.Resource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +22,8 @@ public class ResourceService {
     FileStorageService fileStorageService;
     ResourceMapper resourceMapper;
 
-
+    @PreAuthorize("hasRole('ADMIN') or securityService.isTeacherOfResource(#id)" +
+                  " or securityService.isStudentOfResource(#id)")
     public ResourceWithMeta load(Long id) {
         var resourceEntity = getById(id);
 
@@ -32,6 +35,8 @@ public class ResourceService {
         );
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or securityService.isTeacherOfResource(#id)")
     public void deleteById(Long id) {
         var resourceEntity = getById(id);
 

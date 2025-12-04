@@ -11,4 +11,8 @@ import java.util.List;
 public interface ResourceRepository extends JpaRepository<ResourceEntity, Long> {
 
     List<ResourceEntity> findAllByGroupIdAndType(Long id, ResourceType type);
+
+    boolean existsByIdAndGroup_Teacher_Id(Long id, Long teacherId);
+
+    boolean existsByIdAndGroup_Users_Id(Long id, Long userId);
 }
