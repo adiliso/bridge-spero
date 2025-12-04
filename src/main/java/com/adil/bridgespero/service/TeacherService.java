@@ -1,5 +1,6 @@
 package com.adil.bridgespero.service;
 
+import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
@@ -8,6 +9,7 @@ import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
+import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
 import com.adil.bridgespero.domain.specification.TeacherSpecification;
@@ -25,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -42,6 +45,7 @@ public class TeacherService {
     TeacherMapper teacherMapper;
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
+    FileStorageService fileStorageService;
 
     public PageResponse<TeacherCardResponse> getTopRated(final int pageNumber, final int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("rating").descending());
@@ -115,5 +119,22 @@ public class TeacherService {
     public void save(TeacherDto teacherDto) {
         var entity = teacherMapper.toEntity(teacherDto);
         teacherRepository.save(entity);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('TEACHER')")
+    public String updateDemoVideo(MultipartFile demoVideo, Long userId) {
+        var entity = getById(userId);
+
+        fileStorageService.deleteFile(entity.getDemoVideoUrl());
+
+        String path = fileStorageService.saveFile(demoVideo, ResourceType.DEMO_VIDEO);
+        entity.setDemoVideoUrl(path);
+        teacherRepository.save(entity);
+        return path;
+    }
+
+    private TeacherDetailEntity getById(Long id) {
+        return teacherRepository.findById(id).orElseThrow(() -> new TeacherNotFoundException(id));
     }
 }

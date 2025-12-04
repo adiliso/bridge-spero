@@ -58,7 +58,7 @@ public class GroupService {
     TeacherService teacherService;
     ZoomService zoomService;
     CategoryService categoryService;
-    private final ResourceMapper resourceMapper;
+    ResourceMapper resourceMapper;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());

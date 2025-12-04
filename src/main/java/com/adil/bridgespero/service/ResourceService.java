@@ -22,8 +22,8 @@ public class ResourceService {
     FileStorageService fileStorageService;
     ResourceMapper resourceMapper;
 
-    @PreAuthorize("hasRole('ADMIN') or securityService.isTeacherOfResource(#id)" +
-                  " or securityService.isStudentOfResource(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfResource(#id)" +
+                  " or @securityService.isStudentOfResource(#id)")
     public ResourceWithMeta load(Long id) {
         var resourceEntity = getById(id);
 
@@ -36,7 +36,7 @@ public class ResourceService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or securityService.isTeacherOfResource(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfResource(#id)")
     public void deleteById(Long id) {
         var resourceEntity = getById(id);
 
