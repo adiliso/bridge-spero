@@ -33,7 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true,
-        exclude = {"lessonSchedules", "teacher", "category", "users", "recordings"})
+        exclude = {"lessonSchedules", "teacher", "category", "users", "resources"})
 @Table(name = "groups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
@@ -102,13 +102,6 @@ public class GroupEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     List<UserEntity> users = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "group",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    List<RecordingEntity> recordings = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "group",

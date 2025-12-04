@@ -2,8 +2,8 @@ spring:
   application:
     name: bridge-spero
     storage:
-      public-dir: ${STATIC_DIR:static/uploads}
-      private-dir: ${PRIV_DIR:uploads}
+      public-dir: ${STATIC_DIR:uploads/public}
+      private-dir: ${PRIV_DIR:uploads/private}
   servlet:
     multipart:
       max-file-size: 10GB
