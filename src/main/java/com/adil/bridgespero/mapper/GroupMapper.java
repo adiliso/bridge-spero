@@ -3,18 +3,13 @@ package com.adil.bridgespero.mapper;
 import com.adil.bridgespero.domain.entity.CategoryEntity;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
-import com.adil.bridgespero.domain.entity.RecordingEntity;
-import com.adil.bridgespero.domain.entity.ResourceEntity;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
-import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupScheduleCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupUserDashboardResponse;
-import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
-import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -37,7 +32,7 @@ public class GroupMapper {
                 entity.getId(),
                 entity.getTeacher().getId(),
                 entity.getImageUrl(),
-                entity.getCategory().toString(),
+                entity.getCategory().getName(),
                 entity.getLanguage().getValue(),
                 entity.getName(),
                 entity.getTeacher().getUser().getName(),
@@ -117,37 +112,6 @@ public class GroupMapper {
                 entity.getPrice(),
                 teacherMapper.toDetailedCardResponse(entity.getTeacher())
         );
-    }
-
-    public RecordingResponse toRecordingResponse(RecordingEntity entity) {
-        return new RecordingResponse(
-                entity.getFilePath(),
-                entity.getName()
-        );
-    }
-
-    public ResourceResponse toResourceResponse(ResourceEntity entity) {
-        return new ResourceResponse(
-                entity.getUuid().toString(),
-                entity.getName()
-        );
-    }
-
-    public RecordingEntity toRecordingEntity(Long groupId, String filePath, RecordingCreateRequest request) {
-        var date = LocalDate.now();
-        String name = request.name();
-        if (name == null || name.isEmpty()) {
-            name = date.format(GROUP_DATE_FORMATTER);
-        }
-
-        return RecordingEntity.builder()
-                .filePath(filePath)
-                .name(name)
-                .date(date)
-                .group(GroupEntity.builder()
-                        .id(groupId)
-                        .build())
-                .build();
     }
 
     public GroupEntity toEntity(Long userId, GroupCreateRequest request) {

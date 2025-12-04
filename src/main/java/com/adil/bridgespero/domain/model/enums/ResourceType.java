@@ -9,14 +9,16 @@ import java.util.List;
 @AllArgsConstructor
 public enum ResourceType {
 
-    SYLLABUS("/syllabuses", 10, true,
+    SYLLABUS("syllabuses", 10, true,
             List.of(".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png")),
 
-    RECORDING("/recordings", 10240, false,
+    RECORDING("recordings", 10240, false,
 
             List.of(".mp4")),
 
-    DEMO_VIDEO("/demo_videos", 500, true,
+    RESOURCES("resources", 3072, false, List.of()),
+
+    DEMO_VIDEO("demo_videos", 500, true,
             List.of(".mp4"));
 
     private final String folder;

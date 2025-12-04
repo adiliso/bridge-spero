@@ -2,20 +2,18 @@ package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
-import com.adil.bridgespero.domain.entity.RecordingEntity;
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
-import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
-import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
-import com.adil.bridgespero.domain.repository.RecordingRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.exception.GroupNotFoundException;
@@ -23,6 +21,7 @@ import com.adil.bridgespero.exception.GroupWithZoomIdNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
 import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
+import com.adil.bridgespero.mapper.ResourceMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.util.GroupSpecificationUtils;
 import lombok.AccessLevel;
@@ -39,6 +38,7 @@ import java.util.List;
 
 import static com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE;
 import static com.adil.bridgespero.domain.model.enums.ResourceType.RECORDING;
+import static com.adil.bridgespero.domain.model.enums.ResourceType.RESOURCES;
 import static com.adil.bridgespero.domain.model.enums.ResourceType.SYLLABUS;
 
 @Service
@@ -48,7 +48,6 @@ import static com.adil.bridgespero.domain.model.enums.ResourceType.SYLLABUS;
 public class GroupService {
 
     GroupRepository groupRepository;
-    RecordingRepository recordingRepository;
     ScheduleRepository scheduleRepository;
     ResourceRepository resourceRepository;
 
@@ -59,6 +58,7 @@ public class GroupService {
     TeacherService teacherService;
     ZoomService zoomService;
     CategoryService categoryService;
+    private final ResourceMapper resourceMapper;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -103,21 +103,11 @@ public class GroupService {
 
     @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)" +
                   " or @securityService.isStudentOfGroup(#id)")
-    public List<RecordingResponse> getRecordings(Long id) {
+    public List<ResourceResponse> getResources(Long id, ResourceType type) {
         checkGroupExists(id);
-        return recordingRepository.findAllByGroupId(id)
+        return resourceRepository.findAllByGroupIdAndType(id, type)
                 .stream()
-                .map(groupMapper::toRecordingResponse)
-                .toList();
-    }
-
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)" +
-                  " or @securityService.isStudentOfGroup(#id)")
-    public List<ResourceResponse> getResources(Long id) {
-        checkGroupExists(id);
-        return resourceRepository.findAllByGroupId(id)
-                .stream()
-                .map(groupMapper::toResourceResponse)
+                .map(resourceMapper::toResponse)
                 .toList();
     }
 
@@ -158,11 +148,11 @@ public class GroupService {
         var group = getById(groupId);
         checkSyllabusExists(group);
 
-        String fileName = fileStorageService.saveFile(request.file(), SYLLABUS);
+        String path = fileStorageService.saveFile(request.file(), SYLLABUS);
 
-        group.setSyllabus(fileName);
+        group.setSyllabus(path);
 
-        return fileName;
+        return path;
     }
 
     @Transactional
@@ -176,7 +166,7 @@ public class GroupService {
     }
 
     private void checkSyllabusExists(GroupEntity group) {
-        if (group.getSyllabus() != null) {
+        if (group.getSyllabus() != null && !group.getSyllabus().isEmpty()) {
             throw new SyllabusAlreadyExistsException(group.getId());
         }
     }
@@ -195,14 +185,14 @@ public class GroupService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
-    public Long createRecording(Long id, RecordingCreateRequest request) {
+    public Long createRecording(Long id, ResourceCreateRequest request) {
         checkGroupExists(id);
 
-        String filePath = fileStorageService.saveFile(request.file(), RECORDING);
+        String path = fileStorageService.saveFile(request.file(), RECORDING);
 
-        RecordingEntity entity = groupMapper.toRecordingEntity(id, filePath, request);
+        var entity = resourceMapper.toEntity(id, path, RECORDING, request);
 
-        recordingRepository.save(entity);
+        resourceRepository.save(entity);
         return entity.getId();
     }
 
@@ -267,5 +257,18 @@ public class GroupService {
     private GroupEntity getByZoomMeetingId(Long meetingId) {
         return groupRepository.findByMeetingId(meetingId)
                 .orElseThrow(() -> new GroupWithZoomIdNotFoundException(meetingId));
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
+    public Long createResource(Long id, ResourceCreateRequest request) {
+        checkGroupExists(id);
+
+        String path = fileStorageService.saveFile(request.file(), RESOURCES);
+
+        var entity = resourceMapper.toEntity(id, path, RESOURCES, request);
+
+        resourceRepository.save(entity);
+        return entity.getId();
     }
 }
