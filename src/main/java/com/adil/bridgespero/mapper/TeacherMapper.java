@@ -35,8 +35,7 @@ public class TeacherMapper {
                 entity.getUser().getName(),
                 entity.getUser().getSurname(),
                 entity.getRating(),
-                getActiveStudents(entity),
-                entity.getExperience().getDescription()
+                getActiveStudents(entity)
         );
     }
 
@@ -71,7 +70,6 @@ public class TeacherMapper {
         return TeacherDetailEntity.builder()
                 .id(dto.getId())
                 .user(user)
-                .experience(dto.getExperience())
                 .demoVideoUrl(dto.getDemoVideoUrl())
                 .rating(dto.getRating())
                 .ratingCount(dto.getRatingCount())

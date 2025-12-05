@@ -172,4 +172,10 @@ public class GroupController {
     public ResponseEntity<String> joinLesson(@PathVariable Long id) {
         return ResponseEntity.ok(groupService.joinLesson(id));
     }
+
+    @PostMapping("/{groupId}/students")
+    public ResponseEntity<Void> addStudentToGroup(@PathVariable Long groupId, @AuthenticationPrincipal CustomUserPrincipal user) {
+        groupService.addStudent(groupId, user.getId());
+        return ResponseEntity.ok().build();
+    }
 }

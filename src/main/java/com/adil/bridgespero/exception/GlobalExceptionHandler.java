@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.adil.bridgespero.domain.model.enums.ErrorCode.BAD_REQUEST;
+import static com.adil.bridgespero.domain.model.enums.ErrorCode.UNAUTHORIZED;
 
 @RestControllerAdvice
 @Slf4j
@@ -133,10 +134,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<GlobalErrorResponse> handleAuthException(AccessDeniedException ex) {
+        addErrorLog(HttpStatus.FORBIDDEN, ex.getMessage(), ex.getClass().getSimpleName());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(GlobalErrorResponse.builder()
+                        .errorCode(ErrorCode.FORBIDDEN)
+                        .errorMessage(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .requestId(UUID.randomUUID())
+                        .build());
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<GlobalErrorResponse> handleAuthException(AuthException ex) {
         addErrorLog(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex.getClass().getSimpleName());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(GlobalErrorResponse.builder()
-                        .errorCode(ErrorCode.UNAUTHORIZED)
+                        .errorCode(UNAUTHORIZED)
                         .errorMessage(ex.getMessage())
                         .timestamp(LocalDateTime.now())
                         .requestId(UUID.randomUUID())
