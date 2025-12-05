@@ -74,7 +74,6 @@ public class AuthenticationService {
                 .enabled(true)
                 .agreedToTerms(signupRequest.isAgreedToTerms())
                 .bio(signupRequest.getBio())
-                .experience(signupRequest.getExperience())
                 .demoVideoUrl(fileStorageService.saveFile(signupRequest.getDemoVideo(), ResourceType.DEMO_VIDEO))
                 .build();
         teacherService.save(teacherDto);

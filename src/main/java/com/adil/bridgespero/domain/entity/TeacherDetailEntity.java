@@ -1,12 +1,9 @@
 package com.adil.bridgespero.domain.entity;
 
-import com.adil.bridgespero.domain.model.enums.Experience;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -47,10 +44,6 @@ public class TeacherDetailEntity {
     @MapsId
     @JoinColumn(name = "user_id")
     UserEntity user;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    Experience experience;
 
     @Column(name = "demo_video_url", nullable = false)
     String demoVideoUrl;

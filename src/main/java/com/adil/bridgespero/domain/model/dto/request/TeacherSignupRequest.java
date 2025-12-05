@@ -1,6 +1,5 @@
 package com.adil.bridgespero.domain.model.dto.request;
 
-import com.adil.bridgespero.domain.model.enums.Experience;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -48,9 +47,6 @@ public class TeacherSignupRequest {
     @NotEmpty(message = "At least one subject must be selected")
     private Set<@NotBlank(message = "Subject cannot be empty") String> subjects;
 
-    @NotNull(message = "Experience selection is required")
-    private Experience experience;
-
     @Size(max = 1000, message = "Bio cannot exceed 1000 characters")
     private String bio;
 
@@ -71,7 +67,6 @@ public class TeacherSignupRequest {
                ", password='" + "******" + '\'' +
                ", confirmPassword='" + "******" + '\'' +
                ", subjects=" + subjects +
-               ", experience=" + experience +
                ", bio='" + bio + '\'' +
                ", agreedToTerms=" + agreedToTerms +
                '}';
