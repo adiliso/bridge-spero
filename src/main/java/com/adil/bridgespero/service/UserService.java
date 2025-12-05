@@ -98,4 +98,9 @@ public class UserService {
     public void checkEmailAlreadyExists(String email) {
         if (isEmailExist(email)) throw new EmailAlreadyExistsException();
     }
+
+    public UserDto getById(Long id) {
+        var entity = findById(id);
+        return userMapper2.toDto(entity);
+    }
 }
