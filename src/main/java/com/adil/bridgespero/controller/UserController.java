@@ -1,5 +1,6 @@
 package com.adil.bridgespero.controller;
 
+import com.adil.bridgespero.domain.model.dto.UserDto;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
@@ -22,6 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     UserService userService;
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getMe(@AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(userService.getById(user.getId()));
+    }
 
     @GetMapping("/schedule")
     public ResponseEntity<ScheduleWeekResponse> getSchedule(@AuthenticationPrincipal CustomUserPrincipal user) {
