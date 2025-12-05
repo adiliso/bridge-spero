@@ -53,12 +53,13 @@ public class GroupService {
 
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
+    ResourceMapper resourceMapper;
 
     FileStorageService fileStorageService;
+    UserService userService;
     TeacherService teacherService;
     ZoomService zoomService;
     CategoryService categoryService;
-    ResourceMapper resourceMapper;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -270,5 +271,16 @@ public class GroupService {
 
         resourceRepository.save(entity);
         return entity.getId();
+    }
+
+    @Transactional
+    public void addStudent(Long groupId, Long userId) {
+        checkGroupExists(groupId);
+        var group = groupRepository.getReferenceById(groupId);
+        userService.checkUserExists(userId);
+        var user = userService.findById(userId);
+
+        group.getUsers().add(user);
+        user.getGroups().add(group);
     }
 }

@@ -62,11 +62,11 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    private UserEntity findById(Long id) {
+    public UserEntity findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    private void checkUserExists(Long id) {
+    public void checkUserExists(Long id) {
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(id);
         }
