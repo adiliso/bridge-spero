@@ -52,6 +52,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/api/v1/groups/top-rated",
                                 "/api/v1/teachers/top-rated",
+                                "/api/v1/groups/search",
+                                "/api/v1/teachers/search",
                                 "/api/v1/health",
                                 "/api/v1/zoom/oauth/callback",
                                 "/public/**"
