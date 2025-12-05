@@ -2,6 +2,7 @@ package com.adil.bridgespero.config;
 
 import com.adil.bridgespero.common.TokenProvider;
 import com.adil.bridgespero.common.filter.JwtTokenFilter;
+import com.adil.bridgespero.security.handler.SecurityProblemHandler;
 import com.adil.bridgespero.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,12 +35,16 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
+    private final SecurityProblemHandler securityProblemHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(securityProblemHandler)
+                        .accessDeniedHandler(securityProblemHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/auth/**",
