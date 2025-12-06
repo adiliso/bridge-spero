@@ -12,12 +12,12 @@ import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
-import com.adil.bridgespero.domain.specification.TeacherSpecification;
 import com.adil.bridgespero.exception.TeacherNotFoundException;
 import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.TeacherMapper;
+import com.adil.bridgespero.util.SpecificationUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -97,7 +97,7 @@ public class TeacherService {
     public PageResponse<TeacherCardResponse> search(TeacherFilter filter, int pageNumber, int pageSize) {
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("rating").descending());
 
-        var responses = teacherRepository.findAll(TeacherSpecification.hasName(filter.name()), pageable)
+        var responses = teacherRepository.findAll(SpecificationUtils.getTeacherSpecification(filter), pageable)
                 .map(teacherMapper::toCardResponse);
 
         return new PageResponse<>(

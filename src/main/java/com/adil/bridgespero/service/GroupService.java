@@ -23,7 +23,7 @@ import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ResourceMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
-import com.adil.bridgespero.util.GroupSpecificationUtils;
+import com.adil.bridgespero.util.SpecificationUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -199,7 +199,7 @@ public class GroupService {
 
     public PageResponse<GroupCardResponse> search(GroupFilter filter, int pageNumber, int pageSize) {
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating"));
-        var responses = groupRepository.findAll(GroupSpecificationUtils.getSpecification(filter), pageable)
+        var responses = groupRepository.findAll(SpecificationUtils.getGroupSpecification(filter), pageable)
                 .map(groupMapper::toCardResponse);
 
         return new PageResponse<>(
