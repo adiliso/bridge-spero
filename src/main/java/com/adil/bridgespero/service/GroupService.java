@@ -217,9 +217,12 @@ public class GroupService {
         teacherService.checkTeacherExists(userId);
         categoryService.checkCategoryExists(request.categoryId());
 
-        var group = groupMapper.toEntity(userId, request);
+        String imageUrl = fileStorageService.saveFile(request.image(), ResourceType.IMAGE);
 
-        return groupRepository.save(group).getId();
+        var group = groupMapper.toEntity(userId, imageUrl, request);
+        var savedGroup = groupRepository.save(group);
+
+        return savedGroup.getId();
     }
 
     @Transactional

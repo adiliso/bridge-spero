@@ -41,6 +41,7 @@ public class GroupEntity extends BaseEntity {
     @Column(nullable = false)
     String name;
 
+    @Column(name = "image_url")
     String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -66,6 +67,7 @@ public class GroupEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     Language language;
 
+    @Column(columnDefinition = "TEXT")
     String description;
 
     String syllabus;

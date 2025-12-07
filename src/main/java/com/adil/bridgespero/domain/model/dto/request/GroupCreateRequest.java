@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.springframework.web.multipart.MultipartFile;
 
 public record GroupCreateRequest(
 
@@ -33,6 +34,10 @@ public record GroupCreateRequest(
 
         @NotNull(message = "Price must be provided")
         @Positive(message = "Price must be positive")
-        Double price
+        Double price,
+
+        String description,
+
+        MultipartFile image
 ) {
 }
