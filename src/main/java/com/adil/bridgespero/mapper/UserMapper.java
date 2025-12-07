@@ -56,6 +56,7 @@ public class UserMapper {
 
     public UserCardResponse toCardResponse(UserEntity entity){
         return new UserCardResponse(
+                entity.getId(),
                 entity.getName(),
                 entity.getSurname()
         );

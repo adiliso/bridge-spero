@@ -284,7 +284,7 @@ public class GroupService {
     }
 
     @Transactional
-    public void addStudent(Long groupId, Long userId) {
+    public void addMember(Long groupId, Long userId) {
         checkGroupExists(groupId);
         var group = getById(groupId);
         checkGroupIsFull(groupId, group.getMaxStudents());
@@ -312,5 +312,14 @@ public class GroupService {
                 userCards.size(),
                 userCards
         );
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id) or" +
+                  " @securityService.isCurrentUser(#studentId)")
+    public void deleteMembership(Long id, Long studentId) {
+
+        userService.checkUserExists(studentId);
+        groupRepository.deleteMembership(id, studentId);
     }
 }

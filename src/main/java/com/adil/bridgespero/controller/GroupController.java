@@ -175,14 +175,21 @@ public class GroupController {
         return ResponseEntity.ok(groupService.joinLesson(id));
     }
 
-    @PostMapping("/{groupId}/students")
-    public ResponseEntity<Void> addStudentToGroup(@PathVariable Long groupId, @AuthenticationPrincipal CustomUserPrincipal user) {
-        groupService.addStudent(groupId, user.getId());
-        return ResponseEntity.ok().build();
+    @PostMapping("/{id}/members")
+    public ResponseEntity<Void> addMember(@PathVariable Long id, @AuthenticationPrincipal CustomUserPrincipal user) {
+        groupService.addMember(id, user.getId());
+        return ResponseEntity.status(CREATED).build();
     }
 
     @GetMapping("/{id}/members")
     public ResponseEntity<GroupMembersResponse> getAllMembers(@PathVariable Long id) {
         return ResponseEntity.ok(groupService.getAllMembers(id));
+    }
+
+
+    @DeleteMapping("/{id}/members/{studentId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable Long id, @PathVariable Long studentId) {
+        groupService.deleteMembership(id, studentId);
+        return ResponseEntity.noContent().build();
     }
 }
