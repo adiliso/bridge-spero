@@ -9,6 +9,7 @@ import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
@@ -16,6 +17,8 @@ import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
+import com.adil.bridgespero.domain.repository.UserRepository;
+import com.adil.bridgespero.exception.GroupFullException;
 import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.exception.GroupWithZoomIdNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
@@ -23,6 +26,7 @@ import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ResourceMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
+import com.adil.bridgespero.mapper.UserMapper;
 import com.adil.bridgespero.util.SpecificationUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -54,12 +58,14 @@ public class GroupService {
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
     ResourceMapper resourceMapper;
+    UserMapper userMapper;
 
     FileStorageService fileStorageService;
     UserService userService;
     TeacherService teacherService;
     ZoomService zoomService;
     CategoryService categoryService;
+    UserRepository userRepository;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -79,7 +85,7 @@ public class GroupService {
         return groupMapper.toGroupDetailsResponse(getById(groupId));
     }
 
-    private void checkGroupExists(Long groupId) {
+    public void checkGroupExists(Long groupId) {
         if (!groupRepository.existsById(groupId)) {
             throw new GroupNotFoundException(groupId);
         }
@@ -217,9 +223,13 @@ public class GroupService {
         teacherService.checkTeacherExists(userId);
         categoryService.checkCategoryExists(request.categoryId());
 
-        var group = groupMapper.toEntity(userId, request);
+        String imageUrl = fileStorageService.saveFile(request.image(), ResourceType.IMAGE);
+        String syllabus = fileStorageService.saveFile(request.syllabus(), ResourceType.SYLLABUS);
 
-        return groupRepository.save(group).getId();
+        var group = groupMapper.toEntity(userId, imageUrl, syllabus, request);
+        var savedGroup = groupRepository.save(group);
+
+        return savedGroup.getId();
     }
 
     @Transactional
@@ -274,13 +284,42 @@ public class GroupService {
     }
 
     @Transactional
-    public void addStudent(Long groupId, Long userId) {
+    public void addMember(Long groupId, Long userId) {
         checkGroupExists(groupId);
-        var group = groupRepository.getReferenceById(groupId);
+        var group = getById(groupId);
+        checkGroupIsFull(groupId, group.getMaxStudents());
+
         userService.checkUserExists(userId);
         var user = userService.findById(userId);
 
         group.getUsers().add(user);
         user.getGroups().add(group);
+    }
+
+    private void checkGroupIsFull(Long groupId, int maxStudents) {
+        if (groupRepository.countUsersInGroup(groupId) >= maxStudents)
+            throw new GroupFullException(groupId);
+    }
+
+    public GroupMembersResponse getAllMembers(Long id) {
+
+        checkGroupExists(id);
+        var userCards = userRepository.findAllByGroups_Id(id)
+                .stream()
+                .map(userMapper::toCardResponse).toList();
+
+        return new GroupMembersResponse(
+                userCards.size(),
+                userCards
+        );
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id) or" +
+                  " @securityService.isCurrentUser(#studentId)")
+    public void deleteMembership(Long id, Long studentId) {
+
+        userService.checkUserExists(studentId);
+        groupRepository.deleteMembership(id, studentId);
     }
 }

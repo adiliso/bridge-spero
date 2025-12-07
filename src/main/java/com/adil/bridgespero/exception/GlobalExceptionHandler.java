@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.adil.bridgespero.domain.model.enums.ErrorCode.BAD_REQUEST;
+import static com.adil.bridgespero.domain.model.enums.ErrorCode.INTERNAL_ERROR;
 import static com.adil.bridgespero.domain.model.enums.ErrorCode.UNAUTHORIZED;
 
 @RestControllerAdvice
@@ -155,6 +156,19 @@ public class GlobalExceptionHandler {
                         .requestId(UUID.randomUUID())
                         .build());
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<GlobalErrorResponse> handleException(Exception ex) {
+        addErrorLog(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex.getClass().getSimpleName());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(GlobalErrorResponse.builder()
+                        .errorCode(INTERNAL_ERROR)
+                        .errorMessage(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .requestId(UUID.randomUUID())
+                        .build());
+    }
+
 
     protected void addErrorLog(HttpStatus httpStatus, String errorMessage, String exceptionType) {
         int statusCode = (httpStatus != null) ? httpStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR.value();

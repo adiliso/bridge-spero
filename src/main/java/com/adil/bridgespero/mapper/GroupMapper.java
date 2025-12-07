@@ -49,7 +49,6 @@ public class GroupMapper {
                 .startTime(getStartTime(entity))
                 .numberOfStudents(entity.getUsers().size())
                 .maxStudents(entity.getMaxStudents())
-                .minStudents(entity.getMinStudents())
                 .startUrl(entity.getStartUrl())
                 .isMeetingActive(entity.isMeetingActive())
                 .build();
@@ -114,7 +113,7 @@ public class GroupMapper {
         );
     }
 
-    public GroupEntity toEntity(Long userId, GroupCreateRequest request) {
+    public GroupEntity toEntity(Long userId, String imageUrl, String syllabus, GroupCreateRequest request) {
         var teacher = TeacherDetailEntity.builder()
                 .id(userId)
                 .build();
@@ -136,8 +135,10 @@ public class GroupMapper {
                 .endDate(endDate)
                 .status(GroupStatus.ACTIVE)
                 .maxStudents(request.maxStudents())
-                .minStudents(request.minStudents())
                 .price(request.price())
+                .description(request.description())
+                .imageUrl(imageUrl)
+                .syllabus(syllabus)
                 .build();
     }
 }

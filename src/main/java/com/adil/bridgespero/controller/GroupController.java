@@ -7,6 +7,7 @@ import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
@@ -25,6 +26,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -155,10 +157,10 @@ public class GroupController {
         return ResponseEntity.ok(groupService.search(filter, pageNumber, pageSize));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> create(
             @AuthenticationPrincipal CustomUserPrincipal user,
-            @Valid @RequestBody GroupCreateRequest request
+            @Valid @ModelAttribute GroupCreateRequest request
     ) {
         return ResponseEntity.status(CREATED).body(groupService.create(user.getId(), request));
     }
@@ -173,9 +175,21 @@ public class GroupController {
         return ResponseEntity.ok(groupService.joinLesson(id));
     }
 
-    @PostMapping("/{groupId}/students")
-    public ResponseEntity<Void> addStudentToGroup(@PathVariable Long groupId, @AuthenticationPrincipal CustomUserPrincipal user) {
-        groupService.addStudent(groupId, user.getId());
-        return ResponseEntity.ok().build();
+    @PostMapping("/{id}/members")
+    public ResponseEntity<Void> addMember(@PathVariable Long id, @AuthenticationPrincipal CustomUserPrincipal user) {
+        groupService.addMember(id, user.getId());
+        return ResponseEntity.status(CREATED).build();
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<GroupMembersResponse> getAllMembers(@PathVariable Long id) {
+        return ResponseEntity.ok(groupService.getAllMembers(id));
+    }
+
+
+    @DeleteMapping("/{id}/members/{studentId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable Long id, @PathVariable Long studentId) {
+        groupService.deleteMembership(id, studentId);
+        return ResponseEntity.noContent().build();
     }
 }

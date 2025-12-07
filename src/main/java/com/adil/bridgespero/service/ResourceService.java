@@ -48,4 +48,10 @@ public class ResourceService {
         return resourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
     }
+
+    public void checkResourceExists(Long id) {
+        if (!resourceRepository.existsById(id)) {
+            throw new ResourceNotFoundException(id);
+        }
+    }
 }

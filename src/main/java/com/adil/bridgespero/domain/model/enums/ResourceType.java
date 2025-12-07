@@ -9,6 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 public enum ResourceType {
 
+    IMAGE("images", 5, true, List.of(".jpg", ".png", ".jpeg")),
+
     SYLLABUS("syllabuses", 10, true,
             List.of(".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png")),
 
