@@ -60,7 +60,11 @@ public class SecurityConfig {
                                 "/api/v1/zoom/oauth/callback",
                                 "/public/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/categories",
+                                "/api/v1/groups/*/schedule",
+                                "/api/v1/groups/*/syllabus"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
