@@ -95,8 +95,5 @@ public class ScheduleMapper {
         if (requestEntity.getEndTime() != null) {
             entity.setEndTime(requestEntity.getEndTime());
         }
-        if (requestEntity.getGroup() != null) {
-            entity.setGroup(requestEntity.getGroup());
-        }
     }
 }

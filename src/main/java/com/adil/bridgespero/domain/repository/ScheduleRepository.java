@@ -10,4 +10,6 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<LessonScheduleEntity, Long> {
 
     List<LessonScheduleEntity> findAllByGroupId(Long groupId);
+
+    boolean existsByIdAndGroup_Teacher_Id(Long id, Long currentUserId);
 }
