@@ -7,6 +7,7 @@ import com.adil.bridgespero.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -59,6 +60,7 @@ public class SecurityConfig {
                                 "/api/v1/zoom/oauth/callback",
                                 "/public/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -80,7 +82,6 @@ public class SecurityConfig {
 
         return RoleHierarchyImpl.fromHierarchy(hierarchy);
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
