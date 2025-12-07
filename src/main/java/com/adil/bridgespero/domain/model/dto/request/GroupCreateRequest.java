@@ -38,6 +38,8 @@ public record GroupCreateRequest(
 
         String description,
 
-        MultipartFile image
+        MultipartFile image,
+
+        MultipartFile syllabus
 ) {
 }

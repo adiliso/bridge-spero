@@ -114,7 +114,7 @@ public class GroupMapper {
         );
     }
 
-    public GroupEntity toEntity(Long userId, String imageUrl, GroupCreateRequest request) {
+    public GroupEntity toEntity(Long userId, String imageUrl, String syllabus, GroupCreateRequest request) {
         var teacher = TeacherDetailEntity.builder()
                 .id(userId)
                 .build();
@@ -140,6 +140,7 @@ public class GroupMapper {
                 .price(request.price())
                 .description(request.description())
                 .imageUrl(imageUrl)
+                .syllabus(syllabus)
                 .build();
     }
 }

@@ -218,8 +218,9 @@ public class GroupService {
         categoryService.checkCategoryExists(request.categoryId());
 
         String imageUrl = fileStorageService.saveFile(request.image(), ResourceType.IMAGE);
+        String syllabus = fileStorageService.saveFile(request.syllabus(), ResourceType.SYLLABUS);
 
-        var group = groupMapper.toEntity(userId, imageUrl, request);
+        var group = groupMapper.toEntity(userId, imageUrl, syllabus, request);
         var savedGroup = groupRepository.save(group);
 
         return savedGroup.getId();
