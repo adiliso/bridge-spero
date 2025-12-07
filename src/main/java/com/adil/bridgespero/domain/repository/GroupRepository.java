@@ -28,6 +28,9 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
 
     boolean existsByIdAndUsers_Id(Long groupId, Long userId);
 
+    @Query("SELECT COUNT(u) FROM GroupEntity g JOIN g.users u WHERE g.id = :groupId")
+    int countUsersInGroup(Long groupId);
+
     @Query("""
                 SELECT g
                 FROM GroupEntity g

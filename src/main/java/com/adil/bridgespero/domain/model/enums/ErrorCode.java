@@ -15,6 +15,8 @@ public enum ErrorCode {
 
     TEACHER_ALREADY_EXISTS(HttpStatus.CONFLICT),
     SYLLABUS_ALREADY_EXISTS(HttpStatus.CONFLICT),
+    GROUP_IS_FULL(HttpStatus.CONFLICT),
+
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST),
     ALREADY_EXISTS(HttpStatus.BAD_REQUEST),

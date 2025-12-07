@@ -16,6 +16,7 @@ import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
+import com.adil.bridgespero.exception.GroupFullException;
 import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.exception.GroupWithZoomIdNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
@@ -280,11 +281,18 @@ public class GroupService {
     @Transactional
     public void addStudent(Long groupId, Long userId) {
         checkGroupExists(groupId);
-        var group = groupRepository.getReferenceById(groupId);
+        var group = getById(groupId);
+        checkGroupIsFull(groupId, group.getMaxStudents());
+
         userService.checkUserExists(userId);
         var user = userService.findById(userId);
 
         group.getUsers().add(user);
         user.getGroups().add(group);
+    }
+
+    private void checkGroupIsFull(Long groupId, int maxStudents) {
+        if (groupRepository.countUsersInGroup(groupId) >= maxStudents)
+            throw new GroupFullException(groupId);
     }
 }
