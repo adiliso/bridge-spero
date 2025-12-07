@@ -57,9 +57,6 @@ public class GroupEntity extends BaseEntity {
     @Column(name = "max_students", nullable = false)
     Integer maxStudents;
 
-    @Column(name = "min_students")
-    Integer minStudents;
-
     @Column(nullable = false)
     Double price;
 

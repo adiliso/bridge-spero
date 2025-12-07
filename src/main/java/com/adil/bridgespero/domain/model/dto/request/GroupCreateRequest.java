@@ -26,9 +26,6 @@ public record GroupCreateRequest(
         @Positive(message = "Duration must be positive")
         Integer durationInMonths,
 
-        @Min(value = 1, message = "Minimum students must be at least 1")
-        Integer minStudents,
-
         @Min(value = 1, message = "Maximum students must be at least 1")
         Integer maxStudents,
 
