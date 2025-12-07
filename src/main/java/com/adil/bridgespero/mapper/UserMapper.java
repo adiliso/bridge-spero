@@ -4,6 +4,7 @@ import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
 import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.response.AdminResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupUserDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import org.springframework.stereotype.Component;
@@ -51,5 +52,12 @@ public class UserMapper {
     private double calculateDurationInHours(LessonScheduleEntity ls) {
         long minutes = Duration.between(ls.getStartTime(), ls.getEndTime()).toMinutes();
         return (double) minutes / 60;
+    }
+
+    public UserCardResponse toCardResponse(UserEntity entity){
+        return new UserCardResponse(
+                entity.getName(),
+                entity.getSurname()
+        );
     }
 }

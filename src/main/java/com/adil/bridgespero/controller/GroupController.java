@@ -7,6 +7,7 @@ import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
@@ -178,5 +179,10 @@ public class GroupController {
     public ResponseEntity<Void> addStudentToGroup(@PathVariable Long groupId, @AuthenticationPrincipal CustomUserPrincipal user) {
         groupService.addStudent(groupId, user.getId());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<GroupMembersResponse> getAllMembers(@PathVariable Long id) {
+        return ResponseEntity.ok(groupService.getAllMembers(id));
     }
 }
