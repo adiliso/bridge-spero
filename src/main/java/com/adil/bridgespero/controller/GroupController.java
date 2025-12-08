@@ -1,10 +1,7 @@
 package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
-import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
-import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;
-import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
-import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.*;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
@@ -24,16 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -63,6 +51,19 @@ public class GroupController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(groupService.getDetailsById(id));
+    }
+
+    @PatchMapping(
+            value = "/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<Void> edit(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserPrincipal user,
+            @Valid @ModelAttribute GroupEditRequest request
+    ) {
+        groupService.edit(id, request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}/schedule")
@@ -185,7 +186,6 @@ public class GroupController {
     public ResponseEntity<GroupMembersResponse> getAllMembers(@PathVariable Long id) {
         return ResponseEntity.ok(groupService.getAllMembers(id));
     }
-
 
     @DeleteMapping("/{id}/members/{studentId}")
     public ResponseEntity<Void> deleteMember(@PathVariable Long id, @PathVariable Long studentId) {

@@ -3,10 +3,7 @@ package com.adil.bridgespero.service;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.ScheduleEntity;
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
-import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
-import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;
-import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
-import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.*;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
@@ -228,6 +225,26 @@ public class GroupService {
         var savedGroup = groupRepository.save(group);
 
         return savedGroup.getId();
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
+    public void edit(Long id, GroupEditRequest request) {
+        categoryService.checkCategoryExists(request.categoryId());
+
+        var group = getById(id);
+
+        if (request.image() != null && !request.image().isEmpty()) {
+            String newImageUrl = fileStorageService.saveFile(request.image(), ResourceType.IMAGE);
+            group.setImageUrl(newImageUrl);
+        }
+
+        group.setName(request.name());
+        group.setLanguage(request.language());
+        group.setStartDate(request.startDate());
+        group.setMaxStudents(request.maxStudents());
+        group.setPrice(request.price());
+        group.setDescription(request.description());
     }
 
     @Transactional
