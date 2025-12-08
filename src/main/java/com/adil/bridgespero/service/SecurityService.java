@@ -45,7 +45,7 @@ public class SecurityService {
         return resourceRepository.existsByIdAndGroup_Users_Id(id, getCurrentUserId());
     }
 
-    private Long getCurrentUserId() {
+    public Long getCurrentUserId() {
         return userService.getCurrentUserId();
     }
 

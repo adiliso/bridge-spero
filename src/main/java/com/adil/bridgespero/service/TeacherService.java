@@ -1,6 +1,7 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
+import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
@@ -71,8 +72,8 @@ public class TeacherService {
     }
 
     @PreAuthorize("hasRole('TEACHER')")
-    public List<GroupCardResponse> getGroups(Long id, GroupStatus status) {
-        return groupRepository.findAllByTeacherIdAndStatus(id, status)
+    public List<GroupCardResponse> getGroups(Long id, MyGroupsFilter filter) {
+        return groupRepository.findAll(SpecificationUtils.getTeacherGroupsSpecification(id, filter))
                 .stream()
                 .map(groupMapper::toCardResponse)
                 .toList();
