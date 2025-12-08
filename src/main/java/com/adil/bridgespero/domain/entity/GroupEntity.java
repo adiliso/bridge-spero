@@ -72,7 +72,7 @@ public class GroupEntity extends BaseEntity {
     @Column(nullable = false)
     GroupStatus status;
 
-    Long meetingId;
+    String meetingId;
 
     @Column(length = 2083)
     String startUrl;

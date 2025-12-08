@@ -227,7 +227,6 @@ public class GroupService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
     public String startLesson(Long id, String email) {
-        teacherService.checkTeacherExists(id);
         var group = getById(id);
 
         var zoomMeeting = zoomService.createMeeting(email, group);
@@ -248,7 +247,7 @@ public class GroupService {
 
 
     @Transactional
-    public void endLessonByZoomMeetingId(Long meetingId) {
+    public void endLessonByZoomMeetingId(String  meetingId) {
         var group = getByZoomMeetingId(meetingId);
 
         group.setMeetingId(null);
@@ -257,7 +256,7 @@ public class GroupService {
         group.setMeetingActive(false);
     }
 
-    private GroupEntity getByZoomMeetingId(Long meetingId) {
+    private GroupEntity getByZoomMeetingId(String meetingId) {
         return groupRepository.findByMeetingId(meetingId)
                 .orElseThrow(() -> new GroupWithZoomIdNotFoundException(meetingId));
     }
