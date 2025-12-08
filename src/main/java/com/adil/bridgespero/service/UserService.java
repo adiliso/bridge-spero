@@ -4,11 +4,11 @@ import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.UserDto;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
-import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.model.enums.GroupStatus;
+import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.UserRepository;
 import com.adil.bridgespero.exception.EmailAlreadyExistsException;
 import com.adil.bridgespero.exception.UserNotFoundException;
-import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.UserMapper;
 import com.adil.bridgespero.security.mapper.UserMapper2;
@@ -33,29 +33,32 @@ import java.time.temporal.TemporalAdjusters;
 public class UserService {
 
     UserRepository userRepository;
-    GroupRepository groupRepository;
     UserMapper userMapper;
     UserMapper2 userMapper2;
-    GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
+    ScheduleRepository scheduleRepository;
 
     public ScheduleWeekResponse getSchedule(Long id) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate endOfWeek = startOfWeek.plusDays(7);
 
-        var weekGroups = groupRepository.findAllByUserIdAndSchedule(id, startOfWeek, endOfWeek);
-        return scheduleMapper.toScheduleWeekResponse(startOfWeek, endOfWeek, weekGroups);
+        var schedules = scheduleRepository.findAllByGroup_Users_IdAndGroup_Status(id, GroupStatus.ACTIVE);
+        return scheduleMapper.toScheduleWeekResponse(startOfWeek, endOfWeek, schedules);
     }
 
     public UserDashboardResponse getDashboard(Long id) {
         checkUserExists(id);
 
-        var groups = groupRepository.findAllByUserIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now()));
+        var schedules = scheduleRepository.findAllByDayOfWeekAndGroup_Users_IdAndGroup_Status(
+                DayOfWeek.from(LocalDate.now()),
+                id, GroupStatus.ACTIVE);
 
-        return userMapper.toDashboardResponse(findById(id), groups
-                .stream()
-                .map(groupMapper::toGroupUserDashboardResponse)
-                .toList());
+        return userMapper.toDashboardResponse(
+                findById(id),
+                schedules.stream()
+                        .map(scheduleMapper::toScheduleUserEventResponse)
+                        .toList()
+        );
     }
 
     public boolean isEmailExist(final String email) {

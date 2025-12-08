@@ -1,7 +1,7 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
-import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.entity.ScheduleEntity;
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;
@@ -108,11 +108,10 @@ public class GroupService {
         return getById(id).getSyllabus();
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)" +
-                  " or @securityService.isStudentOfGroup(#id)")
-    public List<ResourceResponse> getResources(Long id, ResourceType type) {
-        checkGroupExists(id);
-        return resourceRepository.findAllByGroupIdAndType(id, type)
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfResource(#groupId)" +
+                  " or @securityService.isStudentOfResource(#groupId)")
+    public List<ResourceResponse> getResources(Long groupId, ResourceType type) {
+        return resourceRepository.findAllByGroupIdAndType(groupId, type)
                 .stream()
                 .map(resourceMapper::toResponse)
                 .toList();
@@ -125,24 +124,23 @@ public class GroupService {
 
         var entity = scheduleMapper.toEntity(groupId, request);
 
-        LessonScheduleEntity saved = scheduleRepository.save(entity);
+        ScheduleEntity saved = scheduleRepository.save(entity);
         return scheduleMapper.toScheduleResponse(saved);
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfSchedule(#id)")
     public void updateSchedule(Long id, ScheduleRequest request) {
-        checkScheduleExistsById(id);
-        LessonScheduleEntity entity = getSchedule(id);
+        ScheduleEntity entity = getSchedule(id);
 
         scheduleMapper.updateSchedule(id, entity, request);
     }
 
-    private LessonScheduleEntity getSchedule(Long scheduleId) {
+    private ScheduleEntity getSchedule(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).orElseThrow(() -> new ScheduleNotFoundException(scheduleId));
     }
 
-    private void checkScheduleExistsById(Long id) {
+    public void checkScheduleExistsById(Long id) {
         if (!scheduleRepository.existsById(id)) {
             throw new ScheduleNotFoundException(id);
         }
@@ -163,11 +161,11 @@ public class GroupService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
-    public void deleteSyllabus(Long id) {
-        var group = getById(id);
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)")
+    public void deleteSyllabus(Long groupId) {
+        var group = getById(groupId);
 
-        deleteFile(group.getSyllabus());
+        fileStorageService.deleteFile(group.getSyllabus());
 
         group.setSyllabus(null);
     }
@@ -178,12 +176,8 @@ public class GroupService {
         }
     }
 
-    private void deleteFile(String filePath) {
-        fileStorageService.deleteFile(filePath);
-    }
-
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfSchedule(#id)")
     public void deleteSchedule(Long id) {
         checkScheduleExistsById(id);
 
@@ -191,13 +185,11 @@ public class GroupService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
-    public Long createRecording(Long id, ResourceCreateRequest request) {
-        checkGroupExists(id);
-
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)")
+    public Long createRecording(Long groupId, ResourceCreateRequest request) {
         String path = fileStorageService.saveFile(request.file(), RECORDING);
 
-        var entity = resourceMapper.toEntity(id, path, RECORDING, request);
+        var entity = resourceMapper.toEntity(groupId, path, RECORDING, request);
 
         resourceRepository.save(entity);
         return entity.getId();

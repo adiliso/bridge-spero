@@ -3,7 +3,7 @@ package com.adil.bridgespero.service;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
@@ -11,9 +11,9 @@ import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
 import com.adil.bridgespero.exception.TeacherNotFoundException;
-import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.TeacherMapper;
@@ -42,6 +42,7 @@ public class TeacherService {
 
     TeacherRepository teacherRepository;
     GroupRepository groupRepository;
+    ScheduleRepository scheduleRepository;
     TeacherMapper teacherMapper;
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
@@ -62,20 +63,18 @@ public class TeacherService {
 
     @PreAuthorize("hasRole('TEACHER')")
     public TeacherDashboardResponse getDashboard(Long id) {
-        return teacherMapper.toDashboardResponse(teacherRepository.findById(id)
-                        .orElseThrow(() -> new UserNotFoundException(id)),
-                groupRepository.findAllByTeacherIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now()))
+        return teacherMapper.toDashboardResponse(
+                getById(id), scheduleRepository.findAllByDayOfWeekAndGroup_Teacher_IdAndGroup_Status(DayOfWeek.from(LocalDate.now()), id, GroupStatus.ACTIVE)
                         .stream()
-                        .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
-                        .map(groupMapper::toGroupTeacherDashboardResponse)
+                        .map(scheduleMapper::toScheduleTeacherEventResponse)
                         .toList());
     }
 
     @PreAuthorize("hasRole('TEACHER')")
-    public List<GroupTeacherDashboardResponse> getGroups(Long id, GroupStatus status) {
+    public List<GroupCardResponse> getGroups(Long id, GroupStatus status) {
         return groupRepository.findAllByTeacherIdAndStatus(id, status)
                 .stream()
-                .map(groupMapper::toGroupTeacherDashboardResponse)
+                .map(groupMapper::toCardResponse)
                 .toList();
     }
 
@@ -87,10 +86,9 @@ public class TeacherService {
         return scheduleMapper.toScheduleWeekResponse(
                 startOfWeek,
                 endOfWeek,
-                groupRepository.findAllByTeacherIdAndSchedule(
+                scheduleRepository.findAllByGroup_Teacher_IdAndGroup_Status(
                         id,
-                        startOfWeek,
-                        endOfWeek
+                        GroupStatus.ACTIVE
                 ));
     }
 

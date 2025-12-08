@@ -5,6 +5,6 @@ import java.util.List;
 public record ScheduleDayResponse(
 
         String dayOfWeek,
-        List<GroupScheduleCardResponse> groups
+        List<ScheduleHourCardResponse> groups
 ) {
 }
