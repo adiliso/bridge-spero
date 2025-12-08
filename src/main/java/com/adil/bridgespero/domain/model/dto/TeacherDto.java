@@ -1,6 +1,5 @@
 package com.adil.bridgespero.domain.model.dto;
 
-import com.adil.bridgespero.domain.model.enums.Experience;
 import com.adil.bridgespero.domain.model.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
@@ -55,8 +54,6 @@ public class TeacherDto implements Serializable {
     private Instant updatedAt;
 
     private List<String> interests;
-
-    private Experience experience;
 
     private Double rating;
 

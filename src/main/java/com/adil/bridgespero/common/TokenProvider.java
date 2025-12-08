@@ -1,6 +1,5 @@
 package com.adil.bridgespero.common;
 
-import com.adil.bridgespero.domain.model.enums.ErrorCode;
 import com.adil.bridgespero.domain.model.enums.Role;
 import com.adil.bridgespero.exception.AuthException;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
@@ -69,7 +68,7 @@ public class TokenProvider {
     }
 
     public Authentication parseAuthentication(String authToken) {
-        validateToken(authToken, () -> new AuthException("Invalid token!", ErrorCode.UNAUTHORIZED));
+        validateToken(authToken, () -> new AuthException("Invalid token!"));
         final Claims claims = extractClaim(authToken);
         final User principal = getPrincipal(claims);
         return new UsernamePasswordAuthenticationToken(principal, authToken, principal.getAuthorities());

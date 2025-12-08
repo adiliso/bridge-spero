@@ -2,8 +2,12 @@ spring:
   application:
     name: bridge-spero
     storage:
-      public-dir: ${STATIC_DIR:static/uploads}
-      private-dir: ${PRIV_DIR:uploads}
+      public-dir: ${STATIC_DIR:uploads/public}
+      private-dir: ${PRIV_DIR:uploads/private}
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 10GB
   datasource:
     url: ${DATASOURCE_URL}
     replicaUrl: ${REPLICA_DATASOURCE_URL}
@@ -18,6 +22,7 @@ spring:
         format_sql: ${JPA_FORMATSQL:false}
   liquibase:
     change-log: classpath:db/changelog-master.yaml
+    drop-first: ${IS_DROP_FIRST}
 zoom:
   client-id: ${ZOOM_CLIENT_ID}
   client-secret: ${ZOOM_CLIENT_SECRET}

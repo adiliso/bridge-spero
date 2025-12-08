@@ -20,6 +20,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.adil.bridgespero.domain.model.enums.ErrorCode.BAD_REQUEST;
+import static com.adil.bridgespero.domain.model.enums.ErrorCode.INTERNAL_ERROR;
+import static com.adil.bridgespero.domain.model.enums.ErrorCode.UNAUTHORIZED;
 
 @RestControllerAdvice
 @Slf4j
@@ -133,15 +135,40 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<GlobalErrorResponse> handleAuthException(AccessDeniedException ex) {
-        addErrorLog(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex.getClass().getSimpleName());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        addErrorLog(HttpStatus.FORBIDDEN, ex.getMessage(), ex.getClass().getSimpleName());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(GlobalErrorResponse.builder()
-                        .errorCode(ErrorCode.UNAUTHORIZED)
+                        .errorCode(ErrorCode.FORBIDDEN)
                         .errorMessage(ex.getMessage())
                         .timestamp(LocalDateTime.now())
                         .requestId(UUID.randomUUID())
                         .build());
     }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<GlobalErrorResponse> handleAuthException(AuthException ex) {
+        addErrorLog(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex.getClass().getSimpleName());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(GlobalErrorResponse.builder()
+                        .errorCode(UNAUTHORIZED)
+                        .errorMessage(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .requestId(UUID.randomUUID())
+                        .build());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<GlobalErrorResponse> handleException(Exception ex) {
+        addErrorLog(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex.getClass().getSimpleName());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(GlobalErrorResponse.builder()
+                        .errorCode(INTERNAL_ERROR)
+                        .errorMessage(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .requestId(UUID.randomUUID())
+                        .build());
+    }
+
 
     protected void addErrorLog(HttpStatus httpStatus, String errorMessage, String exceptionType) {
         int statusCode = (httpStatus != null) ? httpStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR.value();

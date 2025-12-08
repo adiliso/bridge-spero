@@ -33,7 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true,
-        exclude = {"lessonSchedules", "teacher", "category", "users", "recordings"})
+        exclude = {"schedules", "teacher", "category", "users", "resources"})
 @Table(name = "groups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
@@ -41,6 +41,7 @@ public class GroupEntity extends BaseEntity {
     @Column(nullable = false)
     String name;
 
+    @Column(name = "image_url")
     String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,9 +57,6 @@ public class GroupEntity extends BaseEntity {
     @Column(name = "max_students", nullable = false)
     Integer maxStudents;
 
-    @Column(name = "min_students")
-    Integer minStudents;
-
     @Column(nullable = false)
     Double price;
 
@@ -66,6 +64,7 @@ public class GroupEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     Language language;
 
+    @Column(columnDefinition = "TEXT")
     String description;
 
     String syllabus;
@@ -73,7 +72,7 @@ public class GroupEntity extends BaseEntity {
     @Column(nullable = false)
     GroupStatus status;
 
-    Long meetingId;
+    String meetingId;
 
     @Column(length = 2083)
     String startUrl;
@@ -88,7 +87,7 @@ public class GroupEntity extends BaseEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    List<LessonScheduleEntity> lessonSchedules = new ArrayList<>();
+    List<ScheduleEntity> schedules = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
@@ -102,13 +101,6 @@ public class GroupEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     List<UserEntity> users = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "group",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    List<RecordingEntity> recordings = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "group",

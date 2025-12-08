@@ -7,7 +7,6 @@ public record TeacherDetailedCardResponse(
         String name,
         String surname,
         Double rating,
-        Integer activeStudents,
-        String experience
+        Integer activeStudents
 ) {
 }

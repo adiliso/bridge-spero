@@ -2,11 +2,14 @@ package com.adil.bridgespero.config;
 
 import com.adil.bridgespero.common.TokenProvider;
 import com.adil.bridgespero.common.filter.JwtTokenFilter;
+import com.adil.bridgespero.security.handler.SecurityProblemHandler;
 import com.adil.bridgespero.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -33,17 +36,38 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
+    private final SecurityProblemHandler securityProblemHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(securityProblemHandler)
+                        .accessDeniedHandler(securityProblemHandler))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/v1/groups/top-rated",
+                                "/api/v1/teachers/top-rated",
+                                "/api/v1/groups/search",
+                                "/api/v1/teachers/search",
+                                "/api/v1/groups/{id}",
+                                "/api/v1/health",
+                                "/api/v1/zoom/oauth/callback",
+                                "/public/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET,
-                                "/api/v1/zoom/oauth/callback"
+                                "/api/v1/categories",
+                                "/api/v1/groups/*/schedule",
+                                "/api/v1/groups/*/syllabus,",
+                                "/api/v1/zoom/webhook"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/zoom/webhook"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -54,6 +78,17 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        String hierarchy = """
+                ROLE_SUPER_ADMIN > ROLE_ADMIN
+                ROLE_ADMIN > ROLE_TEACHER
+                ROLE_TEACHER > ROLE_USER
+                """;
+
+        return RoleHierarchyImpl.fromHierarchy(hierarchy);
     }
 
     @Bean

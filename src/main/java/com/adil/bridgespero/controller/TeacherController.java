@@ -1,11 +1,12 @@
 package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.TeacherService;
 import jakarta.validation.constraints.Min;
@@ -13,13 +14,17 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,16 +48,16 @@ public class TeacherController {
         return ResponseEntity.ok(teacherService.getTopRated(pageNumber, pageSize));
     }
 
-    @GetMapping
+    @GetMapping("/dashboard")
     public ResponseEntity<TeacherDashboardResponse> getDashboard(@AuthenticationPrincipal CustomUserPrincipal user) {
         return ResponseEntity.ok(teacherService.getDashboard(user.getId()));
     }
 
     @GetMapping("/groups")
-    public ResponseEntity<List<GroupTeacherDashboardResponse>> getGroups(
+    public ResponseEntity<List<GroupCardResponse>> getGroups(
             @AuthenticationPrincipal CustomUserPrincipal user,
-            @RequestParam int parameter) {
-        return ResponseEntity.ok(teacherService.getGroups(user.getId(), parameter));
+            @RequestParam GroupStatus status) {
+        return ResponseEntity.ok(teacherService.getGroups(user.getId(), status));
     }
 
     @GetMapping("/schedule")
@@ -67,5 +72,12 @@ public class TeacherController {
             @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER, required = false) @Min(0) int pageNumber,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE, required = false) @Min(1) int pageSize) {
         return ResponseEntity.ok(teacherService.search(filter, pageNumber, pageSize));
+    }
+
+    @PutMapping(value = "/demo-video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateDemoVideo(
+            @ModelAttribute MultipartFile demoVideo,
+            @AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(teacherService.updateDemoVideo(demoVideo, user.getId()));
     }
 }

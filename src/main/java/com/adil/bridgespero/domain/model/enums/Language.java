@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum Language {
 
-    AZERBAIJANIAN("Azerbaijanian"),
+    AZERBAIJANI("Azerbaijani"),
     ENGLISH("English"),
     RUSSIAN("Russian");
 

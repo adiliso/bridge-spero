@@ -3,15 +3,15 @@ package com.adil.bridgespero.domain.model.dto.response;
 import lombok.Builder;
 
 @Builder
-public record GroupTeacherDashboardResponse(
+public record ScheduleTeacherEventResponse(
 
         Long id,
+        Long groupId,
         String name,
         String status,
         String startTime,
         int numberOfStudents,
         int maxStudents,
-        Integer minStudents,
         String startUrl,
         boolean isMeetingActive
 ) {

@@ -2,15 +2,16 @@ package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
-import com.adil.bridgespero.domain.model.dto.request.RecordingCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
 import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
-import com.adil.bridgespero.domain.model.dto.response.RecordingResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.GroupService;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -117,16 +119,16 @@ public class GroupController {
     }
 
     @GetMapping("/{id}/recordings")
-    public ResponseEntity<List<RecordingResponse>> getRecordings(
+    public ResponseEntity<List<ResourceResponse>> getRecordings(
             @PathVariable Long id
     ) {
-        return ResponseEntity.ok(groupService.getRecordings(id));
+        return ResponseEntity.ok(groupService.getResources(id, ResourceType.RECORDING));
     }
 
     @PostMapping(value = "/{id}/recordings", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createRecording(
             @PathVariable Long id,
-            @Valid @RequestBody RecordingCreateRequest request
+            @Valid ResourceCreateRequest request
     ) {
         return ResponseEntity.status(CREATED).body(groupService.createRecording(id, request));
     }
@@ -135,7 +137,15 @@ public class GroupController {
     public ResponseEntity<List<ResourceResponse>> getResources(
             @PathVariable Long id
     ) {
-        return ResponseEntity.ok(groupService.getResources(id));
+        return ResponseEntity.ok(groupService.getResources(id, ResourceType.RESOURCES));
+    }
+
+    @PostMapping(value = "/{id}/resources", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> createResource(
+            @PathVariable Long id,
+            @Valid ResourceCreateRequest request
+    ) {
+        return ResponseEntity.status(CREATED).body(groupService.createResource(id, request));
     }
 
     @GetMapping("/search")
@@ -147,10 +157,10 @@ public class GroupController {
         return ResponseEntity.ok(groupService.search(filter, pageNumber, pageSize));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> create(
             @AuthenticationPrincipal CustomUserPrincipal user,
-            @Valid @RequestBody GroupCreateRequest request
+            @Valid @ModelAttribute GroupCreateRequest request
     ) {
         return ResponseEntity.status(CREATED).body(groupService.create(user.getId(), request));
     }
@@ -163,5 +173,23 @@ public class GroupController {
     @GetMapping("{id}/join-lesson")
     public ResponseEntity<String> joinLesson(@PathVariable Long id) {
         return ResponseEntity.ok(groupService.joinLesson(id));
+    }
+
+    @PostMapping("/{id}/members")
+    public ResponseEntity<Void> addMember(@PathVariable Long id, @AuthenticationPrincipal CustomUserPrincipal user) {
+        groupService.addMember(id, user.getId());
+        return ResponseEntity.status(CREATED).build();
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<GroupMembersResponse> getAllMembers(@PathVariable Long id) {
+        return ResponseEntity.ok(groupService.getAllMembers(id));
+    }
+
+
+    @DeleteMapping("/{id}/members/{studentId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable Long id, @PathVariable Long studentId) {
+        groupService.deleteMembership(id, studentId);
+        return ResponseEntity.noContent().build();
     }
 }

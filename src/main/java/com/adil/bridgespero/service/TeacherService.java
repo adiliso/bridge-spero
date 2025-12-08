@@ -1,38 +1,38 @@
 package com.adil.bridgespero.service;
 
-import com.adil.bridgespero.domain.entity.GroupEntity;
+import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
+import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
-import com.adil.bridgespero.domain.specification.TeacherSpecification;
 import com.adil.bridgespero.exception.TeacherNotFoundException;
-import com.adil.bridgespero.exception.UserNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.TeacherMapper;
+import com.adil.bridgespero.util.SpecificationUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.adil.bridgespero.domain.model.enums.GroupStatus.ACTIVE;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +42,11 @@ public class TeacherService {
 
     TeacherRepository teacherRepository;
     GroupRepository groupRepository;
+    ScheduleRepository scheduleRepository;
     TeacherMapper teacherMapper;
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
+    FileStorageService fileStorageService;
 
     public PageResponse<TeacherCardResponse> getTopRated(final int pageNumber, final int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("rating").descending());
@@ -59,28 +61,24 @@ public class TeacherService {
                 responses.getTotalPages());
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     public TeacherDashboardResponse getDashboard(Long id) {
-        return teacherMapper.toDashboardResponse(teacherRepository.findById(id)
-                        .orElseThrow(() -> new UserNotFoundException(id)),
-                groupRepository.findAllByTeacherIdAndStatusAndDayOfWeek(id, DayOfWeek.from(LocalDate.now()))
+        return teacherMapper.toDashboardResponse(
+                getById(id), scheduleRepository.findAllByDayOfWeekAndGroup_Teacher_IdAndGroup_Status(DayOfWeek.from(LocalDate.now()), id, GroupStatus.ACTIVE)
                         .stream()
-                        .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
-                        .map(groupMapper::toGroupTeacherDashboardResponse)
+                        .map(scheduleMapper::toScheduleTeacherEventResponse)
                         .toList());
     }
 
-    public List<GroupTeacherDashboardResponse> getGroups(Long id, int parameter) {
-        List<GroupEntity> entities = switch (parameter) {
-            case 0 -> groupRepository.findAllByTeacherIdAndStatus(id, ACTIVE);
-            case 2 -> groupRepository.findAllByTeacherIdAndStatus(id, GroupStatus.COMPLETED);
-            default -> new ArrayList<>();
-        };
-        return entities
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<GroupCardResponse> getGroups(Long id, GroupStatus status) {
+        return groupRepository.findAllByTeacherIdAndStatus(id, status)
                 .stream()
-                .map(groupMapper::toGroupTeacherDashboardResponse)
+                .map(groupMapper::toCardResponse)
                 .toList();
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     public ScheduleWeekResponse getSchedule(Long id) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate endOfWeek = startOfWeek.plusDays(7);
@@ -88,17 +86,16 @@ public class TeacherService {
         return scheduleMapper.toScheduleWeekResponse(
                 startOfWeek,
                 endOfWeek,
-                groupRepository.findAllByTeacherIdAndSchedule(
+                scheduleRepository.findAllByGroup_Teacher_IdAndGroup_Status(
                         id,
-                        startOfWeek,
-                        endOfWeek
+                        GroupStatus.ACTIVE
                 ));
     }
 
     public PageResponse<TeacherCardResponse> search(TeacherFilter filter, int pageNumber, int pageSize) {
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("rating").descending());
 
-        var responses = teacherRepository.findAll(TeacherSpecification.hasName(filter.name()), pageable)
+        var responses = teacherRepository.findAll(SpecificationUtils.getTeacherSpecification(filter), pageable)
                 .map(teacherMapper::toCardResponse);
 
         return new PageResponse<>(
@@ -120,5 +117,22 @@ public class TeacherService {
     public void save(TeacherDto teacherDto) {
         var entity = teacherMapper.toEntity(teacherDto);
         teacherRepository.save(entity);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('TEACHER')")
+    public String updateDemoVideo(MultipartFile demoVideo, Long userId) {
+        var entity = getById(userId);
+
+        fileStorageService.deleteFile(entity.getDemoVideoUrl());
+
+        String path = fileStorageService.saveFile(demoVideo, ResourceType.DEMO_VIDEO);
+        entity.setDemoVideoUrl(path);
+        teacherRepository.save(entity);
+        return path;
+    }
+
+    private TeacherDetailEntity getById(Long id) {
+        return teacherRepository.findById(id).orElseThrow(() -> new TeacherNotFoundException(id));
     }
 }

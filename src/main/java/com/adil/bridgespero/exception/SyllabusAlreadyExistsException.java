@@ -5,6 +5,6 @@ import static com.adil.bridgespero.domain.model.enums.ErrorCode.SYLLABUS_ALREADY
 public class SyllabusAlreadyExistsException extends BaseException {
 
     public SyllabusAlreadyExistsException(Long groupId) {
-        super("Group with ID " + groupId + "has syllabus", SYLLABUS_ALREADY_EXISTS);
+        super("Group with ID " + groupId + " has syllabus", SYLLABUS_ALREADY_EXISTS);
     }
 }

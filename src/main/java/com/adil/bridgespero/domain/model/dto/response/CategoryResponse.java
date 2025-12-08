@@ -1,8 +1,8 @@
 package com.adil.bridgespero.domain.model.dto.response;
 
-public record RecordingResponse(
+public record CategoryResponse(
 
-        String filePath,
+        Long id,
         String name
 ) {
 }
