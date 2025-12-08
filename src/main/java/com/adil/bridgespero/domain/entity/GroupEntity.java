@@ -33,7 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true,
-        exclude = {"lessonSchedules", "teacher", "category", "users", "resources"})
+        exclude = {"schedules", "teacher", "category", "users", "resources"})
 @Table(name = "groups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupEntity extends BaseEntity {
@@ -87,7 +87,7 @@ public class GroupEntity extends BaseEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    List<LessonScheduleEntity> lessonSchedules = new ArrayList<>();
+    List<ScheduleEntity> schedules = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")

@@ -3,7 +3,7 @@ package com.adil.bridgespero.mapper;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.ScheduleTeacherEventResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDetailedCardResponse;
@@ -39,14 +39,14 @@ public class TeacherMapper {
         );
     }
 
-    public TeacherDashboardResponse toDashboardResponse(TeacherDetailEntity entity, List<GroupTeacherDashboardResponse> groups) {
+    public TeacherDashboardResponse toDashboardResponse(TeacherDetailEntity entity, List<ScheduleTeacherEventResponse> groups) {
         return TeacherDashboardResponse.builder()
                 .name(entity.getUser().getName())
                 .activeGroups(getActiveGroups(entity))
                 .activeStudents(getActiveStudents(entity))
                 .totalEarning(null)
                 .rating(entity.getRating())
-                .groups(groups)
+                .events(groups)
                 .build();
     }
 

@@ -24,9 +24,9 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true, exclude = "group")
-@Table(name = "lesson_schedule")
+@Table(name = "schedule")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LessonScheduleEntity extends BaseEntity {
+public class ScheduleEntity extends BaseEntity {
 
     @Column(name = "day_of_week", nullable = false)
     @Enumerated(EnumType.STRING)

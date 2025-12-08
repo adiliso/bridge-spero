@@ -1,7 +1,7 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
-import com.adil.bridgespero.domain.entity.LessonScheduleEntity;
+import com.adil.bridgespero.domain.entity.ScheduleEntity;
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;
@@ -124,19 +124,19 @@ public class GroupService {
 
         var entity = scheduleMapper.toEntity(groupId, request);
 
-        LessonScheduleEntity saved = scheduleRepository.save(entity);
+        ScheduleEntity saved = scheduleRepository.save(entity);
         return scheduleMapper.toScheduleResponse(saved);
     }
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfSchedule(#id)")
     public void updateSchedule(Long id, ScheduleRequest request) {
-        LessonScheduleEntity entity = getSchedule(id);
+        ScheduleEntity entity = getSchedule(id);
 
         scheduleMapper.updateSchedule(id, entity, request);
     }
 
-    private LessonScheduleEntity getSchedule(Long scheduleId) {
+    private ScheduleEntity getSchedule(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).orElseThrow(() -> new ScheduleNotFoundException(scheduleId));
     }
 

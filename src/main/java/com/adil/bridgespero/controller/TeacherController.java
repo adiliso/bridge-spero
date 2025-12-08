@@ -1,7 +1,7 @@
 package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
-import com.adil.bridgespero.domain.model.dto.response.GroupTeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
@@ -54,7 +54,7 @@ public class TeacherController {
     }
 
     @GetMapping("/groups")
-    public ResponseEntity<List<GroupTeacherDashboardResponse>> getGroups(
+    public ResponseEntity<List<GroupCardResponse>> getGroups(
             @AuthenticationPrincipal CustomUserPrincipal user,
             @RequestParam GroupStatus status) {
         return ResponseEntity.ok(teacherService.getGroups(user.getId(), status));

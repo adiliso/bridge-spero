@@ -1,6 +1,6 @@
 package com.adil.bridgespero.domain.model.dto.response;
 
-public record GroupScheduleCardResponse(
+public record ScheduleHourCardResponse(
 
         Long id,
         String groupName,
