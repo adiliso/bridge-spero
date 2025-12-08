@@ -58,13 +58,16 @@ public class SecurityConfig {
                                 "/api/v1/groups/{id}",
                                 "/api/v1/health",
                                 "/api/v1/zoom/oauth/callback",
-                                "/api/v1/zoom/webhook",
                                 "/public/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/categories",
                                 "/api/v1/groups/*/schedule",
-                                "/api/v1/groups/*/syllabus"
+                                "/api/v1/groups/*/syllabus,",
+                                "/api/v1/zoom/webhook"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/zoom/webhook"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
