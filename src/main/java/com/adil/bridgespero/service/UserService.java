@@ -1,18 +1,23 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.UserEntity;
+import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.UserDto;
+import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
+import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.UserRepository;
 import com.adil.bridgespero.exception.EmailAlreadyExistsException;
 import com.adil.bridgespero.exception.UserNotFoundException;
+import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
 import com.adil.bridgespero.mapper.UserMapper;
 import com.adil.bridgespero.security.mapper.UserMapper2;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
+import com.adil.bridgespero.util.SpecificationUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +39,12 @@ import java.time.temporal.TemporalAdjusters;
 public class UserService {
 
     UserRepository userRepository;
+    GroupRepository groupRepository;
+    ScheduleRepository scheduleRepository;
     UserMapper userMapper;
     UserMapper2 userMapper2;
     ScheduleMapper scheduleMapper;
-    ScheduleRepository scheduleRepository;
+    GroupMapper groupMapper;
 
     public ScheduleWeekResponse getSchedule(Long id) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -105,5 +113,12 @@ public class UserService {
     public UserDto getById(Long id) {
         var entity = findById(id);
         return userMapper2.toDto(entity);
+    }
+
+    public List<GroupCardResponse> getGroups(Long userId, MyGroupsFilter filter) {
+        return groupRepository.findAll(SpecificationUtils.getUserGroupsSpecification(userId, filter))
+                .stream()
+                .map(groupMapper::toCardResponse)
+                .toList();
     }
 }

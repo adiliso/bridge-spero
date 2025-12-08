@@ -3,6 +3,7 @@ package com.adil.bridgespero.util;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
+import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.specification.GroupSpecification;
 import com.adil.bridgespero.domain.specification.TeacherSpecification;
@@ -20,12 +21,12 @@ public class SpecificationUtils {
             spec = spec.and(GroupSpecification.hasName(filter.groupName()));
         }
 
-        if (filter.language() != null && !filter.language().isEmpty()) {
+        if (filter.language() != null) {
             spec = spec.and(GroupSpecification.hasLanguage(filter.language()));
         }
 
-        if (filter.category() != null && !filter.category().isEmpty()) {
-            spec = spec.and(GroupSpecification.hasCategory(filter.category()));
+        if (filter.categoryId() != null) {
+            spec = spec.and(GroupSpecification.hasCategoryId(filter.categoryId()));
         }
 
         return spec;
@@ -36,6 +37,55 @@ public class SpecificationUtils {
         if (filter.name() != null && !filter.name().isEmpty()) {
             spec = spec.and(TeacherSpecification.hasName(filter.name()));
         }
+        return spec;
+    }
+
+    public static Specification<GroupEntity> getTeacherGroupsSpecification(Long teacherId, MyGroupsFilter filter) {
+        Specification<GroupEntity> spec = Specification.allOf();
+
+        if (filter.groupName() != null && !filter.groupName().isEmpty()) {
+            spec = spec.and(GroupSpecification.hasName(filter.groupName()));
+        }
+
+        if (filter.status() != null) {
+            spec = spec.and(GroupSpecification.hasStatus(filter.status()));
+        }
+
+        if (filter.language() != null) {
+            spec = spec.and(GroupSpecification.hasLanguage(filter.language()));
+        }
+
+        if (filter.categoryId() != null) {
+            spec = spec.and(GroupSpecification.hasCategoryId(filter.categoryId()));
+        }
+
+        spec = spec.and(GroupSpecification.hasTeacherId(teacherId));
+
+        return spec;
+
+    }
+
+    public static Specification<GroupEntity> getUserGroupsSpecification(Long userId, MyGroupsFilter filter) {
+        Specification<GroupEntity> spec = Specification.allOf();
+
+        if (filter.groupName() != null && !filter.groupName().isEmpty()) {
+            spec = spec.and(GroupSpecification.hasName(filter.groupName()));
+        }
+
+        if (filter.status() != null) {
+            spec = spec.and(GroupSpecification.hasStatus(filter.status()));
+        }
+
+        if (filter.language() != null) {
+            spec = spec.and(GroupSpecification.hasLanguage(filter.language()));
+        }
+
+        if (filter.categoryId() != null) {
+            spec = spec.and(GroupSpecification.hasCategoryId(filter.categoryId()));
+        }
+
+        spec = spec.and(GroupSpecification.hasUserId(userId));
+
         return spec;
     }
 }

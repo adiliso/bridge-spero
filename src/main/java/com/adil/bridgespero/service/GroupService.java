@@ -215,10 +215,16 @@ public class GroupService {
         teacherService.checkTeacherExists(userId);
         categoryService.checkCategoryExists(request.categoryId());
 
-        String imageUrl = fileStorageService.saveFile(request.image(), ResourceType.IMAGE);
-        String syllabus = fileStorageService.saveFile(request.syllabus(), ResourceType.SYLLABUS);
+        String imageUrl = null;
+        String syllabusUrl = null;
+        if (request.image() != null && !request.image().isEmpty()) {
+            imageUrl = fileStorageService.saveFile(request.image(), ResourceType.IMAGE);
+        }
+        if (request.syllabus() != null && !request.syllabus().isEmpty()) {
+            syllabusUrl = fileStorageService.saveFile(request.syllabus(), ResourceType.SYLLABUS);
+        }
 
-        var group = groupMapper.toEntity(userId, imageUrl, syllabus, request);
+        var group = groupMapper.toEntity(userId, imageUrl, syllabusUrl, request);
         var savedGroup = groupRepository.save(group);
 
         return savedGroup.getId();
@@ -247,7 +253,7 @@ public class GroupService {
 
 
     @Transactional
-    public void endLessonByZoomMeetingId(String  meetingId) {
+    public void endLessonByZoomMeetingId(String meetingId) {
         var group = getByZoomMeetingId(meetingId);
 
         group.setMeetingId(null);

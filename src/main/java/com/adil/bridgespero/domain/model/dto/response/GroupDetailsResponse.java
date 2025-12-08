@@ -1,6 +1,8 @@
 package com.adil.bridgespero.domain.model.dto.response;
 
 public record GroupDetailsResponse(
+
+        Long id,
         String name,
         String category,
         String language,
@@ -10,6 +12,7 @@ public record GroupDetailsResponse(
         Integer maxStudents,
         String startDate,
         Double price,
+        String imageUrl,
         TeacherDetailedCardResponse teacher
 ) {
 }
