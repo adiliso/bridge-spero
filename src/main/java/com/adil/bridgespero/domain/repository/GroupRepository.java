@@ -21,7 +21,7 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
 
     Page<GroupEntity> findAllByStatus(GroupStatus status, Pageable pageable);
 
-    Optional<GroupEntity> findByMeetingId(Long currentMeetingId);
+    Optional<GroupEntity> findByMeetingId(String currentMeetingId);
 
     boolean existsByIdAndTeacher_Id(Long groupId, Long teacherId);
 
