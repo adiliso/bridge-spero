@@ -41,23 +41,7 @@ public class SpecificationUtils {
     }
 
     public static Specification<GroupEntity> getTeacherGroupsSpecification(Long teacherId, MyGroupsFilter filter) {
-        Specification<GroupEntity> spec = Specification.allOf();
-
-        if (filter.groupName() != null && !filter.groupName().isEmpty()) {
-            spec = spec.and(GroupSpecification.hasName(filter.groupName()));
-        }
-
-        if (filter.status() != null) {
-            spec = spec.and(GroupSpecification.hasStatus(filter.status()));
-        }
-
-        if (filter.language() != null) {
-            spec = spec.and(GroupSpecification.hasLanguage(filter.language()));
-        }
-
-        if (filter.categoryId() != null) {
-            spec = spec.and(GroupSpecification.hasCategoryId(filter.categoryId()));
-        }
+        Specification<GroupEntity> spec = getMyGroupsSpecification(filter);
 
         spec = spec.and(GroupSpecification.hasTeacherId(teacherId));
 
@@ -65,7 +49,15 @@ public class SpecificationUtils {
 
     }
 
-    public static Specification<GroupEntity> getUserGroupsSpecification(Long userId, MyGroupsFilter filter) {
+    public static Specification<GroupEntity> getStudentGroupsSpecification(Long userId, MyGroupsFilter filter) {
+        Specification<GroupEntity> spec = getMyGroupsSpecification(filter);
+
+        spec = spec.and(GroupSpecification.hasUserId(userId));
+
+        return spec;
+    }
+
+    private static Specification<GroupEntity> getMyGroupsSpecification(MyGroupsFilter filter) {
         Specification<GroupEntity> spec = Specification.allOf();
 
         if (filter.groupName() != null && !filter.groupName().isEmpty()) {
@@ -83,8 +75,6 @@ public class SpecificationUtils {
         if (filter.categoryId() != null) {
             spec = spec.and(GroupSpecification.hasCategoryId(filter.categoryId()));
         }
-
-        spec = spec.and(GroupSpecification.hasUserId(userId));
 
         return spec;
     }

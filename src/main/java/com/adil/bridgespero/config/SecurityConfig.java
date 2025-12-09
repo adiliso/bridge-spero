@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 "/api/v1/categories",
                                 "/api/v1/groups/*/schedule",
                                 "/api/v1/groups/*/syllabus,",
-                                "/api/v1/zoom/webhook"
+                                "/api/v1/zoom/webhook",
+                                "/api/v1/teachers/*/groups"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/zoom/webhook"

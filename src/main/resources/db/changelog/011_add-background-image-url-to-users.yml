@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011_add-background-image-url-to-users
+      author: Adil Ismayilov
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: background_image_url
+                  type: VARCHAR(255)
+
+      rollback:
+        - dropColumn:
+            tableName: users
+            columnName: background_image_url
