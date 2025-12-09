@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006_create-schedule-table
+      author: Adil Ismayilov
+      changes:
+        - createTable:
+            tableName: schedule
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6) WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: BIGINT
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6) WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_by
+                  type: BIGINT
+
+              - column:
+                  name: day_of_week
+                  type: VARCHAR(255)
+              - column:
+                  name: end_time
+                  type: TIME(6)
+              - column:
+                  name: start_time
+                  type: TIME(6)
+
+              - column:
+                  name: group_id
+                  type: BIGINT
+
+        - addForeignKeyConstraint:
+            baseTableName: schedule
+            baseColumnNames: group_id
+            referencedTableName: groups
+            referencedColumnNames: id
+            constraintName: fk_schedule_group_id
+
+        - createIndex:
+            indexName: idx_schedule_group_id
+            tableName: schedule
+            columns:
+              - column:
+                  name: group_id

@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009_create-teacher-detail-entity-subjects
+      author: Adil Ismayilov
+      changes:
+        - createTable:
+            tableName: teacher_detail_entity_subjects
+            columns:
+              - column:
+                  name: teacher_detail_entity_user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subjects
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: teacher_detail_entity_subjects
+            columnNames: teacher_detail_entity_user_id, subjects
+            constraintName: pk_teacher_detail_entity_subjects
+
+        - addForeignKeyConstraint:
+            baseTableName: teacher_detail_entity_subjects
+            baseColumnNames: teacher_detail_entity_user_id
+            referencedTableName: teacher_detail
+            referencedColumnNames: user_id
+            constraintName: fk_teacher_detail_entity_subjects_user_id
+
+        - createIndex:
+            indexName: idx_teacher_detail_entity_subjects_user
+            tableName: teacher_detail_entity_subjects
+            columns:
+              - column:
+                  name: teacher_detail_entity_user_id
