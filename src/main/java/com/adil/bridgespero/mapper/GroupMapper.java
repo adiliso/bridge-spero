@@ -37,6 +37,7 @@ public class GroupMapper {
 
     public GroupDetailsResponse toGroupDetailsResponse(GroupEntity entity) {
         return new GroupDetailsResponse(
+                entity.getId(),
                 entity.getName(),
                 entity.getCategory().getName(),
                 entity.getLanguage().getValue(),
@@ -46,6 +47,7 @@ public class GroupMapper {
                 entity.getMaxStudents(),
                 entity.getStartDate().format(GROUP_DATE_FORMATTER),
                 entity.getPrice(),
+                entity.getImageUrl(),
                 teacherMapper.toDetailedCardResponse(entity.getTeacher())
         );
     }

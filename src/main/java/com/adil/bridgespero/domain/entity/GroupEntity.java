@@ -70,6 +70,7 @@ public class GroupEntity extends BaseEntity {
     String syllabus;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     GroupStatus status;
 
     String meetingId;
