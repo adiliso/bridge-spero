@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010_insert-categories
+      author: Adil Ismayilov
+      changes:
+        - loadData:
+            file: db/data/categories.csv
+            tableName: category
+            separator: ","
+            quotchar: '"'
+            encoding: UTF-8
