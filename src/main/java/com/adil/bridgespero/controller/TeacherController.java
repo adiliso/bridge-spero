@@ -7,6 +7,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.TeacherProfileResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.TeacherService;
 import jakarta.validation.constraints.Min;
@@ -20,6 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,5 +81,15 @@ public class TeacherController {
             @ModelAttribute MultipartFile demoVideo,
             @AuthenticationPrincipal CustomUserPrincipal user) {
         return ResponseEntity.ok(teacherService.updateDemoVideo(demoVideo, user.getId()));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<TeacherProfileResponse> getProfile(@AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(teacherService.getProfile(user.getId()));
+    }
+
+    @GetMapping("/{id}/groups")
+    public ResponseEntity<List<GroupCardResponse>> getGroupCards(@PathVariable Long id) {
+        return ResponseEntity.ok(teacherService.getGroupCards(id));
     }
 }

@@ -71,6 +71,9 @@ public class UserEntity extends BaseEntity {
     @Column(name = "profile_picture_url")
     String profilePictureUrl;
 
+    @Column(name = "background_image_url")
+    String backgroundImageUrl;
+
     @Column(length = 1000)
     String bio;
 
