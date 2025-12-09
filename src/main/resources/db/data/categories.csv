@@ -1,0 +1,25 @@
+id,name,parent_id
+1,Language Learning,
+2,English,1
+3,Russian,1
+
+4,Humanities,
+5,World History,4
+6,Azerbaijan History,4
+7,Literature,4
+
+8,Programming,
+9,Html/CSS,8
+10,Algorithm,8
+11,C++,8
+12,Python,8
+
+13,Science,
+14,Physics,13
+15,Biology,13
+16,Chemistry,13
+
+17,Math,
+18,Calculus,17
+19,Statistics,17
+20,Probability,17

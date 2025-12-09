@@ -6,6 +6,7 @@ import com.adil.bridgespero.domain.repository.StateRedisRepository;
 import com.adil.bridgespero.domain.repository.ZoomTokenRedisRepository;
 import com.adil.bridgespero.exception.StateNotFoundException;
 import com.adil.bridgespero.exception.UserNotConnectedToZoomException;
+import com.adil.bridgespero.exception.ZoomApiCommunicationException;
 import com.adil.bridgespero.exception.ZoomOAuthCallbackProcessingException;
 import com.adil.bridgespero.exception.ZoomOAuthTokenExchangeFailedException;
 import com.adil.bridgespero.exception.ZoomTokenRefreshFailedException;
@@ -179,12 +180,17 @@ public class ZoomOAuthService {
             return mapper.readTree(response.body());
 
         } catch (Exception e) {
-            throw new RuntimeException("Zoom API GET failed", e);
+            throw new ZoomApiCommunicationException();
         }
     }
 
-    public JsonNode getZoomProfile(String username) {
-        return zoomGet(username, "users/me");
-    }
+    public boolean isConnected(String username) {
 
+        try {
+            zoomGet(username, "users/me");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
