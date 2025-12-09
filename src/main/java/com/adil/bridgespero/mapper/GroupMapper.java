@@ -4,6 +4,7 @@ import com.adil.bridgespero.domain.entity.CategoryEntity;
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.GroupEditRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
@@ -79,5 +80,24 @@ public class GroupMapper {
                 .imageUrl(imageUrl)
                 .syllabus(syllabus)
                 .build();
+    }
+
+    public void update(Long userId, GroupEntity group, GroupEditRequest request) {
+        var category = CategoryEntity.builder()
+                .id(request.categoryId())
+                .build();
+        LocalDate startDate = LocalDate.parse(request.startDate(), GROUP_DATE_FORMATTER);
+        LocalDate endDate = null;
+        if (request.durationInMonths() != null) endDate = startDate.plusMonths(request.durationInMonths());
+        group.setName(request.name());
+        group.setCategory(category);
+        group.setLanguage(request.language());
+        group.setDescription(request.description());
+        group.setMaxStudents(request.maxStudents());
+        group.setPrice(request.price());
+        group.setStartDate(LocalDate.parse(request.startDate(), GROUP_DATE_FORMATTER));
+        group.setEndDate(endDate);
+        group.setStatus(GroupStatus.ACTIVE);
+        group.setUpdatedBy(userId);
     }
 }
