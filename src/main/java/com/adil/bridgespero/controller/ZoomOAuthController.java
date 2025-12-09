@@ -1,9 +1,10 @@
 package com.adil.bridgespero.controller;
 
+import com.adil.bridgespero.domain.model.dto.response.ZoomStatusResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.ZoomOAuthService;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,8 @@ public class ZoomOAuthController {
     }
 
     @GetMapping("/verify")
-    public JsonNode verify(String email) {
-        return service.getZoomProfile(email);
+    public ResponseEntity<ZoomStatusResponse> verify(@AuthenticationPrincipal CustomUserPrincipal user) {
+        boolean connected = service.isConnected(user.getUsername());
+        return ResponseEntity.ok(new ZoomStatusResponse(connected));
     }
 }
