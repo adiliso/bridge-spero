@@ -1,0 +1,111 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004_create-groups-table
+      author: Adil Ismayilov
+      changes:
+        - createTable:
+            tableName: groups
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6) WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: BIGINT
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6) WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_by
+                  type: BIGINT
+
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: image_url
+                  type: VARCHAR(255)
+              - column:
+                  name: is_meeting_active
+                  type: BOOLEAN
+              - column:
+                  name: join_url
+                  type: VARCHAR(2083)
+              - column:
+                  name: language
+                  type: VARCHAR(255)
+              - column:
+                  name: max_students
+                  type: INTEGER
+              - column:
+                  name: meeting_id
+                  type: VARCHAR(255)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: price
+                  type: DOUBLE PRECISION
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: start_url
+                  type: VARCHAR(2083)
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: syllabus
+                  type: VARCHAR(255)
+
+              - column:
+                  name: category_id
+                  type: BIGINT
+              - column:
+                  name: teacher_id
+                  type: BIGINT
+
+        - addForeignKeyConstraint:
+            baseTableName: groups
+            baseColumnNames: category_id
+            referencedTableName: category
+            referencedColumnNames: id
+            constraintName: fk_group_category_id
+
+        - addForeignKeyConstraint:
+            baseTableName: groups
+            baseColumnNames: teacher_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_group_teacher_id
+
+        - createIndex:
+            indexName: idx_groups_category_id
+            tableName: groups
+            columns:
+              - column:
+                  name: category_id
+        - createIndex:
+            indexName: idx_groups_teacher_id
+            tableName: groups
+            columns:
+              - column:
+                  name: teacher_id

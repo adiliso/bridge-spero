@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 002_insert-super-admin-users-table
+      id: 001b_insert-super-admin-users-table
       author: Adil Ismayilov
       changes:
         - sql:

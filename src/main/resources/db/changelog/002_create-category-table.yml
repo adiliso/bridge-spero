@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002_create-category-table
+      author: Adil Ismayilov
+      changes:
+        - createTable:
+            tableName: category
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: created_by
+                  type: BIGINT
+              - column:
+                  name: updated_by
+                  type: BIGINT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: BIGINT
+
+        - addForeignKeyConstraint:
+            baseTableName: category
+            baseColumnNames: parent_id
+            referencedTableName: category
+            referencedColumnNames: id
+            constraintName: fk_category_parent_id
+            onDelete: SET NULL
+
+        - createIndex:
+            indexName: idx_category_parent_id
+            tableName: category
+            columns:
+              - column:
+                  name: parent_id
