@@ -116,7 +116,7 @@ public class UserService {
     }
 
     public List<GroupCardResponse> getGroups(Long userId, MyGroupsFilter filter) {
-        return groupRepository.findAll(SpecificationUtils.getUserGroupsSpecification(userId, filter))
+        return groupRepository.findAll(SpecificationUtils.getStudentGroupsSpecification(userId, filter))
                 .stream()
                 .map(groupMapper::toCardResponse)
                 .toList();
