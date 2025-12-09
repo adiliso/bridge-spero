@@ -1,16 +1,22 @@
 package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.GroupFilter;
-import com.adil.bridgespero.domain.model.dto.request.*;
+import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.GroupEditRequest;
+import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;
+import com.adil.bridgespero.domain.model.dto.request.ScheduleRequest;
+import com.adil.bridgespero.domain.model.dto.request.SyllabusCreateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupDetailsResponse;
 import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.dto.response.StudentIsMemberResponse;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.GroupService;
+import com.adil.bridgespero.service.SecurityService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -21,7 +27,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -37,6 +53,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class GroupController {
 
     GroupService groupService;
+    SecurityService securityService;
 
     @GetMapping("/top-rated")
     public ResponseEntity<PageResponse<GroupCardResponse>> getTopRated(
@@ -191,5 +208,11 @@ public class GroupController {
     public ResponseEntity<Void> deleteMember(@PathVariable Long id, @PathVariable Long studentId) {
         groupService.deleteMembership(id, studentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/is-member")
+    public ResponseEntity<StudentIsMemberResponse> isMember(@PathVariable Long id) {
+        boolean isMember = securityService.isStudentOfGroup(id);
+        return ResponseEntity.ok(new StudentIsMemberResponse(isMember));
     }
 }
