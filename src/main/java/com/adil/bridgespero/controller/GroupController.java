@@ -62,7 +62,7 @@ public class GroupController {
             @AuthenticationPrincipal CustomUserPrincipal user,
             @Valid @ModelAttribute GroupEditRequest request
     ) {
-        groupService.edit(id, request);
+        groupService.edit(id, user.getId(), request);
         return ResponseEntity.ok().build();
     }
 
