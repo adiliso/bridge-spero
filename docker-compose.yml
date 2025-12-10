@@ -38,6 +38,8 @@ services:
       - .env
 
     environment:
+      STATIC_DIR: /app/uploads/public
+      PRIV_DIR: /app/uploads/private
       LOG_LEVEL: DEBUG
       KAFKA_LOG_LEVEL: WARN
 
@@ -46,6 +48,10 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+
+    volumes:
+      - ./uploads/public:/app/uploads/public
+      - ./uploads/private:/app/uploads/private
 
     depends_on:
       db_brsp:
