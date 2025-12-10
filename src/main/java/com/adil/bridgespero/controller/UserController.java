@@ -100,13 +100,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createBackgroundImage(user.getId(), file));
     }
 
-    @DeleteMapping(value = "/profile-picture")
+    @DeleteMapping(value = "/background-image")
     public ResponseEntity<Void> deleteBackgroundImage(@AuthenticationPrincipal CustomUserPrincipal user) {
         userService.deleteBackgroundImage(user.getId());
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(value = "/profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/background-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateBackgroundImage(@AuthenticationPrincipal CustomUserPrincipal user,
                                                         @RequestPart("file") MultipartFile file) {
         return ResponseEntity.ok(userService.updateBackgroundImage(user.getId(), file));
