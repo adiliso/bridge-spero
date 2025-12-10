@@ -43,11 +43,12 @@ public class UserMapper {
 
     private double calculateWeeklyStudyHours(UserEntity entity) {
         if (entity.getGroups() == null) return 0.0;
-        return entity.getGroups().stream()
+        double hours = entity.getGroups().stream()
                 .filter(group -> GroupStatus.ACTIVE.equals(group.getStatus()))
                 .flatMap(group -> group.getSchedules().stream())
                 .mapToDouble(this::calculateDurationInHours)
                 .sum();
+        return Math.round(hours * 10.0) / 10.0;
     }
 
     private double calculateDurationInHours(ScheduleEntity ls) {

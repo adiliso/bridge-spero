@@ -24,6 +24,7 @@ import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.exception.GroupWithZoomIdNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
 import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
+import com.adil.bridgespero.exception.UserGroupAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ResourceMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
@@ -299,15 +300,19 @@ public class GroupService {
 
     @Transactional
     public void addMember(Long groupId, Long userId) {
-        checkGroupExists(groupId);
         var group = getById(groupId);
-        checkGroupIsFull(groupId, group.getMaxStudents());
-
-        userService.checkUserExists(userId);
         var user = userService.findById(userId);
+        checkUserGroupAlreadyExists(userId, groupId);
+        checkGroupIsFull(groupId, group.getMaxStudents());
 
         group.getUsers().add(user);
         user.getGroups().add(group);
+    }
+
+    private void checkUserGroupAlreadyExists(Long userId, Long groupId) {
+        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) {
+            throw new UserGroupAlreadyExistsException(userId, groupId);
+        }
     }
 
     private void checkGroupIsFull(Long groupId, int maxStudents) {
