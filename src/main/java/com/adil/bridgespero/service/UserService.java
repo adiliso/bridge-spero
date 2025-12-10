@@ -148,7 +148,7 @@ public class UserService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
-    public String updateImage(Long id, MultipartFile file) {
+    public String updateProfilePicture(Long id, MultipartFile file) {
         UserEntity user = findById(id);
 
         String oldImage = user.getProfilePictureUrl();
@@ -169,5 +169,38 @@ public class UserService {
         checkUserExists(id);
         MyGroupsFilter filter = new MyGroupsFilter(null, null, null, null);
         return getGroups(id, filter);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
+    @Transactional
+    public String createBackgroundImage(Long id, MultipartFile file) {
+        UserEntity user = findById(id);
+        String path = fileStorageService.saveFile(file, ResourceType.IMAGE);
+
+        user.setBackgroundImageUrl(path);
+        return path;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
+    @Transactional
+    public void deleteBackgroundImage(Long id) {
+        UserEntity user = findById(id);
+
+        fileStorageService.deleteFile(user.getBackgroundImageUrl());
+
+        user.setBackgroundImageUrl(null);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
+    public String updateBackgroundImage(Long id, MultipartFile file) {
+        UserEntity user = findById(id);
+
+        String oldImage = user.getBackgroundImageUrl();
+        String newImage = fileStorageService.saveFile(file, ResourceType.IMAGE);
+        fileStorageService.deleteFile(oldImage);
+
+        user.setBackgroundImageUrl(newImage);
+        return newImage;
     }
 }

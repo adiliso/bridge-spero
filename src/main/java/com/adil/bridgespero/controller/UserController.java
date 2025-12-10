@@ -81,7 +81,7 @@ public class UserController {
     @PatchMapping(value = "/profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateImage(@AuthenticationPrincipal CustomUserPrincipal user,
                                               @RequestPart("file") MultipartFile file) {
-        return ResponseEntity.ok(userService.updateImage(user.getId(), file));
+        return ResponseEntity.ok(userService.updateProfilePicture(user.getId(), file));
     }
 
     @GetMapping("/{id}/profile")
@@ -92,5 +92,23 @@ public class UserController {
     @GetMapping("/{id}/groups")
     public ResponseEntity<List<GroupCardResponse>> getProfileGroups(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getProfileGroups(id));
+    }
+
+    @PostMapping(value = "/background-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createBackgroundImage(@AuthenticationPrincipal CustomUserPrincipal user,
+                                                        @RequestPart("file") @NotNull MultipartFile file) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createBackgroundImage(user.getId(), file));
+    }
+
+    @DeleteMapping(value = "/profile-picture")
+    public ResponseEntity<Void> deleteBackgroundImage(@AuthenticationPrincipal CustomUserPrincipal user) {
+        userService.deleteBackgroundImage(user.getId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(value = "/profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateBackgroundImage(@AuthenticationPrincipal CustomUserPrincipal user,
+                                                        @RequestPart("file") MultipartFile file) {
+        return ResponseEntity.ok(userService.updateBackgroundImage(user.getId(), file));
     }
 }
