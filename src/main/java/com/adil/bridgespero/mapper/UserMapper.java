@@ -6,6 +6,7 @@ import com.adil.bridgespero.domain.model.dto.response.AdminResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleUserEventResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class UserMapper {
         );
     }
 
-    public AdminResponse toAdminResponse(UserEntity entity){
+    public AdminResponse toAdminResponse(UserEntity entity) {
         return new AdminResponse(
                 entity.getId(),
                 entity.getEmail(),
@@ -54,11 +55,22 @@ public class UserMapper {
         return (double) minutes / 60;
     }
 
-    public UserCardResponse toCardResponse(UserEntity entity){
+    public UserCardResponse toCardResponse(UserEntity entity) {
         return new UserCardResponse(
                 entity.getId(),
                 entity.getName(),
                 entity.getSurname()
+        );
+    }
+
+    public UserProfileResponse toProfileResponse(UserEntity user) {
+        return new UserProfileResponse(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getBio(),
+                user.getProfilePictureUrl(),
+                user.getBackgroundImageUrl()
         );
     }
 }

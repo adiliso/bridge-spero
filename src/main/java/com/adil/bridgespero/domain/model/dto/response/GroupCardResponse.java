@@ -1,5 +1,7 @@
 package com.adil.bridgespero.domain.model.dto.response;
 
+import com.adil.bridgespero.domain.model.enums.GroupStatus;
+
 public record GroupCardResponse(
 
         Long id,
@@ -10,6 +12,7 @@ public record GroupCardResponse(
         String name,
         String teacherName,
         String teacherSurname,
-        Double price
+        Double price,
+        GroupStatus status
 ) {
 }

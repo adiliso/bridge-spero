@@ -24,7 +24,6 @@ public class ResourceMapper {
         return new ResourceResponse(
                 entity.getId(),
                 entity.getName(),
-                entity.getPath(),
                 entity.getContentType(),
                 LocalDate.ofInstant(entity.getCreatedAt(), ZoneId.of("UTC+4")).format(GROUP_DATE_FORMATTER)
         );

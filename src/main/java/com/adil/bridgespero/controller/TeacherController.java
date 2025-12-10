@@ -83,13 +83,13 @@ public class TeacherController {
         return ResponseEntity.ok(teacherService.updateDemoVideo(demoVideo, user.getId()));
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<TeacherProfileResponse> getProfile(@AuthenticationPrincipal CustomUserPrincipal user) {
-        return ResponseEntity.ok(teacherService.getProfile(user.getId()));
+    @GetMapping("/{id}/profile")
+    public ResponseEntity<TeacherProfileResponse> getProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(teacherService.getProfile(id));
     }
 
     @GetMapping("/{id}/groups")
-    public ResponseEntity<List<GroupCardResponse>> getGroupCards(@PathVariable Long id) {
-        return ResponseEntity.ok(teacherService.getGroupCards(id));
+    public ResponseEntity<List<GroupCardResponse>> getProfileGroups(@PathVariable Long id) {
+        return ResponseEntity.ok(teacherService.getProfileGroups(id));
     }
 }
