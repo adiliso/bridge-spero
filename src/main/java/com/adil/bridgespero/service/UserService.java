@@ -6,7 +6,9 @@ import com.adil.bridgespero.domain.model.dto.UserDto;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
+import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.UserRepository;
@@ -26,6 +28,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -45,6 +48,7 @@ public class UserService {
     UserMapper2 userMapper2;
     ScheduleMapper scheduleMapper;
     GroupMapper groupMapper;
+    FileStorageService fileStorageService;
 
     public ScheduleWeekResponse getSchedule(Long id) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -120,5 +124,50 @@ public class UserService {
                 .stream()
                 .map(groupMapper::toCardResponse)
                 .toList();
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
+    @Transactional
+    public String createProfilePicture(Long id, MultipartFile file) {
+        UserEntity user = findById(id);
+        String path = fileStorageService.saveFile(file, ResourceType.IMAGE);
+
+        user.setProfilePictureUrl(path);
+        return path;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
+    @Transactional
+    public void deleteProfilePicture(Long id) {
+        UserEntity user = findById(id);
+
+        fileStorageService.deleteFile(user.getProfilePictureUrl());
+
+        user.setProfilePictureUrl(null);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
+    public String updateImage(Long id, MultipartFile file) {
+        UserEntity user = findById(id);
+
+        String oldImage = user.getProfilePictureUrl();
+        String newImage = fileStorageService.saveFile(file, ResourceType.IMAGE);
+        fileStorageService.deleteFile(oldImage);
+
+        user.setProfilePictureUrl(newImage);
+        return newImage;
+    }
+
+    public UserProfileResponse getProfile(Long id) {
+        UserEntity user = findById(id);
+
+        return userMapper.toProfileResponse(user);
+    }
+
+    public List<GroupCardResponse> getProfileGroups(Long id) {
+        checkUserExists(id);
+        MyGroupsFilter filter = new MyGroupsFilter(null, null, null, null);
+        return getGroups(id, filter);
     }
 }

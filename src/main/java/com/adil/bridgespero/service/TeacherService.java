@@ -143,7 +143,7 @@ public class TeacherService {
         return teacherMapper.toProfileResponse(teacher);
     }
 
-    public List<GroupCardResponse> getGroupCards(Long id) {
+    public List<GroupCardResponse> getProfileGroups(Long id) {
         checkTeacherExists(id);
         MyGroupsFilter filter = new MyGroupsFilter(null, GroupStatus.ACTIVE, null, null);
         return getGroups(id, filter);
