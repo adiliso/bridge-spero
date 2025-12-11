@@ -1,0 +1,64 @@
+services:
+  db_brsp:
+    container_name: brsp_db
+    image: postgres:18
+    ports:
+      - "5434:5432"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 5s
+      retries: 5
+      timeout: 5s
+    networks:
+      - app-network
+
+  redis:
+    container_name: brsp_redis
+    image: redis:7
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+    networks:
+      - app-network
+
+  app_brsp:
+    container_name: brsp_app
+    image: brsp-app:0.0.1
+    build:
+      dockerfile: Dockerfile
+
+    env_file:
+      - .env
+
+    environment:
+      STATIC_DIR: /app/uploads/public
+      PRIV_DIR: /app/uploads/private
+      LOG_LEVEL: DEBUG
+      KAFKA_LOG_LEVEL: WARN
+
+    networks:
+      - app-network
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+    volumes:
+      - ./uploads/public:/app/uploads/public
+      - ./uploads/private:/app/uploads/private
+
+    depends_on:
+      db_brsp:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+networks:
+  app-network:
+    driver: bridge

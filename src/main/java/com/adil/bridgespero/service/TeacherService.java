@@ -9,6 +9,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
+import com.adil.bridgespero.domain.model.dto.response.TeacherProfileResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
@@ -71,8 +72,8 @@ public class TeacherService {
                         .toList());
     }
 
-    @PreAuthorize("hasRole('TEACHER')")
     public List<GroupCardResponse> getGroups(Long id, MyGroupsFilter filter) {
+        checkTeacherExists(id);
         return groupRepository.findAll(SpecificationUtils.getTeacherGroupsSpecification(id, filter))
                 .stream()
                 .map(groupMapper::toCardResponse)
@@ -135,5 +136,16 @@ public class TeacherService {
 
     private TeacherDetailEntity getById(Long id) {
         return teacherRepository.findById(id).orElseThrow(() -> new TeacherNotFoundException(id));
+    }
+
+    public TeacherProfileResponse getProfile(Long id) {
+        var teacher = getById(id);
+        return teacherMapper.toProfileResponse(teacher);
+    }
+
+    public List<GroupCardResponse> getProfileGroups(Long id) {
+        checkTeacherExists(id);
+        MyGroupsFilter filter = new MyGroupsFilter(null, GroupStatus.ACTIVE, null, null);
+        return getGroups(id, filter);
     }
 }

@@ -7,6 +7,7 @@ import com.adil.bridgespero.domain.model.dto.response.ScheduleTeacherEventRespon
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDetailedCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.TeacherProfileResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -91,5 +92,20 @@ public class TeacherMapper {
                 .filter(group -> group.getStatus().equals(GroupStatus.ACTIVE))
                 .mapToInt(group -> group.getUsers().size())
                 .sum();
+    }
+
+    public TeacherProfileResponse toProfileResponse(TeacherDetailEntity teacherDetail) {
+        var user = teacherDetail.getUser();
+        return new TeacherProfileResponse(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                teacherDetail.getRating(),
+                getActiveStudents(teacherDetail),
+                user.getBio(),
+                user.getProfilePictureUrl(),
+                user.getBackgroundImageUrl(),
+                teacherDetail.getDemoVideoUrl()
+        );
     }
 }

@@ -32,7 +32,8 @@ public class GroupMapper {
                 entity.getName(),
                 entity.getTeacher().getUser().getName(),
                 entity.getTeacher().getUser().getSurname(),
-                entity.getPrice()
+                entity.getPrice(),
+                entity.getStatus()
         );
     }
 
