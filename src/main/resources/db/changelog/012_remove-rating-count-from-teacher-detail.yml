@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 012_remove-rating-count-from-teacher-detail
+      author: Adil Ismayilov
+      changes:
+        - dropColumn:
+            tableName: teacher_detail
+            columnName: rating_count
+
+      rollback:
+        - addColumn:
+            tableName: teacher_detail
+            columns:
+              - column:
+                  name: rating_count
+                  type: INTEGER
+                  defaultValueNumeric: 1

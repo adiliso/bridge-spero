@@ -49,11 +49,8 @@ public class TeacherDetailEntity {
     String demoVideoUrl;
 
     @Builder.Default
-    Double rating = 4.0;
-
-    @Builder.Default
-    @Column(name = "rating_count")
-    Integer ratingCount = 1;
+    @Column(nullable = false)
+    Double rating = 4.5;
 
     @ElementCollection
     @Builder.Default

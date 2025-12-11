@@ -2,6 +2,7 @@ package com.adil.bridgespero.controller;
 
 import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
+import com.adil.bridgespero.domain.model.dto.request.TeacherRateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
@@ -10,6 +11,7 @@ import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherProfileResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.TeacherService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -91,5 +95,15 @@ public class TeacherController {
     @GetMapping("/{id}/groups")
     public ResponseEntity<List<GroupCardResponse>> getProfileGroups(@PathVariable Long id) {
         return ResponseEntity.ok(teacherService.getProfileGroups(id));
+    }
+
+    @PostMapping("/{id}/rate")
+    public ResponseEntity<Void> rate(
+            @AuthenticationPrincipal CustomUserPrincipal user,
+            @PathVariable Long id,
+            @Valid @RequestBody TeacherRateRequest request
+    ) {
+        teacherService.rate(user.getId(), id, request);
+        return ResponseEntity.noContent().build();
     }
 }
