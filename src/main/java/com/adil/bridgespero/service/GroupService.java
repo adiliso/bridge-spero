@@ -110,8 +110,8 @@ public class GroupService {
         return getById(id).getSyllabus();
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfResource(#groupId)" +
-                  " or @securityService.isStudentOfResource(#groupId)")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)" +
+                  " or @securityService.isStudentOfGroup(#groupId)")
     public List<ResourceResponse> getResources(Long groupId, ResourceType type) {
         return resourceRepository.findAllByGroupIdAndType(groupId, type)
                 .stream()
