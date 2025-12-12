@@ -8,6 +8,7 @@ public record ScheduleUserEventResponse(
         String name,
         String status,
         String startTime,
+        String endTime,
         String teacher,
         String joinUrl,
         boolean isMeetingActive
