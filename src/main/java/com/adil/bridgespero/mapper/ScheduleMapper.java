@@ -113,6 +113,7 @@ public class ScheduleMapper {
                 .name(group.getName())
                 .status(group.getStatus().toString().toLowerCase())
                 .startTime(entity.getStartTime().format(TIME_FORMATTER))
+                .endTime(entity.getEndTime().format(TIME_FORMATTER))
                 .numberOfStudents(group.getUsers().size())
                 .maxStudents(group.getMaxStudents())
                 .startUrl(group.getStartUrl())
@@ -129,6 +130,7 @@ public class ScheduleMapper {
                 group.getName(),
                 group.getStatus().toString().toLowerCase(),
                 entity.getStartTime().format(TIME_FORMATTER),
+                entity.getEndTime().format(TIME_FORMATTER),
                 getTeacherNameSurname(group),
                 group.getJoinUrl(),
                 group.isMeetingActive()

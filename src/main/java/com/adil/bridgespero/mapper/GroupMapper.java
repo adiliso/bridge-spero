@@ -62,7 +62,7 @@ public class GroupMapper {
                 .id(request.categoryId())
                 .build();
 
-        LocalDate startDate = LocalDate.parse(request.startDate(), GROUP_DATE_FORMATTER);
+        LocalDate startDate = request.startDate();
         LocalDate endDate = null;
         if (request.durationInMonths() != null) endDate = startDate.plusMonths(request.durationInMonths());
 

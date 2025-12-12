@@ -10,6 +10,7 @@ public record ScheduleTeacherEventResponse(
         String name,
         String status,
         String startTime,
+        String endTime,
         int numberOfStudents,
         int maxStudents,
         String startUrl,
