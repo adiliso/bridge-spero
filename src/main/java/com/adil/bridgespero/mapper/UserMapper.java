@@ -70,7 +70,8 @@ public class UserMapper {
         return new UserCardResponse(
                 entity.getId(),
                 entity.getName(),
-                entity.getSurname()
+                entity.getSurname(),
+                entity.getRole()
         );
     }
 
