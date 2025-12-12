@@ -87,7 +87,7 @@ public class GroupMapper {
         var category = CategoryEntity.builder()
                 .id(request.categoryId())
                 .build();
-        LocalDate startDate = LocalDate.parse(request.startDate(), GROUP_DATE_FORMATTER);
+        LocalDate startDate = request.startDate();
         LocalDate endDate = null;
         if (request.durationInMonths() != null) endDate = startDate.plusMonths(request.durationInMonths());
         group.setName(request.name());
@@ -96,7 +96,7 @@ public class GroupMapper {
         group.setDescription(request.description());
         group.setMaxStudents(request.maxStudents());
         group.setPrice(request.price());
-        group.setStartDate(LocalDate.parse(request.startDate(), GROUP_DATE_FORMATTER));
+        group.setStartDate(startDate);
         group.setEndDate(endDate);
         group.setStatus(GroupStatus.ACTIVE);
         group.setUpdatedBy(userId);
