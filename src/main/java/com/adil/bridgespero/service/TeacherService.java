@@ -122,7 +122,13 @@ public class TeacherService {
     }
 
     @Transactional
-    public void save(TeacherDto teacherDto) {
+    public void save(TeacherDto teacherDto, MultipartFile demoVideo) {
+        String demoVideoUrl = null;
+        if (demoVideo != null && !demoVideo.isEmpty()) {
+            demoVideoUrl = fileStorageService.saveFile(demoVideo, ResourceType.DEMO_VIDEO);
+        }
+        teacherDto.setDemoVideoUrl(demoVideoUrl);
+
         var entity = teacherMapper.toEntity(teacherDto);
         teacherRepository.save(entity);
     }
