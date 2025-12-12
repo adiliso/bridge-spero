@@ -58,7 +58,6 @@ jitsi:
 meeting:
   provider: jitsi   # or zoom
 
-
 logging:
   level:
     org:

@@ -2,6 +2,7 @@ package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.model.dto.response.MeetingResponse;
+import com.adil.bridgespero.util.AppUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -19,7 +20,8 @@ public class JitsiMeetingService implements MeetingService {
         if (group.getStartUrl() != null && !group.getStartUrl().isEmpty()) {
             meetingUrl = group.getStartUrl();
         } else {
-            meetingUrl = baseUrl + "/" + group.getName() + UUID.randomUUID();
+            String safeGroupName = AppUtil.toSlug(group.getName());
+            meetingUrl = baseUrl + "/" + safeGroupName + "-" + UUID.randomUUID();
         }
         return MeetingResponse.builder()
                 .startUrl(meetingUrl)
