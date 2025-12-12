@@ -1,9 +1,11 @@
 package com.adil.bridgespero.domain.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class MeetingResponse {
 
     @JsonProperty("id")
