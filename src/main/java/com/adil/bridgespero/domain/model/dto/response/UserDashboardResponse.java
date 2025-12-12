@@ -8,6 +8,6 @@ public record UserDashboardResponse(
         int activeGroups,
         double studyHours,
         int lessonsToday,
-        List<ScheduleUserEventResponse> groups
+        List<ScheduleUserEventResponse> events
 ) {
 }

@@ -65,7 +65,7 @@ public class GroupService {
     FileStorageService fileStorageService;
     UserService userService;
     TeacherService teacherService;
-    ZoomService zoomService;
+    MeetingService meetingService;
     CategoryService categoryService;
     UserRepository userRepository;
 
@@ -253,11 +253,10 @@ public class GroupService {
     public String startLesson(Long id, String email) {
         var group = getById(id);
 
-        var zoomMeeting = zoomService.createMeeting(email, group);
+        var zoomMeeting = meetingService.createMeeting(email, group);
 
         group.setStartUrl(zoomMeeting.getStartUrl());
         group.setJoinUrl(zoomMeeting.getJoinUrl());
-        group.setMeetingActive(true);
 
         return zoomMeeting.getStartUrl();
     }
