@@ -55,8 +55,6 @@ public class TeacherDto implements Serializable {
 
     private List<String> interests;
 
-    private Double rating;
-
     private Integer ratingCount;
 
     private Set<String> subjects;

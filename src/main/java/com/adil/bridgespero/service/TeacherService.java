@@ -1,9 +1,12 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
+import com.adil.bridgespero.domain.entity.TeacherRatingEntity;
+import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
+import com.adil.bridgespero.domain.model.dto.request.TeacherRateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
@@ -14,6 +17,7 @@ import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
+import com.adil.bridgespero.domain.repository.TeacherRatingRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
 import com.adil.bridgespero.exception.TeacherNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
@@ -49,6 +53,8 @@ public class TeacherService {
     GroupMapper groupMapper;
     ScheduleMapper scheduleMapper;
     FileStorageService fileStorageService;
+    private final UserService userService;
+    private final TeacherRatingRepository teacherRatingRepository;
 
     public PageResponse<TeacherCardResponse> getTopRated(final int pageNumber, final int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("rating").descending());
@@ -116,7 +122,13 @@ public class TeacherService {
     }
 
     @Transactional
-    public void save(TeacherDto teacherDto) {
+    public void save(TeacherDto teacherDto, MultipartFile demoVideo) {
+        String demoVideoUrl = null;
+        if (demoVideo != null && !demoVideo.isEmpty()) {
+            demoVideoUrl = fileStorageService.saveFile(demoVideo, ResourceType.DEMO_VIDEO);
+        }
+        teacherDto.setDemoVideoUrl(demoVideoUrl);
+
         var entity = teacherMapper.toEntity(teacherDto);
         teacherRepository.save(entity);
     }
@@ -148,4 +160,36 @@ public class TeacherService {
         MyGroupsFilter filter = new MyGroupsFilter(null, GroupStatus.ACTIVE, null, null);
         return getGroups(id, filter);
     }
+
+    @Transactional
+    @PreAuthorize("!@securityService.isCurrentUser(#teacherId)")
+    public void rate(Long userId, Long teacherId, TeacherRateRequest request) {
+        UserEntity user = userService.findById(userId);
+        TeacherDetailEntity teacher = getById(teacherId);
+
+        TeacherRatingEntity rating = teacherRatingRepository
+                .findByTeacherIdAndUserId(teacherId, userId)
+                .orElse(new TeacherRatingEntity());
+
+        rating.setTeacher(teacher);
+        rating.setUser(user);
+        rating.setRating(request.rating());
+
+        teacherRatingRepository.save(rating);
+
+        teacher.setRating(getTeacherDisplayedRating(teacherId));
+        teacherRepository.save(teacher);
+    }
+
+    public double getTeacherDisplayedRating(Long teacherId) {
+        double globalAvg = 4.5;
+        int weight = 5;
+
+        Double realAvg = teacherRatingRepository.getTeacherAverageRating(teacherId);
+        Long count = teacherRatingRepository.countByTeacher_Id(teacherId);
+
+        double newAvg = (globalAvg * weight + realAvg * count) / (weight + count);
+        return Math.round(newAvg * 100.0) / 100.0;
+    }
+
 }

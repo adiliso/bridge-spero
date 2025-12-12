@@ -72,8 +72,6 @@ public class TeacherMapper {
                 .id(dto.getId())
                 .user(user)
                 .demoVideoUrl(dto.getDemoVideoUrl())
-                .rating(dto.getRating())
-                .ratingCount(dto.getRatingCount())
                 .subjects(dto.getSubjects())
                 .build();
     }

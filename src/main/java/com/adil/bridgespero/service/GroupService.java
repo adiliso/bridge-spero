@@ -24,6 +24,7 @@ import com.adil.bridgespero.exception.GroupNotFoundException;
 import com.adil.bridgespero.exception.GroupWithZoomIdNotFoundException;
 import com.adil.bridgespero.exception.ScheduleNotFoundException;
 import com.adil.bridgespero.exception.SyllabusAlreadyExistsException;
+import com.adil.bridgespero.exception.UserGroupAlreadyExistsException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ResourceMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
@@ -64,7 +65,7 @@ public class GroupService {
     FileStorageService fileStorageService;
     UserService userService;
     TeacherService teacherService;
-    ZoomService zoomService;
+    MeetingService meetingService;
     CategoryService categoryService;
     UserRepository userRepository;
 
@@ -109,8 +110,8 @@ public class GroupService {
         return getById(id).getSyllabus();
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfResource(#groupId)" +
-                  " or @securityService.isStudentOfResource(#groupId)")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)" +
+                  " or @securityService.isStudentOfGroup(#groupId)")
     public List<ResourceResponse> getResources(Long groupId, ResourceType type) {
         return resourceRepository.findAllByGroupIdAndType(groupId, type)
                 .stream()
@@ -252,11 +253,10 @@ public class GroupService {
     public String startLesson(Long id, String email) {
         var group = getById(id);
 
-        var zoomMeeting = zoomService.createMeeting(email, group);
+        var zoomMeeting = meetingService.createMeeting(email, group);
 
         group.setStartUrl(zoomMeeting.getStartUrl());
         group.setJoinUrl(zoomMeeting.getJoinUrl());
-        group.setMeetingActive(true);
 
         return zoomMeeting.getStartUrl();
     }
@@ -299,15 +299,19 @@ public class GroupService {
 
     @Transactional
     public void addMember(Long groupId, Long userId) {
-        checkGroupExists(groupId);
         var group = getById(groupId);
-        checkGroupIsFull(groupId, group.getMaxStudents());
-
-        userService.checkUserExists(userId);
         var user = userService.findById(userId);
+        checkUserGroupAlreadyExists(userId, groupId);
+        checkGroupIsFull(groupId, group.getMaxStudents());
 
         group.getUsers().add(user);
         user.getGroups().add(group);
+    }
+
+    private void checkUserGroupAlreadyExists(Long userId, Long groupId) {
+        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) {
+            throw new UserGroupAlreadyExistsException(userId, groupId);
+        }
     }
 
     private void checkGroupIsFull(Long groupId, int maxStudents) {

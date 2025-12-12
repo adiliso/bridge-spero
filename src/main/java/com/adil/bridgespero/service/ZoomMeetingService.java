@@ -11,15 +11,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ZoomService {
+public class ZoomMeetingService implements MeetingService {
 
-    RestTemplate restTemplate = new RestTemplate();
+    RestTemplate restTemplate;
     ZoomOAuthService zoomOAuthService;
 
     public MeetingResponse createMeeting(String email, GroupEntity group) {

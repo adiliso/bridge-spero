@@ -74,9 +74,8 @@ public class AuthenticationService {
                 .enabled(true)
                 .agreedToTerms(signupRequest.isAgreedToTerms())
                 .bio(signupRequest.getBio())
-                .demoVideoUrl(fileStorageService.saveFile(signupRequest.getDemoVideo(), ResourceType.DEMO_VIDEO))
                 .build();
-        teacherService.save(teacherDto);
+        teacherService.save(teacherDto, signupRequest.getDemoVideo());
     }
 
     private void checkPasswordsMatch(String password, String confirmPassword) {
