@@ -203,4 +203,12 @@ public class UserService {
         user.setBackgroundImageUrl(newImage);
         return newImage;
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserDto> getAll() {
+        var userEntities = userRepository.findAll();
+        return userEntities.stream()
+                .map(userMapper2::toDto)
+                .toList();
+    }
 }
