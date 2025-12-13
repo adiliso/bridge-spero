@@ -3,6 +3,7 @@ package com.adil.bridgespero.service;
 import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.UserDto;
+import com.adil.bridgespero.domain.model.dto.request.UserUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
@@ -210,5 +211,17 @@ public class UserService {
         return userEntities.stream()
                 .map(userMapper2::toDto)
                 .toList();
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
+    public void update(Long id, UserUpdateRequest request) {
+        checkUserExists(id);
+        checkEmailAlreadyExists(request.getEmail());
+
+        UserEntity user = findById(id);
+
+        userMapper.update(user, request);
+        userRepository.save(user);
     }
 }

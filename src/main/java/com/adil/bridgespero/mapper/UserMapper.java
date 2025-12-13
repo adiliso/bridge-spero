@@ -2,6 +2,7 @@ package com.adil.bridgespero.mapper;
 
 import com.adil.bridgespero.domain.entity.ScheduleEntity;
 import com.adil.bridgespero.domain.entity.UserEntity;
+import com.adil.bridgespero.domain.model.dto.request.UserUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.AdminResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleUserEventResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserCardResponse;
@@ -84,5 +85,14 @@ public class UserMapper {
                 user.getProfilePictureUrl(),
                 user.getBackgroundImageUrl()
         );
+    }
+
+    public void update(UserEntity user, UserUpdateRequest request) {
+        user.setName(request.getName());
+        user.setSurname(request.getSurname());
+        user.setBio(request.getBio());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
+        user.setInterests(request.getInterests());
     }
 }
