@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 014_fix-category-id-sequence
+      author: Adil Ismayilov
+      runOnChange: false
+      runAlways: false
+
+      changes:
+        - sql:
+            dbms: postgresql
+            splitStatements: false
+            stripComments: true
+            sql: |
+              SELECT setval(
+                pg_get_serial_sequence('category', 'id'),
+                COALESCE((SELECT MAX(id) FROM category), 1)
+              );

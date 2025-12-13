@@ -138,12 +138,18 @@ public class TeacherService {
     public String updateDemoVideo(MultipartFile demoVideo, Long userId) {
         var entity = getById(userId);
 
-        fileStorageService.deleteFile(entity.getDemoVideoUrl());
+        String oldDemoVideoUrl = entity.getDemoVideoUrl();
 
-        String path = fileStorageService.saveFile(demoVideo, ResourceType.DEMO_VIDEO);
-        entity.setDemoVideoUrl(path);
+        String newDemoVideUrl = fileStorageService.saveFile(demoVideo, ResourceType.DEMO_VIDEO);
+        entity.setDemoVideoUrl(newDemoVideUrl);
         teacherRepository.save(entity);
-        return path;
+
+        System.err.println(oldDemoVideoUrl);
+        if (oldDemoVideoUrl != null && !oldDemoVideoUrl.isEmpty()) {
+            System.err.println(oldDemoVideoUrl);
+            fileStorageService.deleteFile(oldDemoVideoUrl);
+        }
+        return newDemoVideUrl;
     }
 
     private TeacherDetailEntity getById(Long id) {

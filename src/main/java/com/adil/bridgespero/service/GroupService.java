@@ -340,4 +340,11 @@ public class GroupService {
         userService.checkUserExists(studentId);
         groupRepository.deleteMembership(id, studentId);
     }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#id)")
+    public void delete(Long id) {
+        checkGroupExists(id);
+        groupRepository.deleteById(id);
+    }
 }

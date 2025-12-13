@@ -111,4 +111,9 @@ public class UserController {
                                                         @RequestPart("file") MultipartFile file) {
         return ResponseEntity.ok(userService.updateBackgroundImage(user.getId(), file));
     }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAll() {
+        return ResponseEntity.ok(userService.getAll());
+    }
 }

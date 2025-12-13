@@ -215,4 +215,10 @@ public class GroupController {
         boolean isMember = securityService.isStudentOfGroup(id);
         return ResponseEntity.ok(new StudentIsMemberResponse(isMember));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        groupService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
