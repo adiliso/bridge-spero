@@ -4,4 +4,5 @@ public enum GroupStatus {
 
     ACTIVE,
     COMPLETED,
+    DELETED
 }

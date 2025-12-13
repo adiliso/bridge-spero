@@ -22,6 +22,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,10 +34,11 @@ import java.util.List;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true,
-        exclude = {"schedules", "teacher", "category", "users", "resources"})
+@EqualsAndHashCode(callSuper = true, exclude = {"schedules", "teacher", "category", "users", "resources"})
 @Table(name = "groups")
+@SQLRestriction("status != 'DELETED'")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SQLDelete(sql = "UPDATE groups SET status = 'DELETED' WHERE id = ?")
 public class GroupEntity extends BaseEntity {
 
     @Column(nullable = false)
