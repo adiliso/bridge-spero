@@ -120,9 +120,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll());
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<List<UserDto>> getAllActive(){
+        return ResponseEntity.ok(userService.getAllActive());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
         userService.update(id, request);
         return ResponseEntity.noContent().build();
     }
+
 }

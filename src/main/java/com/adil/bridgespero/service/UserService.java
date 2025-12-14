@@ -223,4 +223,13 @@ public class UserService {
         userMapper.update(user, request);
         userRepository.save(user);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserDto> getAllActive() {
+        var userEntities = userRepository.findAll();
+
+        return userEntities.stream()
+                .map(userMapper2::toDto)
+                .toList();
+    }
 }
