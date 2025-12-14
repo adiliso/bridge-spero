@@ -1,6 +1,5 @@
 package com.adil.bridgespero.controller;
 
-import com.adil.bridgespero.domain.model.dto.UserDto;
 import com.adil.bridgespero.domain.model.dto.filter.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.filter.UserFilter;
 import com.adil.bridgespero.domain.model.dto.request.UserUpdateRequest;
@@ -9,6 +8,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.UserService;
 import jakarta.validation.constraints.Min;
@@ -48,7 +48,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getMe(@AuthenticationPrincipal CustomUserPrincipal user) {
+    public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal CustomUserPrincipal user) {
         return ResponseEntity.ok(userService.getById(user.getId()));
     }
 
@@ -123,12 +123,12 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAll() {
+    public ResponseEntity<List<UserResponse>> getAll() {
         return ResponseEntity.ok(userService.getAll());
     }
 
     @GetMapping("/active")
-    public ResponseEntity<PageResponse<UserDto>> getAllActive(
+    public ResponseEntity<PageResponse<UserResponse>> getAllActive(
             @ParameterObject UserFilter filter,
             @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER, required = false) @Min(0) int pageNumber,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE, required = false) @Min(1) int pageSize

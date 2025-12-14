@@ -7,7 +7,6 @@ import com.adil.bridgespero.domain.model.dto.UserDto;
 import com.adil.bridgespero.domain.model.dto.request.SigninRequest;
 import com.adil.bridgespero.domain.model.dto.request.TeacherSignupRequest;
 import com.adil.bridgespero.domain.model.dto.request.UserSignupRequest;
-import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.model.enums.Role;
 import com.adil.bridgespero.domain.repository.TokenRedisRepository;
 import com.adil.bridgespero.exception.InvalidAccessTokenException;
@@ -37,7 +36,6 @@ public class AuthenticationService {
 
     UserService userService;
     TeacherService teacherService;
-    FileStorageService fileStorageService;
     TokenCreator tokenCreator;
     TokenProvider tokenProvider;
     PasswordEncoder passwordEncoder;
@@ -56,6 +54,8 @@ public class AuthenticationService {
                 .phone(signupRequest.getPhoneCode() + signupRequest.getPhoneNumber())
                 .enabled(true)
                 .agreedToTerms(signupRequest.isAgreedToTerms())
+                .interests(signupRequest.getInterests())
+                .bio(signupRequest.getBio())
                 .build();
         userService.save(userDto);
     }
