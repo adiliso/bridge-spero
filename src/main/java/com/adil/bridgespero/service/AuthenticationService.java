@@ -56,6 +56,8 @@ public class AuthenticationService {
                 .phone(signupRequest.getPhoneCode() + signupRequest.getPhoneNumber())
                 .enabled(true)
                 .agreedToTerms(signupRequest.isAgreedToTerms())
+                .interests(signupRequest.getInterests())
+                .bio(signupRequest.getBio())
                 .build();
         userService.save(userDto);
     }

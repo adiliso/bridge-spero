@@ -10,6 +10,7 @@ import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
@@ -119,9 +120,9 @@ public class UserService {
         if (isEmailExist(email)) throw new EmailAlreadyExistsException();
     }
 
-    public UserDto getById(Long id) {
+    public UserResponse getById(Long id) {
         var entity = findById(id);
-        return userMapper2.toDto(entity);
+        return userMapper.toUserResponse(entity);
     }
 
     public List<GroupCardResponse> getGroups(Long userId, MyGroupsFilter filter) {
@@ -210,10 +211,10 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserDto> getAll() {
+    public List<UserResponse> getAll() {
         var userEntities = userRepository.findAllIncludingDeleted();
         return userEntities.stream()
-                .map(userMapper2::toDto)
+                .map(userMapper::toUserResponse)
                 .toList();
     }
 
@@ -229,10 +230,10 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public PageResponse<UserDto> getAllActive(UserFilter filter, int pageNumber, int pageSize) {
+    public PageResponse<UserResponse> getAllActive(UserFilter filter, int pageNumber, int pageSize) {
         final Pageable pageable = PageRequest.of(pageNumber, pageSize);
         var responses = userRepository.findAll(SpecificationUtils.getUserSpecification(filter), pageable)
-                .map(userMapper2::toDto);
+                .map(userMapper::toUserResponse);
 
         return new PageResponse<>(
                 responses.getContent(),
