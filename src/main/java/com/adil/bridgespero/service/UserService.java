@@ -1,13 +1,16 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.entity.UserEntity;
-import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.UserDto;
+import com.adil.bridgespero.domain.model.dto.filter.MyGroupsFilter;
+import com.adil.bridgespero.domain.model.dto.filter.UserFilter;
 import com.adil.bridgespero.domain.model.dto.request.UserUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
@@ -24,6 +27,8 @@ import com.adil.bridgespero.util.SpecificationUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -115,9 +120,9 @@ public class UserService {
         if (isEmailExist(email)) throw new EmailAlreadyExistsException();
     }
 
-    public UserDto getById(Long id) {
+    public UserResponse getById(Long id) {
         var entity = findById(id);
-        return userMapper2.toDto(entity);
+        return userMapper.toUserResponse(entity);
     }
 
     public List<GroupCardResponse> getGroups(Long userId, MyGroupsFilter filter) {
@@ -206,10 +211,10 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserDto> getAll() {
+    public List<UserResponse> getAll() {
         var userEntities = userRepository.findAllIncludingDeleted();
         return userEntities.stream()
-                .map(userMapper2::toDto)
+                .map(userMapper::toUserResponse)
                 .toList();
     }
 
@@ -225,11 +230,16 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserDto> getAllActive() {
-        var userEntities = userRepository.findAll();
+    public PageResponse<UserResponse> getAllActive(UserFilter filter, int pageNumber, int pageSize) {
+        final Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        var responses = userRepository.findAll(SpecificationUtils.getUserSpecification(filter), pageable)
+                .map(userMapper::toUserResponse);
 
-        return userEntities.stream()
-                .map(userMapper2::toDto)
-                .toList();
+        return new PageResponse<>(
+                responses.getContent(),
+                pageNumber,
+                pageSize,
+                responses.getTotalElements(),
+                responses.getTotalPages());
     }
 }

@@ -5,6 +5,7 @@ import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.request.UserUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.AdminResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleUserEventResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
@@ -93,5 +94,22 @@ public class UserMapper {
         user.setBio(request.getBio());
         user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
         user.setInterests(request.getInterests());
+    }
+
+    public UserResponse toUserResponse(UserEntity entity) {
+        return new UserResponse(
+                entity.getId(),
+                entity.getEmail(),
+                entity.getName(),
+                entity.getSurname(),
+                entity.getRole(),
+                entity.getStatus(),
+                entity.getPhone(),
+                entity.getProfilePictureUrl(),
+                entity.getBio(),
+                entity.getInterests(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt()
+        );
     }
 }

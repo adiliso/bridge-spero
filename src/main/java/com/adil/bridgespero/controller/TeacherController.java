@@ -1,7 +1,7 @@
 package com.adil.bridgespero.controller;
 
-import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
-import com.adil.bridgespero.domain.model.dto.TeacherFilter;
+import com.adil.bridgespero.domain.model.dto.filter.MyGroupsFilter;
+import com.adil.bridgespero.domain.model.dto.filter.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.request.TeacherRateRequest;
 import com.adil.bridgespero.domain.model.dto.request.TeacherUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;

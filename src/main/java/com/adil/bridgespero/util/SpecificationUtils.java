@@ -2,11 +2,14 @@ package com.adil.bridgespero.util;
 
 import com.adil.bridgespero.domain.entity.GroupEntity;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
-import com.adil.bridgespero.domain.model.dto.GroupFilter;
-import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
-import com.adil.bridgespero.domain.model.dto.TeacherFilter;
+import com.adil.bridgespero.domain.entity.UserEntity;
+import com.adil.bridgespero.domain.model.dto.filter.GroupFilter;
+import com.adil.bridgespero.domain.model.dto.filter.MyGroupsFilter;
+import com.adil.bridgespero.domain.model.dto.filter.TeacherFilter;
+import com.adil.bridgespero.domain.model.dto.filter.UserFilter;
 import com.adil.bridgespero.domain.specification.GroupSpecification;
 import com.adil.bridgespero.domain.specification.TeacherSpecification;
+import com.adil.bridgespero.domain.specification.UserSpecification;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -76,6 +79,14 @@ public class SpecificationUtils {
             spec = spec.and(GroupSpecification.hasCategoryId(filter.categoryId()));
         }
 
+        return spec;
+    }
+
+    public static Specification<UserEntity> getUserSpecification(UserFilter filter) {
+        Specification<UserEntity> spec = Specification.allOf();
+        if (filter.role() != null) {
+            spec = spec.and(UserSpecification.hasRole(filter.role()));
+        }
         return spec;
     }
 }
