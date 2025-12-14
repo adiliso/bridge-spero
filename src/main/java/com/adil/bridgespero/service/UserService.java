@@ -217,7 +217,6 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
     public void update(Long id, UserUpdateRequest request) {
         checkUserExists(id);
-        checkEmailAlreadyExists(request.getEmail());
 
         UserEntity user = findById(id);
 

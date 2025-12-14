@@ -91,7 +91,6 @@ public class UserMapper {
         user.setName(request.getName());
         user.setSurname(request.getSurname());
         user.setBio(request.getBio());
-        user.setEmail(request.getEmail());
         user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
         user.setInterests(request.getInterests());
     }

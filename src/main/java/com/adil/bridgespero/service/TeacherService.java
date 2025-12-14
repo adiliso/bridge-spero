@@ -209,10 +209,6 @@ public class TeacherService {
         TeacherDetailEntity teacher = getById(teacherId);
         UserEntity user = teacher.getUser();
 
-        if (!user.getEmail().equals(request.getEmail())) {
-            userService.checkEmailAlreadyExists(request.getEmail());
-        }
-
         teacherMapper.update(user, teacher, request);
 
         userRepository.save(user);

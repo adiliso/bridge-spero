@@ -1,6 +1,5 @@
 package com.adil.bridgespero.domain.model.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -21,10 +20,6 @@ public class TeacherUpdateRequest {
 
     @NotBlank(message = "Surname is required")
     private String surname;
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email is not valid")
-    private String email;
 
     @NotBlank(message = "Phone code is required")
     @Pattern(regexp = "^\\+\\d{1,4}$", message = "Phone code must start with + and contain 1–4 digits")
