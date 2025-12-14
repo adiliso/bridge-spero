@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +36,14 @@ import java.util.Set;
 @Table(name = "teacher_detail")
 @EqualsAndHashCode(exclude = "createdGroups")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SQLRestriction("""
+            EXISTS (
+                SELECT 1
+                FROM users u
+                WHERE u.id = user_id
+                  AND u.status <> 'DELETED'
+            )
+        """)
 public class TeacherDetailEntity {
 
     @Id

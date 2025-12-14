@@ -1,6 +1,6 @@
 package com.adil.bridgespero.domain.model.enums;
 
-public enum UserStatus {
+public enum Status {
 
     ACTIVE,
     DELETED
