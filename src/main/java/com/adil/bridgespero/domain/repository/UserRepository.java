@@ -3,6 +3,7 @@ package com.adil.bridgespero.domain.repository;
 import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,4 +19,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findAllByGroups_Id(Long groupId);
 
     boolean existsByEmail(String email);
+
+    @Query(value = """
+            SELECT * FROM users
+            """, nativeQuery = true)
+    List<UserEntity> findAllIncludingDeleted();
 }

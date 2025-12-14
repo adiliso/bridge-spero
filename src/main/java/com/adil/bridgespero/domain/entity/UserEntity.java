@@ -1,7 +1,7 @@
 package com.adil.bridgespero.domain.entity;
 
 import com.adil.bridgespero.domain.model.enums.Role;
-import com.adil.bridgespero.domain.model.enums.UserStatus;
+import com.adil.bridgespero.domain.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -66,7 +66,7 @@ public class UserEntity extends BaseEntity {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    UserStatus status = UserStatus.ACTIVE;
+    Status status = Status.ACTIVE;
 
     @Column(name = "profile_picture_url")
     String profilePictureUrl;

@@ -1,6 +1,7 @@
 package com.adil.bridgespero.domain.model.dto;
 
 import com.adil.bridgespero.domain.model.enums.Role;
+import com.adil.bridgespero.domain.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,8 @@ public class UserDto implements Serializable {
     private String surname;
 
     private Role role;
+
+    private Status status;
 
     private String phone;
 

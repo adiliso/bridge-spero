@@ -3,6 +3,7 @@ package com.adil.bridgespero.controller;
 import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.request.TeacherRateRequest;
+import com.adil.bridgespero.domain.model.dto.request.TeacherUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
@@ -104,6 +105,12 @@ public class TeacherController {
             @Valid @RequestBody TeacherRateRequest request
     ) {
         teacherService.rate(user.getId(), id, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody TeacherUpdateRequest request) {
+        teacherService.update(id, request);
         return ResponseEntity.noContent().build();
     }
 }

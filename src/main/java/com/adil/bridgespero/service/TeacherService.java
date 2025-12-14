@@ -7,6 +7,7 @@ import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
 import com.adil.bridgespero.domain.model.dto.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.request.TeacherRateRequest;
+import com.adil.bridgespero.domain.model.dto.request.TeacherUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
@@ -19,6 +20,7 @@ import com.adil.bridgespero.domain.repository.GroupRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.TeacherRatingRepository;
 import com.adil.bridgespero.domain.repository.TeacherRepository;
+import com.adil.bridgespero.domain.repository.UserRepository;
 import com.adil.bridgespero.exception.TeacherNotFoundException;
 import com.adil.bridgespero.mapper.GroupMapper;
 import com.adil.bridgespero.mapper.ScheduleMapper;
@@ -55,6 +57,7 @@ public class TeacherService {
     FileStorageService fileStorageService;
     private final UserService userService;
     private final TeacherRatingRepository teacherRatingRepository;
+    private final UserRepository userRepository;
 
     public PageResponse<TeacherCardResponse> getTopRated(final int pageNumber, final int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("rating").descending());
@@ -198,4 +201,17 @@ public class TeacherService {
         return Math.round(newAvg * 100.0) / 100.0;
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#teacherId)")
+    public void update(Long teacherId, TeacherUpdateRequest request) {
+        checkTeacherExists(teacherId);
+
+        TeacherDetailEntity teacher = getById(teacherId);
+        UserEntity user = teacher.getUser();
+
+        teacherMapper.update(user, teacher, request);
+
+        userRepository.save(user);
+        teacherRepository.save(teacher);
+    }
 }
