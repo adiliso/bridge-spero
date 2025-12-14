@@ -207,7 +207,7 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserDto> getAll() {
-        var userEntities = userRepository.findAll();
+        var userEntities = userRepository.findAllIncludingDeleted();
         return userEntities.stream()
                 .map(userMapper2::toDto)
                 .toList();
