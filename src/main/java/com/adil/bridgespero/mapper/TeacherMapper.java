@@ -3,6 +3,7 @@ package com.adil.bridgespero.mapper;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
+import com.adil.bridgespero.domain.model.dto.request.TeacherUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleTeacherEventResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
@@ -12,6 +13,7 @@ import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -105,5 +107,14 @@ public class TeacherMapper {
                 user.getBackgroundImageUrl(),
                 teacherDetail.getDemoVideoUrl()
         );
+    }
+
+    public void update(UserEntity user, TeacherDetailEntity teacher, TeacherUpdateRequest request) {
+        user.setName(request.getName());
+        user.setSurname(request.getSurname());
+        user.setBio(request.getBio());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
+        teacher.setSubjects(new HashSet<>(request.getSubjects()));
     }
 }
