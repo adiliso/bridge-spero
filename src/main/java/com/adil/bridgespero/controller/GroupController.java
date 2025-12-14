@@ -1,6 +1,6 @@
 package com.adil.bridgespero.controller;
 
-import com.adil.bridgespero.domain.model.dto.GroupFilter;
+import com.adil.bridgespero.domain.model.dto.filter.GroupFilter;
 import com.adil.bridgespero.domain.model.dto.request.GroupCreateRequest;
 import com.adil.bridgespero.domain.model.dto.request.GroupEditRequest;
 import com.adil.bridgespero.domain.model.dto.request.ResourceCreateRequest;

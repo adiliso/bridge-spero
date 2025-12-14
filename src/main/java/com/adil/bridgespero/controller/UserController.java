@@ -1,14 +1,17 @@
 package com.adil.bridgespero.controller;
 
-import com.adil.bridgespero.domain.model.dto.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.UserDto;
+import com.adil.bridgespero.domain.model.dto.filter.MyGroupsFilter;
+import com.adil.bridgespero.domain.model.dto.filter.UserFilter;
 import com.adil.bridgespero.domain.model.dto.request.UserUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.UserService;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +29,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.adil.bridgespero.constant.PageConstant.DEFAULT_PAGE_NUMBER;
+import static com.adil.bridgespero.constant.PageConstant.DEFAULT_PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -121,8 +128,12 @@ public class UserController {
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<UserDto>> getAllActive(){
-        return ResponseEntity.ok(userService.getAllActive());
+    public ResponseEntity<PageResponse<UserDto>> getAllActive(
+            @ParameterObject UserFilter filter,
+            @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER, required = false) @Min(0) int pageNumber,
+            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE, required = false) @Min(1) int pageSize
+    ) {
+        return ResponseEntity.ok(userService.getAllActive(filter, pageNumber, pageSize));
     }
 
     @PutMapping("/{id}")

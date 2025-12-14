@@ -51,6 +51,8 @@ public class UserDto implements Serializable {
 
     private Boolean agreedToTerms;
 
+    private String profilePictureUrl;
+
     private Instant createdAt;
 
     private Instant updatedAt;
