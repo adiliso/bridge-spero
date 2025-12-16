@@ -9,7 +9,6 @@ import com.adil.bridgespero.service.AuthenticationService;
 import com.adil.bridgespero.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -83,18 +81,23 @@ public class AuthenticationController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<Void> verify(@RequestHeader("Authorization") @NotBlank String authorizationHeader) {
-        authenticationService.verify(authorizationHeader);
+    public ResponseEntity<Void> verify(HttpServletRequest request) {
+        authenticationService.verify(request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<TokenPair> refresh(
             HttpServletRequest request,
-            @Valid @RequestBody(required = false) RefreshTokenRequest refreshTokenRequest) {
+            @Valid @RequestBody(required = false) RefreshTokenRequest refreshTokenRequest
+    ) {
+
+        String bodyToken = refreshTokenRequest != null
+                ? refreshTokenRequest.getRefreshToken()
+                : null;
 
         TokenPair tokenPair = authenticationService.refreshToken(
-                SecurityUtil.resolveRefreshToken(request, refreshTokenRequest.getRefreshToken()));
+                SecurityUtil.resolveRefreshToken(request, bodyToken));
         return ResponseEntity.ok()
                 .header(SET_COOKIE, createHttpOnlyCookie("access_token", tokenPair.getAccessToken()))
                 .header(SET_COOKIE, createHttpOnlyCookie("refresh_token", tokenPair.getRefreshToken()))

@@ -12,7 +12,6 @@ import com.adil.bridgespero.domain.repository.TokenRedisRepository;
 import com.adil.bridgespero.exception.InvalidAccessTokenException;
 import com.adil.bridgespero.exception.InvalidRefreshTokenException;
 import com.adil.bridgespero.exception.PasswordMismatchException;
-import com.adil.bridgespero.security.TokenUtil;
 import com.adil.bridgespero.security.jwt.TokenCreator;
 import com.adil.bridgespero.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -121,8 +120,13 @@ public class AuthenticationService {
         tokenRedisRepository.delete(username);
     }
 
-    public void verify(String authHeader) {
-        final String accessToken = TokenUtil.extractToken(authHeader);
+    public void verify(HttpServletRequest request) {
+        String accessToken = SecurityUtil.resolveToken(request);
+
+        if (!StringUtils.hasText(accessToken)) {
+            throw new InvalidAccessTokenException();
+        }
+
         final Authentication authentication = tokenProvider.parseAuthentication(accessToken);
         final TokenPair tokenPair = tokenRedisRepository.read(authentication.getName());
 
