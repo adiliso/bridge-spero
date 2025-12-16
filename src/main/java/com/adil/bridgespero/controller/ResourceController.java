@@ -35,12 +35,12 @@ public class ResourceController {
         ResourceResponse meta = wrapper.meta();
         Resource file = wrapper.resource();
 
-        String disposition = download ? "attachment" : "inline";
+        String disposition = download ? "" : "inline;";
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, meta.contentType())
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        disposition + "; filename=\"" + meta.name() + "\"")
+                        disposition + " filename=\"" + meta.name() + "\"")
                 .header(HttpHeaders.ACCEPT_RANGES, "bytes")
                 .body(file);
     }
