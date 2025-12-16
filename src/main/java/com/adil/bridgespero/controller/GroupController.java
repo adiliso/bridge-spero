@@ -146,7 +146,7 @@ public class GroupController {
     @PostMapping(value = "/{id}/recordings", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createRecording(
             @PathVariable Long id,
-            @Valid ResourceCreateRequest request
+            @Valid @ModelAttribute ResourceCreateRequest request
     ) {
         return ResponseEntity.status(CREATED).body(groupService.createRecording(id, request));
     }
