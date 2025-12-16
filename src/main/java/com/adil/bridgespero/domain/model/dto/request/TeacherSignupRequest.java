@@ -3,15 +3,12 @@ package com.adil.bridgespero.domain.model.dto.request;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -43,9 +40,6 @@ public class TeacherSignupRequest {
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
 
-    @NotEmpty(message = "At least one subject must be selected")
-    private Set<@NotBlank(message = "Subject cannot be empty") String> subjects;
-
     @Size(max = 1000, message = "Bio cannot exceed 1000 characters")
     private String bio;
 
@@ -64,7 +58,6 @@ public class TeacherSignupRequest {
                ", phoneNumber='" + phoneNumber + '\'' +
                ", password='" + "******" + '\'' +
                ", confirmPassword='" + "******" + '\'' +
-               ", subjects=" + subjects +
                ", bio='" + bio + '\'' +
                ", agreedToTerms=" + agreedToTerms +
                '}';

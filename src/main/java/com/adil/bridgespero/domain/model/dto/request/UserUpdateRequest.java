@@ -1,7 +1,6 @@
 package com.adil.bridgespero.domain.model.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,8 +28,7 @@ public class UserUpdateRequest {
     @Pattern(regexp = "^[0-9]{7,12}$", message = "Phone number must be between 7–12 digits")
     private String phoneNumber;
 
-    @NotEmpty(message = "At least one interest must be selected")
-    private List<@NotBlank(message = "Interest cannot be empty") String> interests;
+    List<Long> userInterestCategoryIds;
 
     @Size(max = 1000, message = "Bio cannot exceed 1000 characters")
     private String bio;

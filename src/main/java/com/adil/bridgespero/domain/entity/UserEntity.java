@@ -3,15 +3,14 @@ package com.adil.bridgespero.domain.entity;
 import com.adil.bridgespero.domain.model.enums.Role;
 import com.adil.bridgespero.domain.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,6 +26,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -79,13 +79,10 @@ public class UserEntity extends BaseEntity {
 
     String phone;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "user_interest",
-            joinColumns = @JoinColumn(name = "user_id")
-    )
-    @Column(name = "subject")
-    List<String> interests;
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    Set<UserInterestEntity> interests;
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
     List<GroupEntity> groups;

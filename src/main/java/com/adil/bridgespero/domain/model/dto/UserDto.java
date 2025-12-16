@@ -1,5 +1,6 @@
 package com.adil.bridgespero.domain.model.dto;
 
+import com.adil.bridgespero.domain.entity.UserInterestEntity;
 import com.adil.bridgespero.domain.model.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
@@ -12,8 +13,8 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -52,7 +53,7 @@ public class UserDto implements Serializable {
 
     private Instant updatedAt;
 
-    private List<String> interests;
+    private Set<UserInterestEntity> userInterestEntities;
 
     @Override
     public boolean equals(Object o) {

@@ -55,6 +55,7 @@ public class UserService {
     ScheduleMapper scheduleMapper;
     GroupMapper groupMapper;
     FileStorageService fileStorageService;
+    private final UserInterestsService userInterestsService;
 
     public ScheduleWeekResponse getSchedule(Long id) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -227,6 +228,8 @@ public class UserService {
 
         userMapper.update(user, request);
         userRepository.save(user);
+
+        userInterestsService.replaceInterests(id, request.getUserInterestCategoryIds());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
