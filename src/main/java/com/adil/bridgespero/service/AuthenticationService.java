@@ -14,6 +14,8 @@ import com.adil.bridgespero.exception.InvalidRefreshTokenException;
 import com.adil.bridgespero.exception.PasswordMismatchException;
 import com.adil.bridgespero.security.TokenUtil;
 import com.adil.bridgespero.security.jwt.TokenCreator;
+import com.adil.bridgespero.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -90,15 +93,32 @@ public class AuthenticationService {
         return createAndSaveToken(authentication);
     }
 
-    public void signout(String authHeader) {
-        final String accessToken = TokenUtil.extractToken(authHeader);
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final TokenPair currentTokenPair = tokenRedisRepository.read(authentication.getName());
+    public void signout(HttpServletRequest request) {
 
-        if (currentTokenPair == null || !Objects.equals(accessToken, currentTokenPair.getAccessToken()))
+        String accessToken = SecurityUtil.resolveToken(request);
+
+        if (!StringUtils.hasText(accessToken)) {
             throw new InvalidAccessTokenException();
+        }
 
-        tokenRedisRepository.delete(authentication.getName());
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new InvalidAccessTokenException();
+        }
+
+        String username = authentication.getName();
+
+        TokenPair currentTokenPair = tokenRedisRepository.read(username);
+
+        if (currentTokenPair == null ||
+            !accessToken.equals(currentTokenPair.getAccessToken())) {
+            throw new InvalidAccessTokenException();
+        }
+
+        tokenRedisRepository.delete(username);
     }
 
     public void verify(String authHeader) {

@@ -30,4 +30,22 @@ public final class SecurityUtil {
 
         return null;
     }
+
+    public static String resolveRefreshToken(HttpServletRequest request, String bodyToken) {
+
+        if (StringUtils.hasText(bodyToken)) {
+            return bodyToken;
+        }
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (CommonConstant.HttpAttribute.REFRESH_TOKEN.equals(cookie.getName())
+                    && StringUtils.hasText(cookie.getValue())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }

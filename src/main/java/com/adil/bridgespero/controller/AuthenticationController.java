@@ -6,12 +6,16 @@ import com.adil.bridgespero.domain.model.dto.request.SigninRequest;
 import com.adil.bridgespero.domain.model.dto.request.TeacherSignupRequest;
 import com.adil.bridgespero.domain.model.dto.request.UserSignupRequest;
 import com.adil.bridgespero.service.AuthenticationService;
+import com.adil.bridgespero.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,10 +59,27 @@ public class AuthenticationController {
                 .body(tokenPair);
     }
 
-    @GetMapping("/signout")
-    public ResponseEntity<Void> signout(@RequestHeader("Authorization") @NotBlank String authorizationHeader) {
-        authenticationService.signout(authorizationHeader);
-        return ResponseEntity.ok().build();
+    @PostMapping("/signout")
+    public ResponseEntity<Void> signout(
+            HttpServletRequest request
+    ) {
+        authenticationService.signout(request);
+
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie("access_token"))
+                .header(HttpHeaders.SET_COOKIE, deleteCookie("refresh_token"))
+                .build();
+    }
+
+    private String deleteCookie(String name) {
+        return ResponseCookie.from(name, "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(0)
+                .build()
+                .toString();
     }
 
     @GetMapping("/verify")
@@ -68,8 +89,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<TokenPair> refresh(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
-        TokenPair tokenPair = authenticationService.refreshToken(refreshTokenRequest.getRefreshToken());
+    public ResponseEntity<TokenPair> refresh(
+            HttpServletRequest request,
+            @Valid @RequestBody(required = false) RefreshTokenRequest refreshTokenRequest) {
+
+        TokenPair tokenPair = authenticationService.refreshToken(
+                SecurityUtil.resolveRefreshToken(request, refreshTokenRequest.getRefreshToken()));
         return ResponseEntity.ok()
                 .header(SET_COOKIE, createHttpOnlyCookie("access_token", tokenPair.getAccessToken()))
                 .header(SET_COOKIE, createHttpOnlyCookie("refresh_token", tokenPair.getRefreshToken()))
