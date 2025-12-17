@@ -125,7 +125,7 @@ public class GroupController {
     @PostMapping(value = "/{id}/syllabus", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createSyllabus(
             @PathVariable Long id,
-            SyllabusCreateRequest request
+            @ModelAttribute SyllabusCreateRequest request
     ) {
         return ResponseEntity.status(CREATED).body(groupService.createSyllabus(id, request));
     }
@@ -161,7 +161,7 @@ public class GroupController {
     @PostMapping(value = "/{id}/resources", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createResource(
             @PathVariable Long id,
-            @Valid ResourceCreateRequest request
+            @Valid @ModelAttribute ResourceCreateRequest request
     ) {
         return ResponseEntity.status(CREATED).body(groupService.createResource(id, request));
     }
