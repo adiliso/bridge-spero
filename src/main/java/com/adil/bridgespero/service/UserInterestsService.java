@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,22 +22,36 @@ public class UserInterestsService {
     @Transactional
     public void replaceInterests(Long userId, List<Long> categoryIds) {
 
-        userInterestRepository.deleteAllByUserId(userId);
+        deleteInterests(userId);
 
         if (categoryIds == null || categoryIds.isEmpty()) {
             return;
         }
 
-        Set<UserInterestEntity> interests =
+        createInterests(userId, categoryIds);
+    }
+
+    @Transactional
+    protected void deleteInterests(Long userId) {
+        userInterestRepository.deleteAllByUserId(userId);
+        userInterestRepository.flush();
+    }
+
+    @Transactional
+    protected void createInterests(Long userId, List<Long> categoryIds) {
+        List<UserInterestEntity> interests =
                 categoryIds.stream()
                         .distinct()
-                        .map(categoryId -> UserInterestEntity.builder()
-                                .user(userRepository.getReferenceById(userId))
-                                .category(categoryRepository.getReferenceById(categoryId))
-                                .build()
-                        )
-                        .collect(Collectors.toSet());
+                        .map(categoryId -> buildInterest(userId, categoryId))
+                        .toList();
 
         userInterestRepository.saveAll(interests);
+    }
+
+    private UserInterestEntity buildInterest(Long userId, Long categoryId) {
+        return UserInterestEntity.builder()
+                .user(userRepository.getReferenceById(userId))
+                .category(categoryRepository.getReferenceById(categoryId))
+                .build();
     }
 }

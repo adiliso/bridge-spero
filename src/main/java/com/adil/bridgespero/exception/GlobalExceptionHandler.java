@@ -169,7 +169,6 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
-
     protected void addErrorLog(HttpStatus httpStatus, String errorMessage, String exceptionType) {
         int statusCode = (httpStatus != null) ? httpStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR.value();
         log.error("HTTP Status: {} | Error Message: {} | Exception Type: {}", statusCode, errorMessage, exceptionType);

@@ -14,7 +14,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -56,8 +55,6 @@ public class TeacherDto implements Serializable {
     private List<String> interests;
 
     private Integer ratingCount;
-
-    private Set<String> subjects;
 
     private String demoVideoUrl;
 

@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 015_drop_teacher_subjects
+      author: Adil Ismayilov
+      changes:
+        - dropTable:
+            tableName: teacher_detail_entity_subjects
+            cascadeConstraints: true
+
+      rollback:
+        - createTable:
+            tableName: teacher_detail_entity_subjects
+            columns:
+              - column:
+                  name: teacher_detail_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subjects
+                  type: VARCHAR(255)

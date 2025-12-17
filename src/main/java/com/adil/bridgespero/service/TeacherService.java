@@ -3,8 +3,8 @@ package com.adil.bridgespero.service;
 import com.adil.bridgespero.domain.entity.TeacherDetailEntity;
 import com.adil.bridgespero.domain.entity.TeacherRatingEntity;
 import com.adil.bridgespero.domain.entity.UserEntity;
-import com.adil.bridgespero.domain.model.dto.filter.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.TeacherDto;
+import com.adil.bridgespero.domain.model.dto.filter.MyGroupsFilter;
 import com.adil.bridgespero.domain.model.dto.filter.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.request.TeacherRateRequest;
 import com.adil.bridgespero.domain.model.dto.request.TeacherUpdateRequest;
@@ -209,7 +209,7 @@ public class TeacherService {
         TeacherDetailEntity teacher = getById(teacherId);
         UserEntity user = teacher.getUser();
 
-        teacherMapper.update(user, teacher, request);
+        teacherMapper.update(user, request);
 
         userRepository.save(user);
         teacherRepository.save(teacher);
