@@ -5,10 +5,10 @@ import com.adil.bridgespero.domain.entity.UserEntity;
 import com.adil.bridgespero.domain.model.dto.request.UserUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.AdminResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleUserEventResponse;
-import com.adil.bridgespero.domain.model.dto.response.UserResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
+import com.adil.bridgespero.domain.model.dto.response.UserResponse;
 import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import org.springframework.stereotype.Component;
 
@@ -93,7 +93,6 @@ public class UserMapper {
         user.setSurname(request.getSurname());
         user.setBio(request.getBio());
         user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
-        user.setInterests(request.getInterests());
     }
 
     public UserResponse toUserResponse(UserEntity entity) {
@@ -107,9 +106,17 @@ public class UserMapper {
                 entity.getPhone(),
                 entity.getProfilePictureUrl(),
                 entity.getBio(),
-                entity.getInterests(),
+                mapInterestCategoryIds(entity),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
     }
+
+    private List<Long> mapInterestCategoryIds(UserEntity entity) {
+        return entity.getInterests()
+                .stream()
+                .map(i -> i.getCategory().getId())
+                .toList();
+    }
+
 }

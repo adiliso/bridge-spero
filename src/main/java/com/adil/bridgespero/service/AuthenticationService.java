@@ -56,7 +56,6 @@ public class AuthenticationService {
                 .phone(signupRequest.getPhoneCode() + signupRequest.getPhoneNumber())
                 .enabled(true)
                 .agreedToTerms(signupRequest.isAgreedToTerms())
-                .interests(signupRequest.getInterests())
                 .bio(signupRequest.getBio())
                 .build();
         userService.save(userDto);
@@ -72,7 +71,6 @@ public class AuthenticationService {
                 .surname(signupRequest.getSurname())
                 .role(Role.TEACHER)
                 .phone(signupRequest.getPhoneCode() + signupRequest.getPhoneNumber())
-                .subjects(signupRequest.getSubjects())
                 .enabled(true)
                 .agreedToTerms(signupRequest.isAgreedToTerms())
                 .bio(signupRequest.getBio())

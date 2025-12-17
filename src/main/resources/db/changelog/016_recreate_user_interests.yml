@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: 021_recreate_user_interests
+      author: Adil Ismayilov
+
+      changes:
+        - dropTable:
+            tableName: user_interest
+            cascadeConstraints: true
+
+        - createTable:
+            tableName: user_interests
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: created_by
+                  type: BIGINT
+
+              - column:
+                  name: updated_by
+                  type: BIGINT
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: user_interests
+            columnNames: user_id, category_id
+            constraintName: uk_user_category
+
+        - addForeignKeyConstraint:
+            baseTableName: user_interests
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_interests_user
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: user_interests
+            baseColumnNames: category_id
+            referencedTableName: category
+            referencedColumnNames: id
+            constraintName: fk_user_interests_category
+            onDelete: CASCADE
+
+      rollback:
+        - dropTable:
+            tableName: user_interests

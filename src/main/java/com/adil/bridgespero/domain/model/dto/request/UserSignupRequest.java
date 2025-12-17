@@ -3,14 +3,11 @@ package com.adil.bridgespero.domain.model.dto.request;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -42,9 +39,6 @@ public class UserSignupRequest {
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
 
-    @NotEmpty(message = "At least one interest must be selected")
-    private List<@NotBlank(message = "Interest cannot be empty") String> interests;
-
     @Size(max = 1000, message = "Bio cannot exceed 1000 characters")
     private String bio;
 
@@ -61,7 +55,6 @@ public class UserSignupRequest {
                ", phoneNumber='" + phoneNumber + '\'' +
                ", password='" + "******" + '\'' +
                ", confirmPassword='" + "******" + '\'' +
-               ", interests=" + interests +
                ", bio='" + bio + '\'' +
                ", agreedToTerms=" + agreedToTerms +
                '}';

@@ -13,7 +13,6 @@ import com.adil.bridgespero.domain.model.enums.GroupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -67,14 +66,12 @@ public class TeacherMapper {
                 .bio(dto.getBio())
                 .phone(dto.getPhone())
                 .role(dto.getRole())
-                .interests(dto.getInterests())
                 .build();
 
         return TeacherDetailEntity.builder()
                 .id(dto.getId())
                 .user(user)
                 .demoVideoUrl(dto.getDemoVideoUrl())
-                .subjects(dto.getSubjects())
                 .build();
     }
 
@@ -109,11 +106,10 @@ public class TeacherMapper {
         );
     }
 
-    public void update(UserEntity user, TeacherDetailEntity teacher, TeacherUpdateRequest request) {
+    public void update(UserEntity user, TeacherUpdateRequest request) {
         user.setName(request.getName());
         user.setSurname(request.getSurname());
         user.setBio(request.getBio());
         user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
-        teacher.setSubjects(new HashSet<>(request.getSubjects()));
     }
 }

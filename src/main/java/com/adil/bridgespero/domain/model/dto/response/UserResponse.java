@@ -17,7 +17,7 @@ public record UserResponse(
         String phone,
         String profilePictureUrl,
         String bio,
-        List<String> interests,
+        List<Long> interestCategoryIds,
         Instant createdAt,
         Instant updatedAt
 ) {

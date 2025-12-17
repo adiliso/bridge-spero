@@ -2,7 +2,6 @@ package com.adil.bridgespero.domain.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -23,9 +22,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -60,10 +57,6 @@ public class TeacherDetailEntity {
     @Builder.Default
     @Column(nullable = false)
     Double rating = 4.5;
-
-    @ElementCollection
-    @Builder.Default
-    Set<String> subjects = new HashSet<>();
 
     @Builder.Default
     @OneToMany(
