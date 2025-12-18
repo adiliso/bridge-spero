@@ -64,7 +64,8 @@ public class TeacherMapper {
                 .enabled(dto.getEnabled())
                 .agreedToTerms(dto.getAgreedToTerms())
                 .bio(dto.getBio())
-                .phone(dto.getPhone())
+                .phoneCode(dto.getPhoneCode())
+                .phoneNumber(dto.getPhoneNumber())
                 .role(dto.getRole())
                 .build();
 
@@ -110,6 +111,7 @@ public class TeacherMapper {
         user.setName(request.getName());
         user.setSurname(request.getSurname());
         user.setBio(request.getBio());
-        user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
+        user.setPhoneCode(request.getPhoneCode());
+        user.setPhoneNumber(request.getPhoneNumber());
     }
 }

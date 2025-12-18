@@ -12,7 +12,6 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -40,7 +39,9 @@ public class TeacherDto implements Serializable {
 
     private Role role;
 
-    private String phone;
+    private String phoneCode;
+
+    private String phoneNumber;
 
     private Boolean enabled;
 
@@ -51,8 +52,6 @@ public class TeacherDto implements Serializable {
     private Instant createdAt;
 
     private Instant updatedAt;
-
-    private List<String> interests;
 
     private Integer ratingCount;
 

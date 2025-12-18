@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 020_make-phone-columns-not-null
+      author: Adil Ismayilov
+      changes:
+        - addNotNullConstraint:
+            tableName: users
+            columnName: phone_code
+            columnDataType: varchar(5)
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: phone_number
+            columnDataType: varchar(15)

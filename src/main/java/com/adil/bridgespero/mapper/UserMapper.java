@@ -92,7 +92,8 @@ public class UserMapper {
         user.setName(request.getName());
         user.setSurname(request.getSurname());
         user.setBio(request.getBio());
-        user.setPhone(request.getPhoneCode() + request.getPhoneNumber());
+        user.setPhoneCode(request.getPhoneCode());
+        user.setPhoneNumber(request.getPhoneNumber());
     }
 
     public UserResponse toUserResponse(UserEntity entity) {
@@ -103,7 +104,8 @@ public class UserMapper {
                 entity.getSurname(),
                 entity.getRole(),
                 entity.getStatus(),
-                entity.getPhone(),
+                entity.getPhoneCode(),
+                entity.getPhoneNumber(),
                 entity.getProfilePictureUrl(),
                 entity.getBio(),
                 mapInterestCategoryIds(entity),

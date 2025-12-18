@@ -77,6 +77,12 @@ public class UserEntity extends BaseEntity {
     @Column(length = 1000)
     String bio;
 
+    @Column(name = "phone_code", length = 5, nullable = false)
+    String phoneCode;
+
+    @Column(name = "phone_number", length = 15, nullable = false)
+    String phoneNumber;
+
     String phone;
 
     @OneToMany(mappedBy = "user",

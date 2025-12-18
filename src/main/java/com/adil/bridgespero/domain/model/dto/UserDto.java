@@ -41,7 +41,9 @@ public class UserDto implements Serializable {
 
     private Role role;
 
-    private String phone;
+    private String phoneCode;
+
+    private String phoneNumber;
 
     private Boolean enabled;
 
