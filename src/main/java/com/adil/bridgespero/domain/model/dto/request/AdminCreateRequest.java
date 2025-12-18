@@ -2,6 +2,7 @@ package com.adil.bridgespero.domain.model.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record AdminCreateRequest(
@@ -18,16 +19,26 @@ public record AdminCreateRequest(
         String Name,
 
         @NotBlank(message = "Surname is required")
-        String Surname
+        String Surname,
+
+        @NotBlank(message = "Phone code is required")
+        @Pattern(regexp = "^\\+\\d{1,4}$", message = "Phone code must start with + and contain 1–4 digits")
+        String phoneCode,
+
+        @NotBlank(message = "Phone number is required")
+        @Pattern(regexp = "^[0-9]{7,12}$", message = "Phone number must be between 7–12 digits")
+        String phoneNumber
 ) {
 
-        @Override
-        public String toString() {
-                return "AdminCreateRequest{" +
-                       "email='" + email + '\'' +
-                       ", password='" + "******" + '\'' +
-                       ", Name='" + Name + '\'' +
-                       ", Surname='" + Surname + '\'' +
-                       '}';
-        }
+    @Override
+    public String toString() {
+        return "AdminCreateRequest{" +
+               "email='" + email + '\'' +
+               ", password='" + "******" + '\'' +
+               ", Name='" + Name + '\'' +
+               ", Surname='" + Surname + '\'' +
+               ", PhoneCode='" + phoneCode + '\'' +
+               ", PhoneNumber='" + phoneNumber + '\'' +
+               '}';
+    }
 }

@@ -37,6 +37,8 @@ public class AdminService {
                 .name(request.Name())
                 .surname(request.Surname())
                 .role(Role.ADMIN)
+                .phoneCode(request.phoneCode())
+                .phoneNumber(request.phoneNumber())
                 .enabled(true)
                 .agreedToTerms(true)
                 .build();

@@ -4,6 +4,7 @@ import com.adil.bridgespero.domain.entity.UserInterestEntity;
 import com.adil.bridgespero.domain.model.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,10 +40,13 @@ public class UserDto implements Serializable {
     @NotBlank
     private String surname;
 
+    @NotNull
     private Role role;
 
+    @NotBlank
     private String phoneCode;
 
+    @NotBlank
     private String phoneNumber;
 
     private Boolean enabled;
