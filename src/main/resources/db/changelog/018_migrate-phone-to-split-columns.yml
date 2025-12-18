@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 018_migrate-phone-to-split-columns
+      author: adil
+      changes:
+        - sql:
+            comment: Migrate old phone column to phone_code and phone_number
+            sql: |
+              UPDATE users
+              SET
+                phone_code = '+994',
+                phone_number = CASE
+                  WHEN phone LIKE '+994%' THEN substring(phone FROM 5)
+                END
+              WHERE phone IS NOT NULL;

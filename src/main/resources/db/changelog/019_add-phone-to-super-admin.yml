@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 019_add-phone-to-super-admin
+      author: Adil Ismayilov
+      changes:
+        - sql:
+            sql: |
+              UPDATE users
+              SET
+                phone_code = '+994',
+                phone_number = '000000000'
+              WHERE role = 'SUPER_ADMIN'
+                AND (phone_code IS NULL OR phone_number IS NULL);
