@@ -10,6 +10,7 @@ import com.adil.bridgespero.domain.model.dto.response.UserDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserProfileResponse;
 import com.adil.bridgespero.domain.model.dto.response.UserResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
+import com.adil.bridgespero.service.JoinRequestService;
 import com.adil.bridgespero.service.UserService;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -46,6 +47,7 @@ import static com.adil.bridgespero.constant.PageConstant.DEFAULT_PAGE_SIZE;
 public class UserController {
 
     UserService userService;
+    private final JoinRequestService joinRequestService;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal CustomUserPrincipal user) {
@@ -139,6 +141,13 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
         userService.update(id, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/join/{groupId}")
+    public ResponseEntity<Void> requestToJoinGroup(@PathVariable Long groupId,
+                                                   @AuthenticationPrincipal CustomUserPrincipal user) {
+        joinRequestService.create(groupId, user.getId());
         return ResponseEntity.noContent().build();
     }
 
