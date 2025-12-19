@@ -113,7 +113,7 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody TeacherUpdateRequest request) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody TeacherUpdateRequest request) {
         teacherService.update(id, request);
         return ResponseEntity.noContent().build();
     }
