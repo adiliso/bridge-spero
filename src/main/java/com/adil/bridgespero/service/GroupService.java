@@ -297,28 +297,6 @@ public class GroupService {
         return entity.getId();
     }
 
-    @Transactional
-    public void addMember(Long groupId, Long userId) {
-        var group = getById(groupId);
-        var user = userService.findById(userId);
-        checkUserGroupAlreadyExists(userId, groupId);
-        checkGroupIsFull(groupId, group.getMaxStudents());
-
-        group.getUsers().add(user);
-        user.getGroups().add(group);
-    }
-
-    private void checkUserGroupAlreadyExists(Long userId, Long groupId) {
-        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) {
-            throw new UserGroupAlreadyExistsException(userId, groupId);
-        }
-    }
-
-    private void checkGroupIsFull(Long groupId, int maxStudents) {
-        if (groupRepository.countUsersInGroup(groupId) >= maxStudents)
-            throw new GroupFullException(groupId);
-    }
-
     public GroupMembersResponse getAllMembers(Long id) {
 
         checkGroupExists(id);
@@ -346,5 +324,28 @@ public class GroupService {
     public void delete(Long id) {
         checkGroupExists(id);
         groupRepository.deleteById(id);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)")
+    public void addMember(Long groupId, Long studentId) {
+        var group = getById(groupId);
+        var user = userService.findById(studentId);
+        checkUserGroupAlreadyExists(studentId, groupId);
+        checkGroupIsFull(groupId, group.getMaxStudents());
+
+        group.getUsers().add(user);
+        user.getGroups().add(group);
+    }
+
+    public void checkGroupIsFull(Long groupId, int maxStudents) {
+        if (groupRepository.countUsersInGroup(groupId) >= maxStudents)
+            throw new GroupFullException(groupId);
+    }
+
+    public void checkUserGroupAlreadyExists(Long userId, Long groupId) {
+        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) {
+            throw new UserGroupAlreadyExistsException(userId, groupId);
+        }
     }
 }

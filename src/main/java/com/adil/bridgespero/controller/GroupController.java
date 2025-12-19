@@ -193,12 +193,6 @@ public class GroupController {
         return ResponseEntity.ok(groupService.joinLesson(id));
     }
 
-    @PostMapping("/{id}/members")
-    public ResponseEntity<Void> addMember(@PathVariable Long id, @AuthenticationPrincipal CustomUserPrincipal user) {
-        groupService.addMember(id, user.getId());
-        return ResponseEntity.status(CREATED).build();
-    }
-
     @GetMapping("/{id}/members")
     public ResponseEntity<GroupMembersResponse> getAllMembers(@PathVariable Long id) {
         return ResponseEntity.ok(groupService.getAllMembers(id));
