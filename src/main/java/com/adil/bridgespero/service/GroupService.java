@@ -14,8 +14,11 @@ import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.enums.GroupMemberStatus;
+import com.adil.bridgespero.domain.model.enums.JoinRequestStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.repository.JoinRequestRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.UserRepository;
@@ -68,6 +71,7 @@ public class GroupService {
     MeetingService meetingService;
     CategoryService categoryService;
     UserRepository userRepository;
+    private final JoinRequestRepository joinRequestRepository;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -347,5 +351,17 @@ public class GroupService {
         if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) {
             throw new UserGroupAlreadyExistsException(userId, groupId);
         }
+    }
+
+    public GroupMemberStatus getMemberStatus(Long groupId, Long userId) {
+        checkGroupExists(groupId);
+        userService.checkUserExists(userId);
+
+        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) return GroupMemberStatus.MEMBER;
+        else if (joinRequestRepository
+                .existsByStudent_IdAndGroup_IdAndStatus(userId, groupId, JoinRequestStatus.PENDING)) {
+            return GroupMemberStatus.PENDING;
+        }
+        return GroupMemberStatus.NOT_MEMBER;
     }
 }

@@ -12,11 +12,10 @@ import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
-import com.adil.bridgespero.domain.model.dto.response.StudentIsMemberResponse;
+import com.adil.bridgespero.domain.model.enums.GroupMemberStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
 import com.adil.bridgespero.service.GroupService;
-import com.adil.bridgespero.service.SecurityService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -53,7 +52,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class GroupController {
 
     GroupService groupService;
-    SecurityService securityService;
 
     @GetMapping("/top-rated")
     public ResponseEntity<PageResponse<GroupCardResponse>> getTopRated(
@@ -204,10 +202,11 @@ public class GroupController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/is-member")
-    public ResponseEntity<StudentIsMemberResponse> isMember(@PathVariable Long id) {
-        boolean isMember = securityService.isStudentOfGroup(id);
-        return ResponseEntity.ok(new StudentIsMemberResponse(isMember));
+
+    @GetMapping("/{id}/member-status")
+    public ResponseEntity<GroupMemberStatus> isMember(@PathVariable Long id,
+                                                      @AuthenticationPrincipal CustomUserPrincipal user) {
+        return ResponseEntity.ok(groupService.getMemberStatus(id, user.getId()));
     }
 
     @DeleteMapping("/{id}")
