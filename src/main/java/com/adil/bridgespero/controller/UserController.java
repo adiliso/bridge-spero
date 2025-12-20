@@ -154,4 +154,10 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/join/{groupId}")
+    public ResponseEntity<Void> deleteJoinRequest(@PathVariable Long groupId,
+                                                  @AuthenticationPrincipal CustomUserPrincipal user) {
+        joinRequestService.deleteRequest(groupId, user.getId());
+        return ResponseEntity.noContent().build();
+    }
 }

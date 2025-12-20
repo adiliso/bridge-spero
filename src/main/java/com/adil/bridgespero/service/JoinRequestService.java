@@ -89,4 +89,10 @@ public class JoinRequestService {
                 ))
                 .toList();
     }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#studentId)")
+    public void deleteRequest(Long groupId, Long studentId) {
+        joinRequestRepository.deleteByGroup_IdAndStudent_IdAndStatus(groupId, studentId, JoinRequestStatus.PENDING);
+    }
 }

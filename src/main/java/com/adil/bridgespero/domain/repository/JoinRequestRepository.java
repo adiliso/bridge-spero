@@ -15,4 +15,6 @@ public interface JoinRequestRepository extends JpaRepository<JoinRequestEntity, 
     List<JoinRequestEntity> getAllByGroup_Teacher_IdAndStatus(Long teacherId, JoinRequestStatus status);
 
     boolean existsByStudent_IdAndGroup_IdAndStatus(Long studentId, Long groupId, JoinRequestStatus status);
+
+    void deleteByGroup_IdAndStudent_IdAndStatus(Long groupId, Long studentId, JoinRequestStatus status);
 }
