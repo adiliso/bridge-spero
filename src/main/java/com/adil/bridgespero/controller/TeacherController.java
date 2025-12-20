@@ -5,12 +5,14 @@ import com.adil.bridgespero.domain.model.dto.filter.TeacherFilter;
 import com.adil.bridgespero.domain.model.dto.request.TeacherRateRequest;
 import com.adil.bridgespero.domain.model.dto.request.TeacherUpdateRequest;
 import com.adil.bridgespero.domain.model.dto.response.GroupCardResponse;
+import com.adil.bridgespero.domain.model.dto.response.JoinNotificationResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleWeekResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherCardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherDashboardResponse;
 import com.adil.bridgespero.domain.model.dto.response.TeacherProfileResponse;
 import com.adil.bridgespero.security.model.CustomUserPrincipal;
+import com.adil.bridgespero.service.JoinRequestService;
 import com.adil.bridgespero.service.TeacherService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -24,6 +26,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -46,6 +49,7 @@ import static com.adil.bridgespero.constant.PageConstant.DEFAULT_PAGE_SIZE;
 public class TeacherController {
 
     TeacherService teacherService;
+    private final JoinRequestService joinRequestService;
 
     @GetMapping("/top-rated")
     public ResponseEntity<PageResponse<TeacherCardResponse>> getTopRated(
@@ -109,8 +113,25 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody TeacherUpdateRequest request) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody TeacherUpdateRequest request) {
         teacherService.update(id, request);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/join/accept/{requestId}")
+    public ResponseEntity<Void> acceptJoinRequest(@PathVariable Long requestId) {
+        joinRequestService.accept(requestId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/join/decline/{requestId}")
+    public ResponseEntity<Void> declineJoinRequest(@PathVariable Long requestId) {
+        joinRequestService.decline(requestId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/join/notifications")
+    public ResponseEntity<List<JoinNotificationResponse>> getAllJoinNotifications(@PathVariable Long id) {
+        return ResponseEntity.ok(joinRequestService.getAllByTeacherId(id));
     }
 }

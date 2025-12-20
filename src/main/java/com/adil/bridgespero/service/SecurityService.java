@@ -1,6 +1,7 @@
 package com.adil.bridgespero.service;
 
 import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.repository.JoinRequestRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import lombok.AccessLevel;
@@ -19,6 +20,7 @@ public class SecurityService {
     GroupService groupService;
     ResourceService resourceService;
     ScheduleRepository scheduleRepository;
+    private final JoinRequestRepository joinRequestRepository;
 
     public boolean isTeacherOfGroup(Long groupId) {
         groupService.checkGroupExists(groupId);
@@ -56,5 +58,9 @@ public class SecurityService {
     public boolean isTeacherOfSchedule(Long id) {
         groupService.checkScheduleExistsById(id);
         return scheduleRepository.existsByIdAndGroup_Teacher_Id(id, getCurrentUserId());
+    }
+
+    public boolean isTeacherOfJoinRequest(Long requestId) {
+        return joinRequestRepository.existsByIdAndGroup_Teacher_Id(requestId, getCurrentUserId());
     }
 }

@@ -2,6 +2,8 @@ package com.adil.bridgespero.domain.model.dto.request;
 
 import com.adil.bridgespero.domain.model.enums.Language;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -35,6 +37,8 @@ public record GroupEditRequest(
 
         @NotNull(message = "Price must be provided")
         @Positive(message = "Price must be positive")
+        @DecimalMax(value = "10000.00", message = "Price must not exceed 10,000")
+        @Digits(integer = 5, fraction = 2, message = "Invalid price format")
         Double price,
 
         String description,

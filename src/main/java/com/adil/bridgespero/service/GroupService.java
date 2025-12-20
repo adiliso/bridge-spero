@@ -14,8 +14,11 @@ import com.adil.bridgespero.domain.model.dto.response.GroupMembersResponse;
 import com.adil.bridgespero.domain.model.dto.response.PageResponse;
 import com.adil.bridgespero.domain.model.dto.response.ResourceResponse;
 import com.adil.bridgespero.domain.model.dto.response.ScheduleResponse;
+import com.adil.bridgespero.domain.model.enums.GroupMemberStatus;
+import com.adil.bridgespero.domain.model.enums.JoinRequestStatus;
 import com.adil.bridgespero.domain.model.enums.ResourceType;
 import com.adil.bridgespero.domain.repository.GroupRepository;
+import com.adil.bridgespero.domain.repository.JoinRequestRepository;
 import com.adil.bridgespero.domain.repository.ResourceRepository;
 import com.adil.bridgespero.domain.repository.ScheduleRepository;
 import com.adil.bridgespero.domain.repository.UserRepository;
@@ -68,6 +71,7 @@ public class GroupService {
     MeetingService meetingService;
     CategoryService categoryService;
     UserRepository userRepository;
+    private final JoinRequestRepository joinRequestRepository;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
@@ -297,28 +301,6 @@ public class GroupService {
         return entity.getId();
     }
 
-    @Transactional
-    public void addMember(Long groupId, Long userId) {
-        var group = getById(groupId);
-        var user = userService.findById(userId);
-        checkUserGroupAlreadyExists(userId, groupId);
-        checkGroupIsFull(groupId, group.getMaxStudents());
-
-        group.getUsers().add(user);
-        user.getGroups().add(group);
-    }
-
-    private void checkUserGroupAlreadyExists(Long userId, Long groupId) {
-        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) {
-            throw new UserGroupAlreadyExistsException(userId, groupId);
-        }
-    }
-
-    private void checkGroupIsFull(Long groupId, int maxStudents) {
-        if (groupRepository.countUsersInGroup(groupId) >= maxStudents)
-            throw new GroupFullException(groupId);
-    }
-
     public GroupMembersResponse getAllMembers(Long id) {
 
         checkGroupExists(id);
@@ -346,5 +328,40 @@ public class GroupService {
     public void delete(Long id) {
         checkGroupExists(id);
         groupRepository.deleteById(id);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isTeacherOfGroup(#groupId)")
+    public void addMember(Long groupId, Long studentId) {
+        var group = getById(groupId);
+        var user = userService.findById(studentId);
+        checkUserGroupAlreadyExists(studentId, groupId);
+        checkGroupIsFull(groupId, group.getMaxStudents());
+
+        group.getUsers().add(user);
+        user.getGroups().add(group);
+    }
+
+    public void checkGroupIsFull(Long groupId, int maxStudents) {
+        if (groupRepository.countUsersInGroup(groupId) >= maxStudents)
+            throw new GroupFullException(groupId);
+    }
+
+    public void checkUserGroupAlreadyExists(Long userId, Long groupId) {
+        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) {
+            throw new UserGroupAlreadyExistsException(userId, groupId);
+        }
+    }
+
+    public GroupMemberStatus getMemberStatus(Long groupId, Long userId) {
+        checkGroupExists(groupId);
+        userService.checkUserExists(userId);
+
+        if (groupRepository.existsByIdAndUsers_Id(groupId, userId)) return GroupMemberStatus.MEMBER;
+        else if (joinRequestRepository
+                .existsByStudent_IdAndGroup_IdAndStatus(userId, groupId, JoinRequestStatus.PENDING)) {
+            return GroupMemberStatus.PENDING;
+        }
+        return GroupMemberStatus.NOT_MEMBER;
     }
 }
