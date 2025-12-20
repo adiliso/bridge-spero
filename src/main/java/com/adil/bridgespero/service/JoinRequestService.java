@@ -78,7 +78,7 @@ public class JoinRequestService {
     public List<JoinNotificationResponse> getAllByTeacherId(Long id) {
         teacherService.checkTeacherExists(id);
 
-        var entities = joinRequestRepository.getAllByGroup_Teacher_Id(id);
+        var entities = joinRequestRepository.getAllByGroup_Teacher_IdAndStatus(id, JoinRequestStatus.PENDING);
 
         return entities.stream()
                 .map(e -> new JoinNotificationResponse(

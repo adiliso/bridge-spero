@@ -12,7 +12,7 @@ public interface JoinRequestRepository extends JpaRepository<JoinRequestEntity, 
 
     boolean existsByIdAndGroup_Teacher_Id(Long id, Long teacherId);
 
-    List<JoinRequestEntity> getAllByGroup_Teacher_Id(Long teacherId);
+    List<JoinRequestEntity> getAllByGroup_Teacher_IdAndStatus(Long teacherId, JoinRequestStatus status);
 
     boolean existsByStudent_IdAndGroup_IdAndStatus(Long studentId, Long groupId, JoinRequestStatus status);
 }
