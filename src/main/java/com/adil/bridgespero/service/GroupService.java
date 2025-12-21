@@ -74,9 +74,9 @@ public class GroupService {
     private final JoinRequestRepository joinRequestRepository;
 
     public PageResponse<GroupCardResponse> getTopRated(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("teacher.rating").descending());
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-        var responses = groupRepository.findAllByStatus(ACTIVE, pageable)
+        var responses = groupRepository.findTopRated(ACTIVE, pageable)
                 .map(groupMapper::toCardResponse);
 
         return new PageResponse<>(

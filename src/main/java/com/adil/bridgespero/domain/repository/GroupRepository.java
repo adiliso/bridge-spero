@@ -11,15 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSpecificationExecutor<GroupEntity> {
-
-    List<GroupEntity> findAllByTeacherIdAndStatus(Long teacherId, GroupStatus status);
-
-    Page<GroupEntity> findAllByStatus(GroupStatus status, Pageable pageable);
 
     Optional<GroupEntity> findByMeetingId(String currentMeetingId);
 
@@ -35,4 +30,18 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long>, JpaSp
             DELETE FROM group_user gu where gu.group_id = :groupId AND gu.user_id = :studentId
             """, nativeQuery = true)
     void deleteMembership(@Param("groupId") Long id, @Param("studentId") Long studentId);
+
+    @Query("""
+                SELECT g
+                FROM GroupEntity g
+                JOIN g.teacher t
+                WHERE g.status = :status
+                ORDER BY t.rating DESC
+            """)
+    Page<GroupEntity> findTopRated(
+            @Param("status") GroupStatus status,
+            Pageable pageable
+    );
+
+
 }
